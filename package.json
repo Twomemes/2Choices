@@ -30,9 +30,8 @@
     "fork:node": "node ./_scripts.js fork:node",
     "fork:test": "node ./_scripts.js fork:test",
     "node": "hardhat node --network hardhat",
-    "hr": "hardhat --network bsc run",
-    "ht": "hardhat --network bsctest run",
-    "hhm": "hardhat --network harmony run"
+    "hr": "hardhat --network ftm run",
+    "ht": "hardhat --network ftmtest run"
   },
   "keywords": [],
   "author": "",
