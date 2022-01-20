@@ -85,19 +85,19 @@ const cfg: HardhatUserConfig = {
       gasPrice: 20000000000,
       accounts: { ...accounts(), initialIndex: 0, count: 10 },
     },
-    bsc: {
-      url: 'https://bsc-dataseed.binance.org/',
+    ftm: {
+      url: "https://rpc.ftm.tools/",
       chainId: 56,
       // gasPrice: 20000000000,
-      accounts: [ process.env.PROD_PRIVATEKEY as any],
+      accounts: [process.env.PROD_PRIVATEKEY as any],
     },
     bsctest: {
       url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
       chainId: 97,
       accounts: { ...accounts(), initialIndex: 0, count: 10 },
     },
-    harmony:{
-      url :'https://api.harmony.one',
+    harmony: {
+      url: 'https://api.harmony.one',
       chainId: 1666600000,
       accounts: { ...accounts(), initialIndex: 0, count: 10 },
     },
