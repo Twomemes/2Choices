@@ -88,7 +88,7 @@ const cfg: HardhatUserConfig = {
     bsc: {
       url: 'https://bsc-dataseed.binance.org/',
       chainId: 56,
-      // gasPrice: 20000000000,
+      gasPrice: 20000000000,
       accounts: [ process.env.PROD_PRIVATEKEY as any],
     },
     bsctest: {
