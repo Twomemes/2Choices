@@ -37,7 +37,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         _startTime = 7776000;   //start time set before deploy!
         _kakiCaptain = capAdd;
         _aPrice = 100 ether;
-        _bPrice = 150 ether;
+        _bPrice = 222 ether;
         _commonChip = 16;
         _rareChip = 32;
         _sTicketProb = 49;
