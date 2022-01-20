@@ -96,6 +96,11 @@ const cfg: HardhatUserConfig = {
       chainId: 97,
       accounts: { ...accounts(), initialIndex: 0, count: 10 },
     },
+    ftmtest: {
+      url: "https://rpc.testnet.fantom.network/",
+      accounts: { ...accounts(), initialIndex: 0 },
+      chainId: 4002,
+    },
     harmony: {
       url: 'https://api.harmony.one',
       chainId: 1666600000,
