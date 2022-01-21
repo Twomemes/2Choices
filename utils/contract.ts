@@ -102,8 +102,8 @@ export const contractAddress = {
   get claimLock() {
     return getItem("claimLock");
   },
-  get kaki() {
-    return getItem('kaki');
+  get two() {
+    return getItem('two');
   },
   get noLoss() {
     return getItem('noLoss');

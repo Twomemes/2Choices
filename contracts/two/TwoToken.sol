@@ -2,9 +2,9 @@ import {ERC20PermitUpgradeable} from "@openzeppelin/contracts-upgradeable/token/
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import {IKaki} from "../interfaces/IKaki.sol";
 
-contract Kaki is ERC20PermitUpgradeable, IKaki, AccessControlUpgradeable {
+contract TwoToken is ERC20PermitUpgradeable, IKaki, AccessControlUpgradeable {
     bytes32 public constant MINTER = keccak256("MINTER");
-    uint256 public constant MAX_SUPPLY = 210000000 ether;
+    uint256 public constant MAX_SUPPLY = 222222222_222222222222222222;
 
     event Mint(address indexed mintTo, address minter, uint256 amount);
 
@@ -17,8 +17,8 @@ contract Kaki is ERC20PermitUpgradeable, IKaki, AccessControlUpgradeable {
     {
         __AccessControl_init();
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        __ERC20Permit_init("Kaki");
-        __ERC20_init("Kaki", "KAKI");
+        __ERC20Permit_init("TWO");
+        __ERC20_init("Two Choice", "TWO");
         //    _setRoleAdmin(MINTER, DEFAULT_ADMIN_ROLE);
     }
 

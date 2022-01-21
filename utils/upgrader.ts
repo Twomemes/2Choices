@@ -19,7 +19,7 @@ declare class MyContractFactory extends ContractFactory {
   connect(signer: Signer): MyContractFactory;
 }
 
-const manifestRepo = 'git@github.com:derivative-lab/kaki-mono.sol.openzeppelin.git';
+const manifestRepo = process.env['MANIFEST_REPO'] as any;
 
 const origin = 'origin';
 export async function upgrade(fileName: string, address: string, factory: MyContractFactory | any = null, check = true) {
