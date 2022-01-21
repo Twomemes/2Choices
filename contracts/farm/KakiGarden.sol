@@ -267,6 +267,6 @@ contract KakiGarden is IKakiGarden, WithAdminRole, ReentrancyGuardUpgradeable, P
     receive() external payable {}
 
     function version() public pure returns (uint256) {
-        return 28;
+        return 29;
     }
 }
