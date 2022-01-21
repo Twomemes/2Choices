@@ -113,7 +113,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         _totalBonus[_chapter] = _totalBonus[_chapter] + addBonus;
 
         _ticketNFT.transferFrom(msg.sender, address(0xdead), nftId);
-        emit StartGame(msg.sender, nftId);
+        emit StartGame(msg.sender, nftId,ticketInfo.ticketType);
     }
 
     function myInitChipCurrentChapter() public view returns (uint256) {
