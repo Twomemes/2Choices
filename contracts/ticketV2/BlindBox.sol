@@ -16,6 +16,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     string[] _uri;
     bool _able;
     uint256 _startTime;
+    uint256 constant THOUSAND = 10 ** 3;
     uint256 public _aPrice;
     uint256 public _bPrice;
     uint256 public _sTicketProb;
@@ -23,7 +24,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     uint256 public _rareChip;
     uint256 public _foundationRate;
     address public _squidGameAdd;
-    address public _kakiFoundation;
+    address public _foundation;
     address public _squidCoinBase;
     address public _squidGameFound;
     address constant BlackHole = 0x0000000000000000000000000000000000000000;
@@ -41,8 +42,8 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         _commonChip = 16;
         _rareChip = 32;
         _sTicketProb = 49;
-        _foundationRate = 30; //3%
-        _kakiFoundation = 0x958f0991D0e847C06dDCFe1ecAd50ACADE6D461d; // kaki foundation address
+        _foundationRate = 20; //2%
+        _foundation = 0x958f0991D0e847C06dDCFe1ecAd50ACADE6D461d; // kaki foundation address
         _squidGameFound = 0x958f0991D0e847C06dDCFe1ecAd50ACADE6D461d;//
         _squidCoinBase = 0x958f0991D0e847C06dDCFe1ecAd50ACADE6D461d;
     }
@@ -107,21 +108,25 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         _kaki.transferFrom(msg.sender, _squidCoinBase, _aPrice);
         uint256 rand = random(5, 15);
         _kakiTicket.mint(msg.sender, _commonChip, rand, _aPrice, 0);
-        emit BuyABox(msg.sender);
+        emit BuyABox(msg.sender, 0);
     }
 
     function _bBoxOpen() internal {
-        _kaki.transferFrom(msg.sender, _squidCoinBase, _bPrice);
+        uint256 fee = _bPrice * _foundationRate / THOUSAND;
+        _kaki.transferFrom(msg.sender, _foundation, fee);
+        _kaki.transferFrom(msg.sender, _squidCoinBase, _bPrice - fee);
         uint256 randTicket = random(1, 100);
         uint256 rand = random(0, 10);
-
-        if (randTicket <= 80) {
+ 
+        if (randTicket <= 85) {
             _kakiTicket.mint(msg.sender, _commonChip, rand + 5, _aPrice, 0);
-        } else if (randTicket > 95 && _sTicketCount[(block.timestamp - _startTime) / 86400] < 6) {
-            _kakiTicket.mint(msg.sender, _rareChip, _sTicketProb, _bPrice, 2);
-            _sTicketCount[(block.timestamp - _startTime) / 86400]++;
-        } else {
+            emit BuyBBox(msg.sender, 0);
+        } else if (randTicket <= 99) {
             _kakiTicket.mint(msg.sender, _rareChip, rand + 10, _bPrice, 1);
+            emit BuyBBox(msg.sender, 1);
+        } else {
+            _kakiTicket.mint(msg.sender, _rareChip, _sTicketProb, _bPrice, 2);
+            emit BuyBBox(msg.sender, 2); 
         }
     }
 
@@ -157,7 +162,6 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     }
 
     function version() public pure returns (uint256) {
-        return 1;
+        return 0;
     }
-    
 }

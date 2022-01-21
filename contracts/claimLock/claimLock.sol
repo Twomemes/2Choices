@@ -34,7 +34,7 @@ contract ClaimLock is IClaimLock, WithAdminRole {
 
     function initialize(address farmAdd, IKaki kTokenAdd) public initializer {
         __WithAdminRole_init();
-        //*********************************** block number **********************************
+        // block number 
         _farmPeriod = 7776000;
 
         _addFarm = farmAdd;

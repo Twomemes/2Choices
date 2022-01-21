@@ -2,8 +2,8 @@
 pragma solidity ^0.8.0;
 
 interface IBlindBox {
-    event BuyABox(address indexed account);
-    event BuyBBox(address indexed account);
+    event BuyABox(address indexed account, uint256 ticketType);
+    event BuyBBox(address indexed account, uint256 ticketType);
 
     function aBoxOpen(uint256 num) external;
     function bBoxOpen(uint256 num) external;
