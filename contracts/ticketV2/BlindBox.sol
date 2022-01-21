@@ -30,13 +30,12 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     address constant BlackHole = 0x0000000000000000000000000000000000000000;
     mapping(uint256 => uint256) _sTicketCount;
 
-    function initialize(IKakiTicket ercAdd, IERC20 kTokenAdd, IKakiCaptain capAdd, IRandoms radomAdd) public initializer {
+    function initialize(IKakiTicket ercAdd, IERC20 kTokenAdd, IRandoms radomAdd) public initializer {
         __WithAdminRole_init();
         __WithRandom_init(radomAdd);
         _kaki = kTokenAdd;
         _kakiTicket = ercAdd;
         _startTime = 7776000;   //start time set before deploy!
-        _kakiCaptain = capAdd;
         _aPrice = 100 ether;
         _bPrice = 222 ether;
         _commonChip = 16;
@@ -70,39 +69,39 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         }
     }
 
-    function combine(uint256[3] memory ticket, uint256[] memory extraCap) public override isAble onlyNoneContract {
-        require(extraCap.length <= 3, "Invalid number of captain.");
+    // function combine(uint256[3] memory ticket, uint256[] memory extraCap) public override isAble onlyNoneContract {
+    //     require(extraCap.length <= 3, "Invalid number of captain.");
 
-        uint256 totalChip;
-        uint256 totalType;
-        uint256 totalProb;
+    //     uint256 totalChip;
+    //     uint256 totalType;
+    //     uint256 totalProb;
 
-        for(uint256 i; i < 3; i ++) {
-            require(_kakiTicket.ownerOf(ticket[i]) == msg.sender, "Not NFT owner.");
-            totalChip += _kakiTicket.getTicketInfo(ticket[i]).chip;
-            totalType += _kakiTicket.getTicketInfo(ticket[i]).ticketType;
-            totalProb += _kakiTicket.getTicketInfo(ticket[i]).prob;
-        }
+    //     for(uint256 i; i < 3; i ++) {
+    //         require(_kakiTicket.ownerOf(ticket[i]) == msg.sender, "Not NFT owner.");
+    //         totalChip += _kakiTicket.getTicketInfo(ticket[i]).chip;
+    //         totalType += _kakiTicket.getTicketInfo(ticket[i]).ticketType;
+    //         totalProb += _kakiTicket.getTicketInfo(ticket[i]).prob;
+    //     }
 
-        uint256 extraProb;
+    //     uint256 extraProb;
 
-        for(uint256 i; i < extraCap.length; i ++) {
-            require(_kakiCaptain.ownerOf(extraCap[i]) == msg.sender, "Not NFT owner.");
-            extraProb += _kakiCaptain.getCapInfo(extraCap[i]).combineRate;
-        }
+    //     for(uint256 i; i < extraCap.length; i ++) {
+    //         require(_kakiCaptain.ownerOf(extraCap[i]) == msg.sender, "Not NFT owner.");
+    //         extraProb += _kakiCaptain.getCapInfo(extraCap[i]).combineRate;
+    //     }
 
-        require(totalType == 3 && totalChip == 80, "Invalid NFT.");
-        uint256 rand = random(1, 100);
-        totalProb = totalProb + extraProb;
+    //     require(totalType == 3 && totalChip == 80, "Invalid NFT.");
+    //     uint256 rand = random(1, 100);
+    //     totalProb = totalProb + extraProb;
         
-        for (uint256 i; i < 3; i++){
-            _kakiTicket.transferFrom(msg.sender, address(0xdead), ticket[i]);
-        }
+    //     for (uint256 i; i < 3; i++){
+    //         _kakiTicket.transferFrom(msg.sender, address(0xdead), ticket[i]);
+    //     }
 
-        if (rand <= totalProb) {
-            _kakiTicket.mint(msg.sender, _commonChip, 0, 0, 3);
-        }
-    }
+    //     if (rand <= totalProb) {
+    //         _kakiTicket.mint(msg.sender, _commonChip, 0, 0, 3);
+    //     }
+    // }
 
     function _aBoxOpen() internal {
         _kaki.transferFrom(msg.sender, _squidCoinBase, _aPrice);

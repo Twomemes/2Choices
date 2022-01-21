@@ -7,5 +7,5 @@ interface IBlindBox {
 
     function aBoxOpen(uint256 num) external;
     function bBoxOpen(uint256 num) external;
-    function combine(uint256[3] memory ticket, uint256[] memory extraCap) external;
+    // function combine(uint256[3] memory ticket, uint256[] memory extraCap) external;
 }
