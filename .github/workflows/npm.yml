@@ -89,7 +89,7 @@ jobs:
           node-version: "16"
           registry-url: "https://npm.pkg.github.com"
           # Defaults to the user or organization that owns the workflow file
-          scope: "@derivative-lab"
+          scope: "@twomemes"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: |
@@ -106,9 +106,9 @@ jobs:
         run: |
           cat << EOF>./typechain/package.json
           {
-            "name": "@derivative-lab/kaki-mono.sol",
+            "name": "@twomemes/2choices",
             "version": "${{ env.FULL_VERSION }}",
-            "description": "kaki-mono",
+            "description": "2Choices",
             "main": "./lib/index.js",
             "module": "./lib.esm/index.js",
             "types": "./lib.esm/index.d.ts",
