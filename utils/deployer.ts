@@ -220,12 +220,11 @@ export async function deployMockRandom() {
   return instance as MockRandom;
 }
 
-export async function deployBlindBox(kakiTicket: KakiTicket, busd: IERC20, kakiCap: MockKakiCaptain, chainlink: MockRandom) {
+export async function deployBlindBox(kakiTicket: KakiTicket, busd: IERC20, chainlink: MockRandom) {
   const signer0 = await getSigner(0);
   const args: Parameters<BlindBox['initialize']> = [
     kakiTicket.address,
     busd.address,
-    kakiCap.address,
     chainlink.address
   ];
   const factory = new BlindBox__factory(signer0);
