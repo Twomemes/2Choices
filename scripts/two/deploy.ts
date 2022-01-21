@@ -7,7 +7,7 @@ import { deploy } from '../../utils/upgrader';
 (async ()=>{
 
 
-  await deploy('kaki/Kaki.sol')
+  await deploy('two/TwoToken.sol')
 
   // const signer0 = await getSigner(0);
   // const factory = new MockToken__factory(signer0);

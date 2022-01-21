@@ -35,11 +35,10 @@ contract ClaimLock is IClaimLock, WithAdminRole {
     function initialize(address farmAdd, IKaki kTokenAdd) public initializer {
         __WithAdminRole_init();
         // block number 
-        _farmPeriod = 7776000;
+        _farmPeriod = 9800000;
 
         _addFarm = farmAdd;
         _kaki = kTokenAdd;
-        _farmRate = 500;
     }
 
     function lockFarmReward(address account, uint256 amount) public override isFarm {
