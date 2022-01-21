@@ -8,23 +8,24 @@ import "./IAggregatorInterface.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import {ITicket} from "../ticketV1/interface/ITicket.sol";
+import {IKakiTicket} from "../interfaces/IKakiTicket.sol";
 import "../base/WithAdminRole.sol";
 contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradeable {
     using SafeMath for uint256;
 
     IERC20 internal _token;
-    ITicket internal _ticketNFT;
+    IKakiTicket internal _ticketNFT;
     IAggregatorInterface _aggregator;
     uint256 _roundTime;
     uint256 _roundSum;
     uint256 _tradingTime;
     uint256 _gameInterval;
+    uint256 _lastUserAwardRate;
+    uint256 _beforeAwrdNum;
+    uint256 _lastAwardNum;
+
     //uint256 _ticketPrice;
-    uint256 _initChipNum;
-    uint256 constant BASE = 10**18;
     uint256 constant THOUSAND = 10**3;
-    uint256 public kakiFoundationRate;
     address public kakiFoundationAddress;
 
     uint256 public _chapter;
@@ -51,6 +52,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
 
     struct User {
         mapping(uint256 => uint256) _initChip;
+        mapping(uint256 => uint256) _joinOrder;
         uint256 _lastCheckChapter;
     }
     modifier onlyNoneContract() {
@@ -62,26 +64,28 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
      * Contract constructor
      */
     function initialize(
-        ITicket nftToken_,
-        IERC20 busdToken,
+        IKakiTicket nftToken_,
+        IERC20 kakiToken,
         IAggregatorInterface aggregator_,
         address payWallet
     ) public initializer {
         __WithAdminRole_init();
         __ReentrancyGuard_init();
         _aggregator = aggregator_;
-        _token = busdToken;
+        _token = kakiToken;
         _ticketNFT = nftToken_;
 
         _nextGameTime = 1638442800; //2021-12-2 16:00:00
 
+        _lastUserAwardRate =3;
+        _beforeAwrdNum=1000;
+        _lastAwardNum=22;
         _roundSum = 5; //5; //5round
         _gameInterval = 3600; //8hour = 28800 35min =2100  13min=780 60min3600
         _roundTime = 5 * 60; //  5min = 300
         _tradingTime = 3 * 60; //  3min = 180
-        _initChipNum = 16;
-
-        kakiFoundationRate = 50; // 5%
+        
+        
         kakiFoundationAddress = 0x8F1EAa1F61bc1997B345665537DcdcE00867a4B2;
         _kakiPayWalletAddress = payWallet;
     }
@@ -131,21 +135,25 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
             emit Claim(msg.sender, b);
         }
         require(_ticketNFT.ownerOf(nftId) == msg.sender, "not owner");
-        ITicket.TicketPara memory ticketInfo = _ticketNFT.getTicketInfo(nftId);
-        uint256 price = ticketInfo.value;
-        uint256 invalidTime = ticketInfo.invalidTime;
-        require(invalidTime == 0 || block.timestamp <= invalidTime, "expired");
-        _ticketNFT.transferFrom(msg.sender, address(0xdead), nftId);
-        emit StartGame(msg.sender, nftId, ticketInfo.isDrop);
         require(_users[msg.sender]._initChip[_chapter] == 0, "Had bought ticket.");
+
         uint256 time = getTimestamp();
         require(time < _nextGameTime, "The game is in the play status.");
 
-        _users[msg.sender]._initChip[_chapter] = _initChipNum;
+        _ticketNFT.transferFrom(msg.sender, address(0xdead), nftId);
+
+        IKakiTicket.TicketPara memory ticketInfo = _ticketNFT.getTicketInfo(nftId);
+        _users[msg.sender]._initChip[_chapter] = ticketInfo.chip;        
+        _totalChips[_chapter] += ticketInfo.chip;
+        uint256 addBonus=320;
+        if(ticketInfo.ticketType==0)
+            addBonus=160;
+        _totalBonus[_chapter] = _totalBonus[_chapter] + addBonus;
+
         _joinNum[_chapter]++;
-        _totalChips[_chapter] += _initChipNum;
-        _totalBonus[_chapter] = _totalBonus[_chapter] + price;
-        emit BuyTicket(msg.sender, price);
+        _users[msg.sender]._joinOrder[_chapter] = _joinNum[_chapter];
+        
+        emit StartGame(msg.sender, nftId);
     }
 
     /*
@@ -217,12 +225,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
 
             if (_totalWinnerChip[_chapter] == 0) {
                 _token.transferFrom(_kakiPayWalletAddress, kakiFoundationAddress, bonus);
-            } else {
-                uint256 foundationBonus = bonus.mul(kakiFoundationRate).div(THOUSAND);
-                if (foundationBonus != 0) {
-                    _token.transferFrom(_kakiPayWalletAddress, kakiFoundationAddress, foundationBonus);
-                }
-            }
+            } 
 
             _chapter++;
             _nextGameTime = _nextGameTime.add(_gameInterval);
@@ -264,9 +267,33 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
             else winChip = _placePutStatus[lastCheckChapter][_roundSum - 1][msg.sender];
         }
         if (winChip > 0) {
-            bonus = _totalBonus[lastCheckChapter].mul(THOUSAND - kakiFoundationRate).div(THOUSAND).mul(winChip).div(
-                _totalWinnerChip[lastCheckChapter]
-            );
+            uint256 totalBonus = _totalBonus[lastCheckChapter];
+            uint256 joinOrder=_users[msg.sender]._joinOrder[lastCheckChapter] ;
+
+            uint256 lastUserAward= totalBonus * _lastUserAwardRate / THOUSAND;
+            totalBonus = totalBonus -lastUserAward;
+            if(_joinNum[lastCheckChapter] < _beforeAwrdNum){
+                totalBonus -= (_joinNum[lastCheckChapter]-1)*40;
+            }else{
+                totalBonus -= _beforeAwrdNum*40;
+            }
+            bonus = totalBonus.mul(winChip).div(_totalWinnerChip[lastCheckChapter]);
+
+            if(_joinNum[lastCheckChapter] - joinOrder < _lastAwardNum){
+                uint256 lastAwrdUser=_lastAwardNum;
+                if(_joinNum[lastCheckChapter] <_lastAwardNum )
+                    lastAwrdUser=_joinNum[lastCheckChapter];
+                bonus += lastUserAward /(lastAwrdUser);
+            }
+            
+             if(joinOrder < _beforeAwrdNum){
+                uint256 beforeAwrdUser=_beforeAwrdNum;
+                if(_joinNum[lastCheckChapter] >_beforeAwrdNum )
+                    beforeAwrdUser=_joinNum[lastCheckChapter];
+                for (uint256 i=joinOrder; i <= beforeAwrdUser; i++) {
+                    bonus += 40 * i / beforeAwrdUser;
+                }
+            }            
         }
         return bonus;
     }
@@ -373,10 +400,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         _gameInterval = gameInterval;
     }
 
-    function updateKakiFoundationRate(uint256 newKakiFoundationRate) public onlyOwner {
-        require(newKakiFoundationRate > 0, "invalid data");
-        kakiFoundationRate = newKakiFoundationRate;
-    }
+
 
     function chapterInvalid(uint256 nextTime) public onlyOwner {
         uint256 bonus = _totalBonus[_chapter];
