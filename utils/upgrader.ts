@@ -6,7 +6,7 @@ import { bumpVersion, checkHasVersionFunction } from './bumpVersion';
 import gitP, { SimpleGit } from 'simple-git/promise';
 import { TransactionRequest } from '@ethersproject/providers';
 import * as typechain from "~/typechain";
-
+import fs from 'fs/promises';
 declare class MyContract extends BaseContract {
   version(overrides?: CallOverrides): Promise<BigNumber>;
 }
@@ -19,7 +19,7 @@ declare class MyContractFactory extends ContractFactory {
   connect(signer: Signer): MyContractFactory;
 }
 
-const manifestRepo = 'git@github.com:derivative-lab/kaki-mono.sol.openzeppelin.git';
+const manifestRepo = process.env['MANIFEST_REPO'] as any;
 
 const origin = 'origin';
 export async function upgrade(fileName: string, address: string, factory: MyContractFactory | any = null, check = true) {
@@ -31,7 +31,13 @@ export async function upgrade(fileName: string, address: string, factory: MyCont
     factory = (<any>typechain)[`${fname}__factory`];
   }
 
-  const repo = gitP('./.openzeppelin');
+  const dir = './.openzeppelin'
+  try {
+    await fs.stat(dir);
+  } catch (e) {
+    await fs.mkdir(dir)
+  }
+  const repo = gitP(dir);
 
   const branchName = `${name}-${network.name}`;
 
@@ -111,7 +117,13 @@ export async function deploy(
     factory = (<any>typechain)[`${contractName}__factory`];
   }
 
-  const repo = gitP("./.openzeppelin");
+  const dir = './.openzeppelin'
+  try {
+    await fs.stat(dir);
+  } catch (e) {
+    await fs.mkdir(dir);
+  }
+  const repo = gitP(dir);
   const branchName = `${name}-${network.name}`;
   const rst = await repo.init();
   // }

@@ -2,7 +2,7 @@ import { deployments, ethers, network } from 'hardhat';
 import {
   CaptainClaim__factory,
   BlindBox, KakiCaptain__factory, KakiGarden__factory, KakiTicket, MysteryBox__factory
-  , AddressList__factory, MockChainLink__factory, MockToken__factory, Ticket__factory, OpenBox__factory, KakiSquidGame, KakiSquidGame__factory, BlindBox__factory, KakiTicket__factory, ERC20__factory, Kaki__factory, ClaimLock__factory, KakiNoLoss, KakiNoLoss__factory, Tools__factory,
+  , AddressList__factory, MockChainLink__factory, MockToken__factory, Ticket__factory, OpenBox__factory, KakiSquidGame, KakiSquidGame__factory, BlindBox__factory, KakiTicket__factory, ERC20__factory, TwoToken__factory, ClaimLock__factory, KakiNoLoss, KakiNoLoss__factory, Tools__factory,
 } from '~/typechain';
 
 import bsctest from './contractAddress/bscTest'
@@ -102,8 +102,8 @@ export const contractAddress = {
   get claimLock() {
     return getItem("claimLock");
   },
-  get kaki() {
-    return getItem('kaki');
+  get two() {
+    return getItem('two');
   },
   get noLoss() {
     return getItem('noLoss');
@@ -195,8 +195,8 @@ export async function claimLockContract(signerIndex = 0) {
   return ClaimLock__factory.connect(contractAddress.claimLock, await getSigner(signerIndex));
 }
 
-export async function kakiContract(signerIndex = 0) {
-  return Kaki__factory.connect(contractAddress.kaki, await getSigner(signerIndex));
+export async function twoTokenContract(signerIndex = 0) {
+  return TwoToken__factory.connect(contractAddress.two, await getSigner(signerIndex));
 }
 
 

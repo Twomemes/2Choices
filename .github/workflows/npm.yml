@@ -32,12 +32,12 @@ jobs:
           echo "GIT_REF=${{ github.ref }}" >> $GITHUB_ENV
           echo "GIT_COMMIT=${{ github.event.head_commit.message }}" >> $GITHUB_ENV
 
-      - name: check testnet env
-        if: endsWith(github.event.head_commit.message,':bsctest')
-        run: echo "NPM_TAG=bsctest" >> $GITHUB_ENV
-      - name: check bsc env
-        if: endsWith(github.event.head_commit.message,':bsc')
-        run: echo "NPM_TAG=bsc" >> $GITHUB_ENV
+      - name: check ftmtest env
+        if: endsWith(github.event.head_commit.message,':ftmtest')
+        run: echo "NPM_TAG=ftmtest" >> $GITHUB_ENV
+      - name: check ftm env
+        if: endsWith(github.event.head_commit.message,':ftm')
+        run: echo "NPM_TAG=ftm" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
         if: env.NEED_RELEASE == 'yes'
@@ -89,7 +89,7 @@ jobs:
           node-version: "16"
           registry-url: "https://npm.pkg.github.com"
           # Defaults to the user or organization that owns the workflow file
-          scope: "@derivative-lab"
+          scope: "@twomemes"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: |
@@ -106,9 +106,9 @@ jobs:
         run: |
           cat << EOF>./typechain/package.json
           {
-            "name": "@derivative-lab/kaki-mono.sol",
+            "name": "@twomemes/2choices",
             "version": "${{ env.FULL_VERSION }}",
-            "description": "kaki-mono",
+            "description": "2Choices",
             "main": "./lib/index.js",
             "module": "./lib.esm/index.js",
             "types": "./lib.esm/index.d.ts",

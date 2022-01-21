@@ -10,3 +10,4 @@ typechain/
 typechain-tiny/
 .vscode
 deployments/
+coverage
