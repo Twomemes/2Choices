@@ -18,7 +18,7 @@ contract TwoToken is ERC20PermitUpgradeable, IKaki, AccessControlUpgradeable {
         __AccessControl_init();
         _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
         __ERC20Permit_init("TWO");
-        __ERC20_init("Two Choice", "TWO");
+        __ERC20_init("2Choices", "TWO");
         //    _setRoleAdmin(MINTER, DEFAULT_ADMIN_ROLE);
     }
 
@@ -29,6 +29,6 @@ contract TwoToken is ERC20PermitUpgradeable, IKaki, AccessControlUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 4;
+        return 5;
     }
 }

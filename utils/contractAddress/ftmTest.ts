@@ -24,8 +24,8 @@ const addrs: ContractAddress = {
   kakiBusdLP: '',
   kakiBnbLP: '',
   tools: '',
-  blindBox: '',
-  kakiTicket: '',
+  blindBox: '0x9b5149046A81e631F1f859Dd41e810a1eDaF4732',
+  kakiTicket: '0x35604605628691F5285CaBb71250829AcE6C0651',
 }
 
 

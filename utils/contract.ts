@@ -44,16 +44,8 @@ export const webToolsContractNames = [
 
 export const mutiContractAddrs = {
   bsctest,
-  ftmtest: {
-    kakiTicket: '',
-    blindBox: '',
-    chainlinkRandoms: '',
-  },
-  ftm: {
-    kakiTicket: '',
-    blindBox: '',
-    chainlinkRandoms: '',
-  },
+  ftmtest,
+  ftm,
 };
 
 export const contractAddress = {

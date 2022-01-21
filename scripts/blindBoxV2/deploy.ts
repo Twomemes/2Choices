@@ -5,8 +5,7 @@ import {deploy} from '~/utils/upgrader';
 
   const args : Parameters<BlindBox["initialize"]> = [
     contractAddress.kakiTicket,
-    contractAddress.kaki,
-    contractAddress.kakiCaptain,
+    contractAddress.two,
     contractAddress.chainlinkRandoms
   ]
   // await deployOpenBox(ticket, busd, 1639649100, allowList);
