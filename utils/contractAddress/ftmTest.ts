@@ -5,7 +5,7 @@ const addrs: ContractAddress = {
   squidGame: '',
   squidShortGame: '',
   busd: '',
-  oracle: '',
+  oracle: '0x7842459e306d9AF96D34b34466FcD26D08388A15',
   blindBoxDrop: '',
   squidAllowList: '',
   squidTicket: '',

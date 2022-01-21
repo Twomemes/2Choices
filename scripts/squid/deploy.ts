@@ -1,4 +1,5 @@
-import { busdContract, contractAddress, oracleContract, squidTicketContract } from '~/utils/contract';
+import { contractAddress } from '~/utils/contract'
+
 import { deploySquidGame } from '../../utils/deployer';
 import { KakiSquidGame ,KakiSquidGame__factory } from '~/typechain';
 import { deploy } from '~/utils/upgrader';
@@ -8,7 +9,7 @@ import { deploy } from '~/utils/upgrader';
 
   const args: Parameters<KakiSquidGame["initialize"]> = [
     contractAddress.squidTicket,
-    contractAddress.busd,
+    contractAddress.two,
     contractAddress.oracle,
     '0x580377aA000B374785122a8cbe6033120461552d'
   ]
