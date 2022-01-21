@@ -21,7 +21,7 @@ import {IFairLaunch} from "./IFairLaunch.sol";
 //     function withdraw(uint256 amount) external;
 // }
 
-interface IKakiGarden {
+interface IGarden {
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event Harvest(address indexed user, uint256 indexed pid, uint256 amount);

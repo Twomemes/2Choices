@@ -2,7 +2,7 @@ pragma solidity ^0.8.0;
 
 import "../base/WithAdminRole.sol";
 import "../interfaces/IERC20.sol";
-import {IKakiGarden} from "../interfaces/IKakiGarden.sol";
+import {IGarden} from "../interfaces/IGarden.sol";
 import "../interfaces/IClaimLock.sol";
 import {DebtToken} from "./DebtToken.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
@@ -14,7 +14,7 @@ import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "../libraries/SafeToken.sol";
 
-contract KakiGarden is IKakiGarden, WithAdminRole, ReentrancyGuardUpgradeable, PausableUpgradeable {
+contract Garden is IGarden, WithAdminRole, ReentrancyGuardUpgradeable, PausableUpgradeable {
     using SafeERC20Upgradeable for IERC20;
     // start mine block number
     uint256 public _startBlockNumber;
@@ -267,6 +267,6 @@ contract KakiGarden is IKakiGarden, WithAdminRole, ReentrancyGuardUpgradeable, P
     receive() external payable {}
 
     function version() public pure returns (uint256) {
-        return 29;
+        return 30;
     }
 }
