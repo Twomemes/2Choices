@@ -32,12 +32,12 @@ jobs:
           echo "GIT_REF=${{ github.ref }}" >> $GITHUB_ENV
           echo "GIT_COMMIT=${{ github.event.head_commit.message }}" >> $GITHUB_ENV
 
-      - name: check testnet env
-        if: endsWith(github.event.head_commit.message,':bsctest')
-        run: echo "NPM_TAG=bsctest" >> $GITHUB_ENV
-      - name: check bsc env
-        if: endsWith(github.event.head_commit.message,':bsc')
-        run: echo "NPM_TAG=bsc" >> $GITHUB_ENV
+      - name: check ftmtest env
+        if: endsWith(github.event.head_commit.message,':ftmtest')
+        run: echo "NPM_TAG=ftmtest" >> $GITHUB_ENV
+      - name: check ftm env
+        if: endsWith(github.event.head_commit.message,':ftm')
+        run: echo "NPM_TAG=ftm" >> $GITHUB_ENV
 
       - uses: actions/checkout@v2
         if: env.NEED_RELEASE == 'yes'
