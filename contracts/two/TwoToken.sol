@@ -29,6 +29,6 @@ contract TwoToken is ERC20PermitUpgradeable, IKaki, AccessControlUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 2;
+        return 3;
     }
 }
