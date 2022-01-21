@@ -86,8 +86,8 @@ const cfg: HardhatUserConfig = {
       accounts: { ...accounts(), initialIndex: 0, count: 10 },
     },
     ftm: {
-      url: "https://rpc.ftm.tools/",
-      chainId: 56,
+      url: "https://rpcapi.fantom.network/",
+      chainId: 250,
       // gasPrice: 20000000000,
       accounts: [process.env.PROD_PRIVATEKEY as any],
     },

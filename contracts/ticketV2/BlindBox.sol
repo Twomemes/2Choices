@@ -148,12 +148,12 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     }
 
     function setSquidFoundAdd(address newSquidFoundAdd) public onlyOwner {
-        require(newSquidFoundAdd != BlackHole, "Invalid  address");
+        require(newSquidFoundAdd != BlackHole, "Invalid address");
         _squidGameFound = newSquidFoundAdd;
     }
 
     function setSquidCoinBaseAdd(address newSquidCoinBaseAdd) public onlyOwner {
-        require(newSquidCoinBaseAdd != BlackHole, "Invalid  address");
+        require(newSquidCoinBaseAdd != BlackHole, "Invalid address");
         _squidCoinBase = newSquidCoinBaseAdd;
     }
 
