@@ -4,15 +4,8 @@ import "../base/WithAdminRole.sol";
 import "../interfaces/IERC20.sol";
 import {IGarden} from "../interfaces/IGarden.sol";
 import "../interfaces/IClaimLock.sol";
-// import {DebtToken} from "./DebtToken.sol";
-// import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-// import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-// import {IVault} from "../interfaces/IVault.sol";
-// import {IFairLaunch} from "../interfaces/IFairLaunch.sol";
-
 import {ITwoToken} from "../interfaces/ITwoToken.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
-// import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "../libraries/SafeToken.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
@@ -20,7 +13,6 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "hardhat/console.sol";
 
 contract Garden is IGarden, ReentrancyGuard, Ownable {
-    // using SafeERC20Upgradeable for IERC20;
     using SafeToken for address;
     // start mine block number
     uint256 public _startBlockNumber;
@@ -29,6 +21,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     // total allocation point
     uint256 public _totalAllocPoint;
     uint256 public _rewardPerBlock;
+    uint256 public constant _initRewardPercent =22;
     ITwoToken public _twoToken;
     IClaimLock public _rewardLocker;
     mapping(address => uint256) public _poolId1; // poolId1 starting from 1,subtract 1 before using with poolInfo
@@ -37,21 +30,6 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     // Info of each pool.
     PoolInfo[] public _poolInfo;
     uint256[] public _rewardMultiplier;
-
-    // function initialize(
-    //     ITwoToken twoToken,
-    //     uint256 rewardPerBlock,
-    //     uint256 startBlock
-    // ) public initializer {
-    //     __WithAdminRole_init();
-    //     __ReentrancyGuard_init();
-    //     __Pausable_init();
-    //     // _rewardToken = rewardToken;
-    //     _rewardPerBlock = rewardPerBlock;
-    //     _startBlockNumber = startBlock;
-    //     _oneDayBlocks = 22656;
-    //     _twoToken = twoToken;
-    // }
 
     constructor(
         ITwoToken twoToken,
@@ -159,7 +137,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
 
     function massUpdatePools() public {
         uint256 length = _poolInfo.length;
-        for (uint256 pid = 0; pid < length; ++pid) {
+        for (uint256 pid; pid < length; pid++) {
             updatePool(pid);
         }
     }
@@ -182,46 +160,66 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     }
 
     function deposit(uint256 pid, uint256 amount) public payable override nonReentrant {
-        uint256 currentBlock = block.number;
-        require(currentBlock >= _startBlockNumber, "not begin yet");
+        PoolInfo storage pool = _poolInfo[pid];
         UserInfo storage user = _userInfo[pid][msg.sender];
-        if (user.amount > 0) {
-            _harvest(pid);
-        }
-        // user.rewardAtBlock = currentBlock;
-        PoolInfo storage poolInfo = _poolInfo[pid];
-
+        updatePool(pid);
+        uint256 pending = ((user.amount * pool.accTwoPerShare) / 1e12) - user.rewardDebt;
         user.amount += amount;
-        // poolInfo.stakingAmount += amount;
-        // poolInfo.debtToken.mint(msg.sender, amount);
+        user.rewardDebt = (user.amount * pool.accTwoPerShare) / 1e12;
+        if (pending > 0) {
+            safeTwoTransfer(msg.sender, pending);
+        }
+        pool.token.safeTransferFrom(msg.sender, address(this), amount);
         emit Deposit(msg.sender, pid, amount);
     }
 
     function withdraw(uint256 pid, uint256 amount) public override nonReentrant {
-        _withdraw(pid, amount);
-    }
+        PoolInfo storage pool = _poolInfo[pid];
+        UserInfo storage user = _userInfo[pid][msg.sender];
 
-    function _withdraw(uint256 pid, uint256 amount) internal {
-        require(amount > 0, "amount cannot be zero");
-        address userAddr = msg.sender;
-        UserInfo storage user = _userInfo[pid][userAddr];
-        require(user.amount >= amount, "out of staking");
-        _harvest(pid);
-        PoolInfo storage poolInfo = _poolInfo[pid];
+        require(user.amount >= amount, "over withdraw");
 
-        uint256 realWithdraw;
+        updatePool(pid);
 
-        // poolInfo.debtToken.burn(userAddr, amount);
+        uint256 pending = (user.amount * pool.accTwoPerShare) / 1e12 - user.rewardDebt;
+
         user.amount -= amount;
-        // poolInfo.stakingAmount -= amount;
-        emit Withdraw(userAddr, pid, amount);
+        user.rewardDebt = (user.amount * pool.accTwoPerShare) / 1e12;
+
+        if (pending > 0) {
+            safeTwoTransfer(msg.sender, pending);
+        }
+        pool.token.safeTransfer(msg.sender, amount);
+
+        emit Withdraw(msg.sender, pid, amount);
     }
 
-    function harvest(uint256 pid) public override nonReentrant {
-        _harvest(pid);
-    }
+    function harvestAll() public override {
+        uint256 length = _poolInfo.length;
+        uint256 calc;
+        uint256 pending;
+        UserInfo storage user;
+        PoolInfo storage pool;
+        uint256 totalPending;
+        for (uint256 pid = 0; pid < length; ++pid) {
+            user = _userInfo[pid][msg.sender];
+            if (user.amount > 0) {
+                pool = _poolInfo[pid];
+                updatePool(pid);
 
-    function _harvest(uint256 pid) internal {}
+                calc = (user.amount * pool.accTwoPerShare) / 1e12;
+                pending = calc - user.rewardDebt;
+                user.rewardDebt = calc;
+
+                if (pending > 0) {
+                    totalPending += pending;
+                }
+            }
+        }
+        if (totalPending > 0) {
+            safeTwoTransfer(msg.sender, totalPending);
+        }
+    }
 
     function poolInfoLength() public view returns (uint256) {
         return _poolInfo.length;
@@ -251,9 +249,5 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         user.rewardDebt = 0;
         pool.token.safeTransfer(msg.sender, oldUserAmount);
         emit EmergencyWithdraw(msg.sender, pid, oldUserAmount);
-    }
-
-    function version() public pure returns (uint256) {
-        return 30;
     }
 }
