@@ -1,9 +1,7 @@
 import { deployments, ethers, network } from 'hardhat';
 import {
-  CaptainClaim__factory,
-  BlindBox, KakiCaptain__factory, //KakiGarden__factory, 
-  KakiTicket, MysteryBox__factory
-  , AddressList__factory, MockChainLink__factory, MockToken__factory, Ticket__factory, OpenBox__factory, KakiSquidGame, KakiSquidGame__factory, BlindBox__factory, KakiTicket__factory, ERC20__factory, TwoToken__factory, ClaimLock__factory, KakiNoLoss, KakiNoLoss__factory, Tools__factory,
+  BlindBox,  //KakiGarden__factory, 
+  KakiTicket, AddressList__factory, MockChainLink__factory, MockToken__factory, Ticket__factory, OpenBox__factory, KakiSquidGame, KakiSquidGame__factory, BlindBox__factory, KakiTicket__factory, ERC20__factory, TwoToken__factory, ClaimLock__factory,  Tools__factory,
 } from '~/typechain';
 
 import bsctest from './contractAddress/bscTest'
@@ -168,14 +166,6 @@ export async function blindBoxContract(signerIndex = 0) {
   return BlindBox__factory.connect(contractAddress.blindBox, await getSigner(signerIndex));
 }
 
-export async function kakiCaptainContract(signerIndex = 0) {
-  return KakiCaptain__factory.connect(contractAddress.kakiCaptain, await getSigner(signerIndex));
-}
-
-export async function captainClaimContract(signerIndex = 0) {
-  return CaptainClaim__factory.connect(contractAddress.captainClaim, await getSigner(signerIndex));
-}
-
 export async function captainAllowListContract(signerIndex = 0) {
   return AddressList__factory.connect(contractAddress.captainAllowList, await getSigner(signerIndex));
 }
@@ -184,9 +174,7 @@ export async function captainMintContract(signerIndex = 0) {
   return AddressList__factory.connect(contractAddress.captainMintList, await getSigner(signerIndex));
 }
 
-export async function mysteryBoxContract(signerIndex = 0) {
-  return MysteryBox__factory.connect(contractAddress.mysteryBox, await getSigner(signerIndex));
-}
+
 
 // export async function farmContract(signerIndex = 0) {
 //   return KakiGarden__factory.connect(contractAddress.farm, await getSigner(signerIndex));
@@ -200,9 +188,7 @@ export async function twoTokenContract(signerIndex = 0) {
   return TwoToken__factory.connect(contractAddress.two, await getSigner(signerIndex));
 }
 
-export async function noLossContract(signerIndex = 0) {
-  return KakiNoLoss__factory.connect(contractAddress.noLoss, await getSigner(signerIndex));
-}
+
 
 export async function toolsContract(signerIndex = 0) {
   return Tools__factory.connect(contractAddress.tools, await getSigner(signerIndex));
