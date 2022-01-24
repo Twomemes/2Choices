@@ -8,7 +8,7 @@ import { deploy } from '~/utils/upgrader';
 (async () => {
 
   const args: Parameters<KakiSquidGame["initialize"]> = [
-    contractAddress.blindBox,
+    contractAddress.kakiTicket,
     contractAddress.two,
     contractAddress.oracle,
     '0x580377aA000B374785122a8cbe6033120461552d'

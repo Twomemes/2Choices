@@ -408,6 +408,6 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
     }
 
     function version() public pure returns (uint256) {
-        return 13;
+        return 14;
     }
 }
