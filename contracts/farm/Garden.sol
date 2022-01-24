@@ -24,6 +24,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     uint256 public _initRewardPercent;
     ITwoToken public _twoToken;
     IClaimLock public _rewardLocker;
+    address public _govVault;
     // Info of each user that stakes LP tokens. pid => user address => info
     mapping(uint256 => mapping(address => UserInfo)) public _userInfo;
     // Info of each pool.
@@ -64,6 +65,10 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
 
     function setRewardPerBlock(uint256 rewardPerBlock) public onlyOwner {
         _rewardPerBlock = rewardPerBlock;
+    }
+
+    function setGovVault(address vault) public onlyOwner {
+        _govVault = vault;
     }
 
     function setRewardMultiplier(uint256[] memory multiplier) public onlyOwner {
