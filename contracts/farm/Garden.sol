@@ -17,6 +17,8 @@ import "../libraries/SafeToken.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
+import "hardhat/console.sol";
+
 contract Garden is IGarden, ReentrancyGuard, Ownable {
     // using SafeERC20Upgradeable for IERC20;
     using SafeToken for address;
@@ -71,6 +73,18 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         _oneDayBlocks = oneDayBlocks;
     }
 
+    function setEndBlockNumber(uint256 endBlockNumber) public onlyOwner {
+        _endBlockNumber = endBlockNumber;
+    }
+
+    function setStartBlockNumber(uint256 startBlockNumber) public onlyOwner {
+        _startBlockNumber = startBlockNumber;
+    }
+
+    function setRewardPerBlock(uint256 rewardPerBlock) public onlyOwner {
+        _rewardPerBlock = rewardPerBlock;
+    }
+
     function addPool(uint256 allocPoint, address token) external onlyOwner {
         checkForDuplicate(token); // ensure you cant add duplicate pools
         massUpdatePools();
@@ -95,6 +109,9 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     }
 
     function getWeekth(uint256 blockNumber) public view returns (uint256) {
+        if (blockNumber < _startBlockNumber) {
+            return 0;
+        }
         return (blockNumber - _startBlockNumber) / (_oneDayBlocks * 7);
     }
 
@@ -103,6 +120,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     }
 
     function getMultiplier(uint256 from, uint256 to) public view returns (uint256) {
+        console.log("from,to:", from, to);
         if (to < _startBlockNumber) {
             return 0;
         }
@@ -113,8 +131,15 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
             to = _endBlockNumber;
         }
         uint256 weekth = getWeekth(to);
-        uint256 multiplier = weekth > _rewardMultiplier.length ? 1 : _rewardMultiplier[weekth - 1];
-        return (to - from) * multiplier;
+        console.log("weekth,_rewardMultiplier.length:", weekth, _rewardMultiplier.length);
+        // return _rewardMultiplier[0];
+        uint256 multiplier = weekth > _rewardMultiplier.length - 1 ? 1 : _rewardMultiplier[weekth];
+        // return multiplier;
+        console.log("multiplier:", multiplier);
+        console.log("to", to);
+        console.log("from", from);
+        console.log("to-from", to - from);
+        return multiplier * (to - from);
     }
 
     function pendingReward(uint256 pid, address user) public view override returns (uint256) {
@@ -196,41 +221,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         _harvest(pid);
     }
 
-    function _harvest(uint256 pid) internal {
-        // uint256 rAmount = onlyHarvest(pid);
-        // if (rAmount > 0) {
-        //     _rewardLocker.lockFarmReward(msg.sender, rAmount);
-        // }
-        // emit Harvest(msg.sender, pid, rAmount);
-    }
-
-    // function harvestMany(uint256[] memory pids) public override nonReentrant {
-    //     uint256 pl = pids.length;
-    //     require(pl > 0, "empoty pids");
-
-    //     uint256 rAmountTotal;
-    //     uint256[] memory rAmounts = new uint256[](pl);
-    //     for (uint256 i; i < pl; i++) {
-    //         uint256 samount = onlyHarvest(pids[i]);
-    //         rAmountTotal += samount;
-    //         rAmounts[i] = samount;
-    //     }
-
-    //     if (rAmountTotal > 0) {
-    //         _rewardLocker.lockFarmReward(msg.sender, rAmountTotal);
-    //     } else {
-    //         revert("empty staking");
-    //     }
-    //     emit HarvestMany(msg.sender, pids, rAmounts);
-    // }
-
-    // function pendingReward(uint256 pid) public view override returns (uint256) {
-    // PoolInfo memory pool = _poolInfo[pid];
-    // UserInfo memory user = _userInfo[pid][msg.sender];
-    // if (user.amount > 0) {
-    //     return (_rewardPerBlock * (block.number - user.rewardAtBlock) * pool.allocPoint) / _totalAllocPoint;
-    // }
-    // }
+    function _harvest(uint256 pid) internal {}
 
     function poolInfoLength() public view returns (uint256) {
         return _poolInfo.length;
