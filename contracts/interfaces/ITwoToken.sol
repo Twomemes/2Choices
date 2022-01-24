@@ -6,6 +6,6 @@ import {IERC20PermitUpgradeable} from "@openzeppelin/contracts-upgradeable/token
 // import {IERC20Upgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 
 import {IERC20} from "../interfaces/IERC20.sol";
-interface IKaki is IERC20, IERC20PermitUpgradeable{
+interface ITwoToken is IERC20, IERC20PermitUpgradeable{
     function mint(address to, uint256 amount) external;
 }
