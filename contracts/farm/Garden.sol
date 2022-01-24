@@ -321,4 +321,20 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         PoolInfo memory pool = _poolInfo[pid];
         return (multiplier * _rewardPerBlock * _oneDayBlocks * pool.allocPoint) / _totalAllocPoint;
     }
+
+    function chainInfo()
+        public
+        view
+        returns (
+            uint256 chainId,
+            uint256 blockNumber,
+            uint256 timestamp
+        )
+    {
+        assembly {
+            chainId := chainid()
+        }
+        blockNumber = block.number;
+        timestamp = block.timestamp;
+    }
 }
