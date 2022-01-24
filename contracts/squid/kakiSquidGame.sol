@@ -397,7 +397,6 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         }
         _chapter++;
         _nextGameTime = nextTime;
-        //delete _lastRoundUsers;
     }
 
     function setAggregateContract(IAggregatorInterface aggregator) public onlyOwner {

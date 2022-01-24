@@ -2,7 +2,7 @@ import type { ContractAddress } from "./bscTest";
 
 
 const addrs: ContractAddress = {
-  squidGame: '',
+  squidGame: '0xdbcbAe00f37Bfd18BB86f04fB0c642E2D20d7651',
   squidShortGame: '',
   busd: '',
   oracle: '0x7842459e306d9AF96D34b34466FcD26D08388A15',
