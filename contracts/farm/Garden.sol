@@ -230,7 +230,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         if (totalPending > 0) {
             safeTwoTransfer(msg.sender, totalPending);
         }
-        emit HarvestAll(msg.sender,  totalPending);
+        emit HarvestAll(msg.sender, totalPending);
     }
 
     function poolInfoLength() public view returns (uint256) {
@@ -263,5 +263,11 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         user.rewardDebt = 0;
         pool.token.safeTransfer(msg.sender, oldUserAmount);
         emit EmergencyWithdraw(msg.sender, pid, oldUserAmount);
+    }
+
+    function daylyReward(uint256 pid) public view returns (uint256) {
+        uint256 multiplier = getMultiplier(block.number - 1, block.number);
+        PoolInfo memory pool = _poolInfo[pid];
+        return (multiplier * _rewardPerBlock * _oneDayBlocks * pool.allocPoint) / _totalAllocPoint;
     }
 }
