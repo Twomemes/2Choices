@@ -186,6 +186,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
             safeTwoTransfer(msg.sender, pending);
         }
         pool.token.safeTransferFrom(msg.sender, address(this), amount);
+        user.depositTime = block.timestamp;
         emit Deposit(msg.sender, pid, amount);
     }
 
@@ -205,9 +206,54 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         if (pending > 0) {
             safeTwoTransfer(msg.sender, pending);
         }
-        pool.token.safeTransfer(msg.sender, amount);
+        uint256 percent = withdrawPercent(user.depositTime);
+        uint256 userAmount = (amount * percent) / 10000;
+        uint256 govAmount = amount - userAmount;
+        pool.token.safeTransfer(msg.sender, userAmount);
+        if (govAmount > 0) {
+            pool.token.safeTransfer(_govVault, govAmount);
+        }
 
         emit Withdraw(msg.sender, pid, amount);
+    }
+
+    function canWithdraw(
+        uint256 pid,
+        address user,
+        uint256 amount
+    )
+        public
+        view
+        returns (
+            uint256 userAmount,
+            uint256 govVault,
+            uint256 percent
+        )
+    {
+        percent = withdrawPercent(_userInfo[pid][user].depositTime);
+        userAmount = (amount * percent) / 10000;
+        govVault = amount - userAmount;
+    }
+
+    function withdrawPercent(uint256 depositTime) public view returns (uint256) {
+        uint256 nowTime = block.timestamp;
+        if (depositTime == nowTime) {
+            return 7800; // 78%
+        }
+        uint256 diff = nowTime - depositTime;
+        if (diff > 2 weeks) {
+            return 10000; // 100%
+        } else if (diff > 1 weeks) {
+            return 9990; // 99.9%
+        } else if (diff > 3 days) {
+            return 9950; // 99.5%
+        } else if (diff > 1 days) {
+            return 9900; // 99%
+        } else if (diff > 1 hours) {
+            return 9700; // 97%
+        } else {
+            return 9500; // 95%
+        }
     }
 
     function harvestAll() public override {
