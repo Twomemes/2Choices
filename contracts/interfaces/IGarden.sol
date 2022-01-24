@@ -41,7 +41,7 @@ interface IGarden {
         uint256 accTwoPerShare; // Accumulated OXDs per share, times 1e12. See below.
     }
 
-    function harvest(uint256 pid) external;
+    function harvestAll() external;
 
     // function harvestMany(uint256[] memory pids) external;
 
