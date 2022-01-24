@@ -22,6 +22,8 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     uint256 public _totalAllocPoint;
     uint256 public _rewardPerBlock;
     uint256 public _initRewardPercent;
+    uint256 public _squidGameAllocPoint;
+    address public _squidGameContract;
     ITwoToken public _twoToken;
     IClaimLock public _rewardLocker;
     address public _govVault;
@@ -89,10 +91,19 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         );
     }
 
-    function set(uint256 pid, uint256 allocPoint) public onlyOwner {
+    function setAllocPoint(uint256 pid, uint256 allocPoint) public onlyOwner {
         massUpdatePools();
         _totalAllocPoint = _totalAllocPoint - _poolInfo[pid].allocPoint + allocPoint;
         _poolInfo[pid].allocPoint = allocPoint;
+    }
+
+    function setSquidGameContract(address squid) public onlyOwner {
+        _squidGameContract = squid;
+    }
+
+    function setSquidGameAllocPoint(uint256 allocPoint) public onlyOwner {
+        _totalAllocPoint = _totalAllocPoint - _squidGameAllocPoint + allocPoint;
+        _squidGameAllocPoint = allocPoint;
     }
 
     function checkForDuplicate(address token) internal view {
@@ -322,9 +333,13 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         return (multiplier * _rewardPerBlock * _oneDayBlocks * pool.allocPoint) / _totalAllocPoint;
     }
 
-        function squidPoolCalim(uint256 from, uint256 to) public override returns(uint256){
+    function squidPoolCalim(uint256 from, uint256 to) public override returns (uint256) {
+        require(msg.sender == _squidGameContract, "none squid game");
+        uint256 amount = (_rewardPerBlock * getMultiplier(from, to) * _squidGameAllocPoint) / _totalAllocPoint;
 
-        }
+        _twoToken.mint(_squidGameContract, amount);
+        return amount;
+    }
 
     function chainInfo()
         public
