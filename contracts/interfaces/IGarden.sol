@@ -9,6 +9,7 @@ interface IGarden {
     struct UserInfo {
         uint256 amount; // How any LP tokens the user has provided.
         uint256 rewardDebt;
+        uint256 depositTime;
     }
 
     // Info of each pool.
