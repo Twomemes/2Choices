@@ -1,11 +1,11 @@
 pragma solidity ^0.8.0;
 import "../interfaces/IClaimLock.sol";
-import "../interfaces/IKaki.sol";
+import "../interfaces/ITwoToken.sol";
 import "../interfaces/IERC20.sol";
 import "../base/WithAdminRole.sol";
 
 contract ClaimLock is IClaimLock, WithAdminRole {
-    IKaki  _kaki; 
+    ITwoToken  _kaki;
     uint256 constant THOUSAND = 10 ** 3;
     uint256 public _startTime;
     uint256 public _tradingStartTime;
@@ -13,7 +13,7 @@ contract ClaimLock is IClaimLock, WithAdminRole {
     uint256 public _tradingPeriod;
     address public _addFarm;
     address public _treasury;
-    
+
     bool internal locked;
 
     mapping(address => LockedFarmReward[]) public _userLockedFarmRewards;
@@ -31,9 +31,9 @@ contract ClaimLock is IClaimLock, WithAdminRole {
         _;
     }
 
-    function initialize(address farmAdd, IKaki kTokenAdd) public initializer {
+    function initialize(address farmAdd, ITwoToken kTokenAdd) public initializer {
         __WithAdminRole_init();
-        // block number 
+        // block number
         _farmPeriod = 9800000;
         _addFarm = farmAdd;
         _kaki = kTokenAdd;
@@ -69,7 +69,7 @@ contract ClaimLock is IClaimLock, WithAdminRole {
             claimableReward[i] = getClaimableFarmReward(account, i);
         }
     }
-    
+
     function getClaimableFarmReward(address account, uint256 index) public override view returns (uint256) {
         uint256 currentBlockNumber = block.number;
         uint256 unlockedAmount;

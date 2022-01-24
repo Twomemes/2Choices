@@ -26,43 +26,36 @@ interface IGarden {
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event Harvest(address indexed user, uint256 indexed pid, uint256 amount);
     event HarvestMany(address indexed user, uint256[] pids, uint256[] amounts);
+    event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
     // Info of each user.
     struct UserInfo {
-        uint256 amount; // How many tokens the user has provided.
-        // uint256 rewardTotal;
-        uint256 rewardAtBlock; // the last block reward.
+        uint256 amount; // How any LP tokens the user has provided.
+        uint256 rewardDebt;
     }
 
     // Info of each pool.
     struct PoolInfo {
-        uint256 allocPoint; // pool allocation point
-        uint256 pid; // pool index
-        uint256 stakingAmount; // poll total stakingAmount
-        uint256 price; // token price
-        IERC20 token; // pool staking token
-        IDebtToken debtToken; //  pool debt token
-        IVault vault; // pool bank
-        IERC20 ibToken; // pool bank staking token eg ibBUSD  ibBNB
-        IFairLaunch fairLaunch; // Interest Bearing Bank
-        uint256 flPid; // FairLaunch pool id
-        bool isNative; //  is native token
-        string name; // pool name
+        address token; // Address of LP token contract.
+        uint256 allocPoint; // How many allocation points assigned to this pool. OXDs to distribute per block.
+        uint256 lastRewardBlock; // Last block time that OXDs distribution occurs.
+        uint256 accTwoPerShare; // Accumulated OXDs per share, times 1e12. See below.
     }
 
     function harvest(uint256 pid) external;
 
-    function harvestMany(uint256[] memory pids) external;
+    // function harvestMany(uint256[] memory pids) external;
 
     function withdraw(uint256 pid, uint256 amount) external;
 
     function deposit(uint256 pid, uint256 amount) external payable;
 
-    function pendingReward(uint256 pid) external view returns (uint256);
+    function pendingReward(uint256 pid, address user) external view returns (uint256);
+    function emergencyWithdraw(uint256 pid) external ;
 
-    function dailyReward(uint256 pid) external view returns (uint256);
+    // function dailyReward(uint256 pid) external view returns (uint256);
 
     function poolInfo() external view returns (PoolInfo[] memory);
 
-    function poolApr(uint256 pid) external view returns (uint256);
+    // function poolApr(uint256 pid) external view returns (uint256);
     // function withdrawAll(uint256 pid) external;
 }
