@@ -322,6 +322,10 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         return (multiplier * _rewardPerBlock * _oneDayBlocks * pool.allocPoint) / _totalAllocPoint;
     }
 
+        function squidPoolCalim(uint256 from, uint256 to) public override returns(uint256){
+
+        }
+
     function chainInfo()
         public
         view

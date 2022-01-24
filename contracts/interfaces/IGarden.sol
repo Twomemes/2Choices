@@ -30,4 +30,6 @@ interface IGarden {
     function emergencyWithdraw(uint256 pid) external ;
 
     function poolInfo() external view returns (PoolInfo[] memory);
+
+    function squidPoolCalim(uint256 from, uint256 to) external returns(uint256);
 }
