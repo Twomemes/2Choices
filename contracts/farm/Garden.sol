@@ -21,7 +21,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     // total allocation point
     uint256 public _totalAllocPoint;
     uint256 public _rewardPerBlock;
-    uint256 public  _initRewardPercent;
+    uint256 public _initRewardPercent;
     ITwoToken public _twoToken;
     IClaimLock public _rewardLocker;
     // Info of each user that stakes LP tokens. pid => user address => info
@@ -65,9 +65,11 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     function setRewardPerBlock(uint256 rewardPerBlock) public onlyOwner {
         _rewardPerBlock = rewardPerBlock;
     }
+
     function setRewardMultiplier(uint256[] memory multiplier) public onlyOwner {
         _rewardMultiplier = multiplier;
     }
+
     function setInitRewardPercent(uint256 percent) public onlyOwner {
         _initRewardPercent = percent;
     }
@@ -228,6 +230,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         if (totalPending > 0) {
             safeTwoTransfer(msg.sender, totalPending);
         }
+        emit HarvestAll(msg.sender,  totalPending);
     }
 
     function poolInfoLength() public view returns (uint256) {
