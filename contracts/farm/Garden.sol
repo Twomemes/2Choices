@@ -21,7 +21,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     // total allocation point
     uint256 public _totalAllocPoint;
     uint256 public _rewardPerBlock;
-    uint256 public constant _initRewardPercent =22;
+    uint256 public constant _initRewardPercent = 22;
     ITwoToken public _twoToken;
     IClaimLock public _rewardLocker;
     mapping(address => uint256) public _poolId1; // poolId1 starting from 1,subtract 1 before using with poolInfo
@@ -233,10 +233,14 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
 
     function safeTwoTransfer(address to, uint256 amount) internal {
         uint256 twoBal = _twoToken.balanceOf(address(this));
-        if (amount > twoBal) {
+        uint256 sending = (amount * _initRewardPercent) / 100;
+        if (sending > twoBal) {
             _twoToken.transfer(to, twoBal);
         } else {
-            _twoToken.transfer(to, amount);
+            _twoToken.transfer(to, sending);
+            uint256 locked = twoBal - sending;
+            _twoToken.transfer(address(_rewardLocker), locked);
+            _rewardLocker.lockFarmReward(to, locked);
         }
     }
 
