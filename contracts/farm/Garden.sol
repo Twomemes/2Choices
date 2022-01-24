@@ -74,7 +74,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         _initRewardPercent = percent;
     }
 
-    function addPool(uint256 allocPoint, address token) external onlyOwner {
+    function addPool(uint256 allocPoint, address token) public onlyOwner {
         checkForDuplicate(token); // ensure you cant add duplicate pools
         massUpdatePools();
         uint256 lastRewardBlock = block.number > _startBlockNumber ? block.number : _startBlockNumber;
@@ -84,7 +84,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         );
     }
 
-    function set(uint256 pid, uint256 allocPoint) external onlyOwner {
+    function set(uint256 pid, uint256 allocPoint) public onlyOwner {
         massUpdatePools();
         _totalAllocPoint = _totalAllocPoint - _poolInfo[pid].allocPoint + allocPoint;
         _poolInfo[pid].allocPoint = allocPoint;
