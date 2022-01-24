@@ -1,7 +1,8 @@
 import { deployments, ethers, network } from 'hardhat';
 import {
   BlindBox,  //KakiGarden__factory, 
-  KakiTicket, AddressList__factory, MockChainLink__factory, MockToken__factory, Ticket__factory, OpenBox__factory, KakiSquidGame, KakiSquidGame__factory, BlindBox__factory, KakiTicket__factory, ERC20__factory, TwoToken__factory, ClaimLock__factory,  Tools__factory,
+  KakiTicket, AddressList__factory, MockChainLink__factory, MockToken__factory, Ticket__factory, OpenBox__factory, KakiSquidGame, KakiSquidGame__factory, BlindBox__factory, KakiTicket__factory, ERC20__factory, TwoToken__factory, ClaimLock__factory,  Tools__factory,          
+
 } from '~/typechain';
 
 import bsctest from './contractAddress/bscTest'
@@ -174,8 +175,6 @@ export async function captainMintContract(signerIndex = 0) {
   return AddressList__factory.connect(contractAddress.captainMintList, await getSigner(signerIndex));
 }
 
-
-
 // export async function farmContract(signerIndex = 0) {
 //   return KakiGarden__factory.connect(contractAddress.farm, await getSigner(signerIndex));
 // }
@@ -187,8 +186,6 @@ export async function claimLockContract(signerIndex = 0) {
 export async function twoTokenContract(signerIndex = 0) {
   return TwoToken__factory.connect(contractAddress.two, await getSigner(signerIndex));
 }
-
-
 
 export async function toolsContract(signerIndex = 0) {
   return Tools__factory.connect(contractAddress.tools, await getSigner(signerIndex));

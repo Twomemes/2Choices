@@ -11,9 +11,8 @@ contract ClaimLock is IClaimLock, WithAdminRole {
     uint256 public _tradingStartTime;
     uint256 public _farmPeriod;
     uint256 public _tradingPeriod;
-    uint256 public _farmRate;
     address public _addFarm;
-    address public _addTrading;
+    address public _treasury;
     
     bool internal locked;
 
@@ -36,7 +35,6 @@ contract ClaimLock is IClaimLock, WithAdminRole {
         __WithAdminRole_init();
         // block number 
         _farmPeriod = 9800000;
-
         _addFarm = farmAdd;
         _kaki = kTokenAdd;
     }
@@ -57,7 +55,7 @@ contract ClaimLock is IClaimLock, WithAdminRole {
         for (uint256 i; i < index.length; i++) {
             uint256 bonus = getClaimableFarmReward(msg.sender, index[i]);
             _kaki.mint(msg.sender, bonus);
-            _kaki.mint(_addTrading, (_userLockedFarmRewards[msg.sender][index[i]]._locked - bonus));
+            _kaki.mint(_treasury, (_userLockedFarmRewards[msg.sender][index[i]]._locked - bonus));
             _userLockedFarmRewards[msg.sender][index[i]] = _userLockedFarmRewards[msg.sender][_userLockedFarmRewards[msg.sender].length - 1];
             _userLockedFarmRewards[msg.sender].pop();
         }
@@ -78,8 +76,7 @@ contract ClaimLock is IClaimLock, WithAdminRole {
         LockedFarmReward[] memory user = _userLockedFarmRewards[account];
         if(index < user.length) {
             if(currentBlockNumber - user[index]._blockNumber < _farmPeriod){
-                uint256 claimableAmount = user[index]._locked * _farmRate / THOUSAND;
-                unlockedAmount = claimableAmount + (user[index]._locked - claimableAmount) * (currentBlockNumber - user[index]._blockNumber) / _farmPeriod;
+                unlockedAmount = user[index]._locked * (currentBlockNumber - user[index]._blockNumber) / _farmPeriod;
             }
             else unlockedAmount = user[index]._locked;
         }
@@ -93,7 +90,7 @@ contract ClaimLock is IClaimLock, WithAdminRole {
     }
 
     function version() public pure returns (uint256) {
-        return 0;
+        return 1;
     }
 
 }
