@@ -21,10 +21,9 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     // total allocation point
     uint256 public _totalAllocPoint;
     uint256 public _rewardPerBlock;
-    uint256 public constant _initRewardPercent = 22;
+    uint256 public  _initRewardPercent;
     ITwoToken public _twoToken;
     IClaimLock public _rewardLocker;
-    mapping(address => uint256) public _poolId1; // poolId1 starting from 1,subtract 1 before using with poolInfo
     // Info of each user that stakes LP tokens. pid => user address => info
     mapping(uint256 => mapping(address => UserInfo)) public _userInfo;
     // Info of each pool.
@@ -34,13 +33,17 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     constructor(
         ITwoToken twoToken,
         uint256 rewardPerBlock,
-        uint256 startBlock
+        uint256 startBlock,
+        uint256 endBlock,
+        uint256 oneDayBlocks
     ) {
         _rewardPerBlock = rewardPerBlock;
         _startBlockNumber = startBlock;
-        _oneDayBlocks = 22656;
+        _endBlockNumber = endBlock;
+        _oneDayBlocks = oneDayBlocks;
         _twoToken = twoToken;
         _rewardMultiplier = [32, 16, 14, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1];
+        _initRewardPercent = 22;
     }
 
     function setRewardLocker(IClaimLock rewardLocker) public onlyOwner {
@@ -61,6 +64,12 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
 
     function setRewardPerBlock(uint256 rewardPerBlock) public onlyOwner {
         _rewardPerBlock = rewardPerBlock;
+    }
+    function setRewardMultiplier(uint256[] memory multiplier) public onlyOwner {
+        _rewardMultiplier = multiplier;
+    }
+    function setInitRewardPercent(uint256 percent) public onlyOwner {
+        _initRewardPercent = percent;
     }
 
     function addPool(uint256 allocPoint, address token) external onlyOwner {
@@ -228,8 +237,6 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     function poolInfo() public view override returns (PoolInfo[] memory) {
         return _poolInfo;
     }
-
-    receive() external payable {}
 
     function safeTwoTransfer(address to, uint256 amount) internal {
         uint256 twoBal = _twoToken.balanceOf(address(this));
