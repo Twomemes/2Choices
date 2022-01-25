@@ -12,7 +12,7 @@ import delay from 'delay';
 
 const setup = deployments.createFixture(async () => {
   const signer = await getSigner();
-  const two = <TwoToken>await upgrades.deployProxy(new TwoToken__factory(signer));
+  const two = <TwoToken>await new TwoToken__factory(signer).deploy();
 
   const mockLp = await new MockToken__factory(signer).deploy('Mock LP', 'MOCK', 18, parseEther('100000000000000'));
 
