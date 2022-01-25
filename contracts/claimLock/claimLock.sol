@@ -89,8 +89,13 @@ contract ClaimLock is IClaimLock, WithAdminRole {
         _addFarm = newFarmAdd;
     }
 
+    function setTreasury(address newTreasury) public onlyOwner {
+        require(newTreasury != address(0), "Invalid address.");
+        _treasury = newTreasury;
+    }
+
     function version() public pure returns (uint256) {
-        return 3;
+        return 4;
     }
 
 }
