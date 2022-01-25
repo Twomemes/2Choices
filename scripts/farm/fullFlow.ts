@@ -22,7 +22,7 @@ async function deploy() {
   const instance = await factory.deploy(
     contractAddress.two,
     parseEther('1'),
-    currentBlock + 100,
+    currentBlock + 10,
     currentBlock + oneDayBlock * 365 * 3,
     oneDayBlock
   );
@@ -57,8 +57,6 @@ async function config(farm: Garden) {
   const signer = await getSigner(1);
   const setGovVault = await farm.setGovVault(signer.address);
   console.log(`setGovVault ${setGovVault.hash}`);
-
-
   const squidSetting = await farm.setSquidGameContract(contractAddress.squidGame);
   console.log(`squid game setting: ${squidSetting.hash}`);
 }
@@ -87,14 +85,13 @@ async function withdraw(farm: Garden) {
   const signer = await getSigner()
   const user = await farm._userInfo(0, signer.address)
 
-  const tx = await farm.withdraw(0, user.amount)
+  const tx = await farm.withdraw(0, user.amount, { gasLimit: 500000 });
   console.log(`withdraw: ${tx.hash}`);
 }
 
 async function harvest(farm: Garden) {
-  const h = await farm.harvestAll();
+  const h = await farm.harvestAll({ gasLimit: 500000 });
   console.log(`harvest ${h.hash}`);
-
 }
 
 (async () => {
@@ -108,5 +105,5 @@ async function harvest(farm: Garden) {
   await delay(20 * 1000);
   await withdraw(farm);
   const pool = await farm.poolInfo();
-  printEtherResultArray(pool)
+  printEtherResultArray(pool);
 })();
