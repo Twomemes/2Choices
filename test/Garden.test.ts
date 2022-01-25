@@ -118,7 +118,7 @@ describe('garden', async () => {
     await farm.setSquidGameContract(users[1].address);
     await delay(1 * 1000);
 
-    await users[1].farm.squidPoolCalim();
+    await users[1].farm.squidPoolCalim(users[1].address);
 
     console.log(`_squidGameLastClaimBlockNumber : ${await farm._squidGameLastClaimBlockNumber()}`);
 
