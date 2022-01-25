@@ -1,6 +1,5 @@
 pragma solidity ^0.8.0;
 
-import "../base/WithAdminRole.sol";
 import "../interfaces/IERC20.sol";
 import {IGarden} from "../interfaces/IGarden.sol";
 import "../interfaces/IClaimLock.sol";
