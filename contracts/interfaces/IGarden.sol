@@ -1,5 +1,7 @@
 pragma solidity ^0.8.0;
 
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
 interface IGarden {
     event Deposit(address indexed user, uint256 indexed pid, uint256 amount);
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
@@ -14,7 +16,7 @@ interface IGarden {
 
     // Info of each pool.
     struct PoolInfo {
-        address token; // Address of LP token contract.
+        IERC20 token; // Address of LP token contract.
         uint256 allocPoint; // How many allocation points assigned to this pool. OXDs to distribute per block.
         uint256 lastRewardBlock; // Last block time that OXDs distribution occurs.
         uint256 accTwoPerShare; // Accumulated OXDs per share, times 1e12. See below.

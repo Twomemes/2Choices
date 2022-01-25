@@ -1,6 +1,7 @@
 pragma solidity ^0.8.0;
 
-import "../interfaces/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 import {IGarden} from "../interfaces/IGarden.sol";
 import "../interfaces/IClaimLock.sol";
 import {ITwoToken} from "../interfaces/ITwoToken.sol";
@@ -12,7 +13,8 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "hardhat/console.sol";
 
 contract Garden is IGarden, ReentrancyGuard, Ownable {
-    using SafeToken for address;
+    // using SafeToken for address;
+    using SafeERC20 for IERC20;
     // start mine block number
     uint256 public _startBlockNumber;
     uint256 public _endBlockNumber;
@@ -81,7 +83,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         _initRewardPercent = percent;
     }
 
-    function addPool(uint256 allocPoint, address token) public onlyOwner {
+    function addPool(uint256 allocPoint, IERC20 token) public onlyOwner {
         checkForDuplicate(token); // ensure you cant add duplicate pools
         massUpdatePools();
         uint256 lastRewardBlock = block.number > _startBlockNumber ? block.number : _startBlockNumber;
@@ -106,7 +108,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         _squidGameAllocPoint = allocPoint;
     }
 
-    function checkForDuplicate(address token) internal view {
+    function checkForDuplicate(IERC20 token) internal view {
         uint256 length = _poolInfo.length;
         for (uint256 pid; pid < length; pid++) {
             require(_poolInfo[pid].token != token, "add: pool already exists!!!!");
@@ -151,7 +153,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         PoolInfo storage pool = _poolInfo[pid];
         UserInfo storage user = _userInfo[pid][user];
         uint256 accTwoPerShare = pool.accTwoPerShare;
-        uint256 lpSupply = pool.token.myBalance();
+        uint256 lpSupply = pool.token.balanceOf(address(this));
         if (block.number > pool.lastRewardBlock && lpSupply != 0) {
             uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
             uint256 twoReward = (multiplier * _rewardPerBlock * pool.allocPoint) / _totalAllocPoint;
@@ -174,7 +176,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         if (block.number <= pool.lastRewardBlock) {
             return;
         }
-        uint256 lpSupply = pool.token.myBalance();
+        uint256 lpSupply = pool.token.balanceOf(address(this));
         if (lpSupply == 0) {
             pool.lastRewardBlock = block.number;
             return;
@@ -196,6 +198,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         if (pending > 0) {
             safeTwoTransfer(msg.sender, pending);
         }
+        console.log("pool.token.safeTransferFrom",msg.sender,address(this),amount);
         pool.token.safeTransferFrom(msg.sender, address(this), amount);
         user.depositTime = block.timestamp;
         emit Deposit(msg.sender, pid, amount);
@@ -220,8 +223,14 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         uint256 percent = withdrawPercent(user.depositTime);
         uint256 userAmount = (amount * percent) / 10000;
         uint256 govAmount = amount - userAmount;
+        console.log("pool.token", address(pool.token));
+        console.log("msg.sender", msg.sender);
+        console.log("userAmount", userAmount);
+        console.log("balance", pool.token.balanceOf(address(this)));
         pool.token.safeTransfer(msg.sender, userAmount);
         if (govAmount > 0) {
+            console.log("_govVault", _govVault);
+            console.log("govAmount", govAmount);
             pool.token.safeTransfer(_govVault, govAmount);
         }
 
@@ -335,7 +344,9 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
 
     function squidPoolCalim() public override returns (uint256) {
         require(msg.sender == _squidGameContract, "none squid game");
-        uint256 amount = (_rewardPerBlock * getMultiplier(_squidGameLastClaimBlockNumber, block.number) * _squidGameAllocPoint) / _totalAllocPoint;
+        uint256 amount = (_rewardPerBlock *
+            getMultiplier(_squidGameLastClaimBlockNumber, block.number) *
+            _squidGameAllocPoint) / _totalAllocPoint;
         _squidGameLastClaimBlockNumber = block.number;
         _twoToken.mint(_squidGameContract, amount);
         return amount;
