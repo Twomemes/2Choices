@@ -24,7 +24,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     uint256 public _rewardPerBlock;
     uint256 public _initRewardPercent;
     uint256 public _squidGameAllocPoint;
-    uint256 public _squidGameLastClaimBlockNumber;
+    uint256 public _squidGameLastRewardBlock;
     address public _squidGameContract;
     ITwoToken public _twoToken;
     IClaimLock public _rewardLocker;
@@ -345,9 +345,9 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     function squidPoolCalim(address forUser) public override returns (uint256) {
         require(msg.sender == _squidGameContract, "none squid game");
         uint256 amount = (_rewardPerBlock *
-            getMultiplier(_squidGameLastClaimBlockNumber, block.number) *
+            getMultiplier(_squidGameLastRewardBlock, block.number) *
             _squidGameAllocPoint) / _totalAllocPoint;
-        _squidGameLastClaimBlockNumber = block.number;
+        _squidGameLastRewardBlock = block.number;
         _twoToken.mint(forUser, amount);
         return amount;
     }
