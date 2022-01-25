@@ -9,12 +9,14 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import {IKakiTicket} from "../interfaces/IKakiTicket.sol";
+import {IGarden} from "../interfaces/IGarden.sol";
 import "../base/WithAdminRole.sol";
 
 contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradeable {
     using SafeMath for uint256;
 
     IERC20 internal _token;
+    IGarden internal _farmGarden;
     IKakiTicket internal _ticketNFT;
     IAggregatorInterface _aggregator;
     uint256 _roundTime;
@@ -25,30 +27,30 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
     uint256 _beforeAwrdNum;
     uint256 _lastAwardNum;
 
-    //uint256 _ticketPrice;
     uint256 constant THOUSAND = 10**3;
     address public kakiFoundationAddress;
 
     uint256 public _chapter;
     uint256 public _lastRound;
     uint256 public _nextGameTime;
+    uint256 public _ticketToBonus0;
+    uint256 public _ticketToBonus1;
 
-    //address[] public _lastRoundUsers;
     mapping(uint256 => bool) public isChapterStart;
-    mapping(uint256 => mapping(uint256 => uint256)) public _lastRoundStartTime;
-    //mapping(uint256 => mapping(address => uint256)) public _users;
     mapping(address => User) public _users;
 
+    mapping(uint256 => uint256) public _totalChips;
     mapping(uint256 => uint256) public _joinNum;
     mapping(uint256 => uint256) public _totalBonus;
     mapping(uint256 => uint256) public _totalWinnerChip;
 
     mapping(uint256 => mapping(uint256 => uint256)) public _finalCall;
     mapping(uint256 => mapping(uint256 => uint256)) public _finalPut;
+    mapping(uint256 => mapping(uint256 => uint256)) public _price;
+    mapping(uint256 => mapping(uint256 => uint256)) public _lastRoundStartTime;
     mapping(uint256 => mapping(uint256 => mapping(address => uint256))) public _placeCallStatus;
     mapping(uint256 => mapping(uint256 => mapping(address => uint256))) public _placePutStatus;
-    mapping(uint256 => mapping(uint256 => uint256)) public _price;
-    mapping(uint256 => uint256) public _totalChips;
+
     address public _kakiPayWalletAddress;
 
     struct User {
@@ -66,6 +68,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
      */
     function initialize(
         IKakiTicket nftToken_,
+        IGarden farmGarden;
         IERC20 kakiToken,
         IAggregatorInterface aggregator_,
         address payWallet
@@ -75,7 +78,10 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         _aggregator = aggregator_;
         _token = kakiToken;
         _ticketNFT = nftToken_;
+        _farmGarden=farmGarden;
 
+        _ticketToBonus0 = 156800000000000000000;
+        _ticketToBonus1 = 313600000000000000000;
         _nextGameTime = 1638442800; //2021-12-2 16:00:00
 
         _lastUserAwardRate = 3;
@@ -109,7 +115,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         _users[msg.sender]._initChip[_chapter] = ticketInfo.chip;
         _totalChips[_chapter] += ticketInfo.chip;
 
-        uint256 addBonus = ticketInfo.ticketType == 0 ? 160 : 320;
+        uint256 addBonus = ticketInfo.ticketType == 0 ? _ticketToBonus0 : _ticketToBonus1;
         _totalBonus[_chapter] = _totalBonus[_chapter] + addBonus;
 
         _ticketNFT.transferFrom(msg.sender, address(0xdead), nftId);
@@ -218,8 +224,8 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         require(_nextGameTime <= time, "The chapter is not start.");
         require(!isChapterStart[_chapter], "The chapter is already start.");
 
-        //_nextGameTime = time;
-
+        //_nextGameTime = time;        
+        _totalBonus[_chapter] += _farmGarden.squidPoolCalim(_kakiPayWalletAddress);
         isChapterStart[_chapter] = true;
         _lastRound = 0;
         _lastRoundStartTime[_chapter][_lastRound] = time;

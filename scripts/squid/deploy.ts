@@ -13,5 +13,7 @@ import {deploy} from '~/utils/upgrader';
   ];
   console.log({args});
   // await deploySquidGame(ticket, busd, oracle);
+
   await deploy(`squid/kakiSquidGame.sol`, args, KakiSquidGame__factory);
+
 })();
