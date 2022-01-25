@@ -1,6 +1,5 @@
-import { deployBlindBoxDrop } from '~/utils/deployer'
+import {deployBlindBoxDrop} from '~/utils/deployer';
 
 (async () => {
-
   await deployBlindBoxDrop();
 })();

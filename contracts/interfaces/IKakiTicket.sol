@@ -1,7 +1,7 @@
 pragma solidity ^0.8.0;
 import "./IBaseERC721.sol";
-interface IKakiTicket is IBaseERC721 {
 
+interface IKakiTicket is IBaseERC721 {
     struct TicketPara {
         uint256 chip;
         uint256 prob;

@@ -1,5 +1,4 @@
-import type { ContractAddress } from "./bscTest";
-
+import type {ContractAddress} from './bscTest';
 
 const addrs: ContractAddress = {
   squidGame: '',
@@ -26,7 +25,6 @@ const addrs: ContractAddress = {
   tools: '',
   blindBox: '',
   kakiTicket: '',
-}
-
+};
 
 export default addrs;

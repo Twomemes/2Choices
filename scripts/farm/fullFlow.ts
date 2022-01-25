@@ -1,8 +1,9 @@
 import { ERC20__factory, Garden, Garden__factory } from '~/typechain';
-import { getSigner } from '../../utils/contract';
+import { farmContract, getSigner } from '../../utils/contract';
 import { parseEther } from 'ethers/lib/utils';
 import { contractAddress } from '../../utils/contract';
 import { printEtherResult, printEtherResultArray } from '../../utils/logutil';
+import delay from 'delay';
 
 
 const addrs = {
@@ -80,10 +81,22 @@ async function withdraw(farm: Garden) {
   const tx = await farm.withdraw(0, user.amount)
   console.log(`withdraw: ${tx.hash}`);
 }
+
+async function harvest(farm: Garden) {
+  const h = await farm.harvestAll();
+  console.log(`harvest ${h.hash}`);
+
+}
+
 (async () => {
-  const farm = await deploy();
-  await config(farm);
-  await deposit(farm);
+  // const farm = await deploy();
+  const farm = await farmContract();
+  // await config(farm);
+  // await deposit(farm);
+
+  // await delay(20 * 1000);
+  await harvest(farm);
+  await delay(20 * 1000);
   await withdraw(farm);
   const pool = await farm.poolInfo();
   printEtherResultArray(pool)

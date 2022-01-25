@@ -1,4 +1,4 @@
-import { task } from 'hardhat/config';
+import {task} from 'hardhat/config';
 import '@nomiclabs/hardhat-waffle';
 import '@nomiclabs/hardhat-ethers';
 import 'solidity-coverage';
@@ -10,14 +10,14 @@ import 'hardhat-deploy';
 import '@openzeppelin/hardhat-upgrades';
 import 'hardhat-contract-sizer';
 import 'tsconfig-paths/register';
-import { HardhatUserConfig } from 'hardhat/types';
-import { accounts, node_url, getMnemonic } from './utils/network';
-import { bufferToHex, privateToAddress } from 'ethereumjs-util';
+import {HardhatUserConfig} from 'hardhat/types';
+import {accounts, node_url, getMnemonic} from './utils/network';
+import {bufferToHex, privateToAddress} from 'ethereumjs-util';
 
 // import "./config.json";
 // import config from './config.json';
-import { deriveKeyFromMnemonicAndIndex } from './utils/generateAddr';
-import type { network as Network } from 'hardhat';
+import {deriveKeyFromMnemonicAndIndex} from './utils/generateAddr';
+import type {network as Network} from 'hardhat';
 
 declare const network: typeof Network;
 // This is a sample Hardhat task. To learn how to create your own go to
@@ -30,7 +30,7 @@ task('accounts', 'Prints the list of accounts', async (args, hre) => {
   }
 });
 
-task("pks", "Prints the private keys", async () => {
+task('pks', 'Prints the private keys', async () => {
   for (let i = 0; i < 5; i++) {
     const pk = deriveKeyFromMnemonicAndIndex(getMnemonic(network.name), i);
     if (pk) {
@@ -57,36 +57,36 @@ const cfg: HardhatUserConfig = {
       accounts: accounts(process.env.HARDHAT_FORK),
       forking: process.env.HARDHAT_FORK
         ? {
-          // TODO once PR merged : network: process.env.HARDHAT_FORK,
-          url: node_url(process.env.HARDHAT_FORK),
-          blockNumber: process.env.HARDHAT_FORK_NUMBER ? parseInt(process.env.HARDHAT_FORK_NUMBER) : undefined,
-        }
+            // TODO once PR merged : network: process.env.HARDHAT_FORK,
+            url: node_url(process.env.HARDHAT_FORK),
+            blockNumber: process.env.HARDHAT_FORK_NUMBER ? parseInt(process.env.HARDHAT_FORK_NUMBER) : undefined,
+          }
         : undefined,
       mining: process.env.MINING_INTERVAL
         ? {
-          auto: false,
-          interval: process.env.MINING_INTERVAL.split(',').map((v) => parseInt(v)) as [number, number],
-        }
+            auto: false,
+            interval: process.env.MINING_INTERVAL.split(',').map((v) => parseInt(v)) as [number, number],
+          }
         : undefined,
     },
     testnet: {
       url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
       chainId: 97,
-      accounts: { ...accounts(), initialIndex: 0, count: 10 },
+      accounts: {...accounts(), initialIndex: 0, count: 10},
     },
     testweb: {
       url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
       chainId: 97,
-      accounts: { ...accounts(), initialIndex: 0, count: 10 },
+      accounts: {...accounts(), initialIndex: 0, count: 10},
     },
     mainnet: {
       url: 'https://bsc-dataseed.binance.org/',
       chainId: 56,
       gasPrice: 20000000000,
-      accounts: { ...accounts(), initialIndex: 0, count: 10 },
+      accounts: {...accounts(), initialIndex: 0, count: 10},
     },
     ftm: {
-      url: "https://rpcapi.fantom.network/",
+      url: 'https://rpcapi.fantom.network/',
       chainId: 250,
       // gasPrice: 20000000000,
       accounts: [process.env.PROD_PRIVATEKEY as any],
@@ -94,17 +94,17 @@ const cfg: HardhatUserConfig = {
     bsctest: {
       url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
       chainId: 97,
-      accounts: { ...accounts(), initialIndex: 0, count: 10 },
+      accounts: {...accounts(), initialIndex: 0, count: 10},
     },
     ftmtest: {
-      url: "https://rpc.testnet.fantom.network/",
-      accounts: { ...accounts(), initialIndex: 0 },
+      url: 'https://rpc.testnet.fantom.network/',
+      accounts: {...accounts(), initialIndex: 0},
       chainId: 4002,
     },
     harmony: {
       url: 'https://api.harmony.one',
       chainId: 1666600000,
-      accounts: { ...accounts(), initialIndex: 0, count: 10 },
+      accounts: {...accounts(), initialIndex: 0, count: 10},
     },
   },
   solidity: {
@@ -139,4 +139,3 @@ const cfg: HardhatUserConfig = {
 };
 
 export default cfg;
-

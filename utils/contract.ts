@@ -1,14 +1,26 @@
-import { deployments, ethers, network } from 'hardhat';
+import {deployments, ethers, network} from 'hardhat';
 import {
-  BlindBox,  //KakiGarden__factory, 
-  KakiTicket, AddressList__factory, MockChainLink__factory, MockToken__factory, Ticket__factory, OpenBox__factory, KakiSquidGame, KakiSquidGame__factory, BlindBox__factory, KakiTicket__factory, ERC20__factory, TwoToken__factory, ClaimLock__factory,  Tools__factory,          
-
+  BlindBox,
+  Garden__factory,
+  KakiTicket,
+  AddressList__factory,
+  MockChainLink__factory,
+  MockToken__factory,
+  Ticket__factory,
+  OpenBox__factory,
+  KakiSquidGame,
+  KakiSquidGame__factory,
+  BlindBox__factory,
+  KakiTicket__factory,
+  ERC20__factory,
+  TwoToken__factory,
+  ClaimLock__factory,
+  Tools__factory,
 } from '~/typechain';
 
-import bsctest from './contractAddress/bscTest'
-import ftmtest from './contractAddress/ftmTest'
-import ftm from './contractAddress/ftmProd'
-
+import bsctest from './contractAddress/bscTest';
+import ftmtest from './contractAddress/ftmTest';
+import ftm from './contractAddress/ftmProd';
 
 export const frontendUsedContracts = [
   'index',
@@ -18,17 +30,17 @@ export const frontendUsedContracts = [
   'package',
   //-------  Solidity files -----
 
-  "IKakiSquidGame",
-  "KakiSquidGame",
-  "IOpenBox",
-  "ITicket",
-  "IERC20",
-  "IBlindBox",
-  "IBaseERC721",
-  "AddressList",
-  "IKakiTicket",
-  "IBlindBox",
-  "KakiNoLoss",
+  'IKakiSquidGame',
+  'KakiSquidGame',
+  'IOpenBox',
+  'ITicket',
+  'IERC20',
+  'IBlindBox',
+  'IBaseERC721',
+  'AddressList',
+  'IKakiTicket',
+  'IBlindBox',
+  'KakiNoLoss',
 ];
 
 export const webToolsContractNames = [
@@ -38,8 +50,8 @@ export const webToolsContractNames = [
   'AddressList',
   'CaptainClaim',
   'KakiGarden',
-  "KakiNoLoss",
-]
+  'KakiNoLoss',
+];
 
 export const mutiContractAddrs = {
   bsctest,
@@ -100,7 +112,7 @@ export const contractAddress = {
     return getItem('chainlinkRandoms');
   },
   get claimLock() {
-    return getItem("claimLock");
+    return getItem('claimLock');
   },
   get two() {
     return getItem('two');
@@ -175,9 +187,9 @@ export async function captainMintContract(signerIndex = 0) {
   return AddressList__factory.connect(contractAddress.captainMintList, await getSigner(signerIndex));
 }
 
-// export async function farmContract(signerIndex = 0) {
-//   return KakiGarden__factory.connect(contractAddress.farm, await getSigner(signerIndex));
-// }
+export async function farmContract(signerIndex = 0) {
+  return Garden__factory.connect(contractAddress.farm, await getSigner(signerIndex));
+}
 
 export async function claimLockContract(signerIndex = 0) {
   return ClaimLock__factory.connect(contractAddress.claimLock, await getSigner(signerIndex));

@@ -1,5 +1,5 @@
-import { BigNumber, BigNumberish } from '@ethersproject/bignumber';
-import { ethers, upgrades, deployments } from 'hardhat';
+import {BigNumber, BigNumberish} from '@ethersproject/bignumber';
+import {ethers, upgrades, deployments} from 'hardhat';
 import {
   IClaimLock,
   MockChainLink,
@@ -8,8 +8,6 @@ import {
   MockToken,
   KakiSquidGame,
   KakiSquidGame__factory,
-  KakiNoLoss,
-  KakiNoLoss__factory,
   Ticket,
   Ticket__factory,
   AddressList,
@@ -25,13 +23,6 @@ import {
   ClaimLock__factory,
   Garden,
   Garden__factory,
-  KakiCaptain,
-  KakiCaptain__factory,
-  CaptainClaim,
-  CaptainClaim__factory,
-  MysteryBox,
-  MysteryBox__factory,
-  MockFarm,
   MockFarm__factory,
   ChainlinkRandoms__factory,
   MockRandom,
@@ -39,12 +30,13 @@ import {
   MockKakiCaptain,
   MockKakiCaptain__factory,
   MockBlindBox,
-  MockBlindBox__factory
+  MockBlindBox__factory,
+  MockFarm,
 } from '~/typechain';
 
 import chalk from 'chalk';
-import { getSigner } from '~/utils/contract';
-import { parseEther } from 'ethers/lib/utils';
+import {getSigner} from '~/utils/contract';
+import {parseEther} from 'ethers/lib/utils';
 
 export async function deployMockChainLink() {
   const signer0 = await getSigner(0);
@@ -79,116 +71,38 @@ export async function deployMockERC20(name: string, symbol: string, issue: BigNu
   return factory.attach(instance.address);
 }
 
-export async function deployKakiCaptain() {
-  const signer = await getSigner(0);
-  const factory = new KakiCaptain__factory(signer);
-  const args: Parameters<KakiCaptain["initialize"]> = [];
-  const instance = await upgrades.deployProxy(factory, args);
-  console.log(`KakiCaptain deployed to: ${instance.address}`);
-  return instance as KakiCaptain;
-}
-
 export async function deployMockKakiCaptain() {
   const signer = await getSigner(0);
   const factory = new MockKakiCaptain__factory(signer);
-  const args: Parameters<MockKakiCaptain["initialize"]> = [];
+  const args: Parameters<MockKakiCaptain['initialize']> = [];
   const instance = await upgrades.deployProxy(factory, args);
   console.log(`MockKakiCaptain deployed to: ${instance.address}`);
   return instance as MockKakiCaptain;
 }
 
-export async function deployMysteryBox() {
-  const signer = await getSigner(0);
-  const factory = new MysteryBox__factory(signer);
-  const instance = await factory.deploy("https://ipfs.fleek.co/ipfs/QmUYZRw647x7zKqtAzKjeyfQt24v9sasuEeJVYrioxaD4t/KakiSeedBox.json");
-  await instance.deployed();
-  console.log(`MysteryBox deployed to: ${instance.address}`);
-  return instance as MysteryBox;
-}
-
-export async function deployCaptainClaim(kakiCaptain: KakiCaptain, mysteryBox: MysteryBox, mockChainlink: MockChainLink) {
-  const signer = await getSigner(0);
-  const args: Parameters<CaptainClaim["initialize"]> = [
-    kakiCaptain.address,
-    mysteryBox.address,
-    mockChainlink.address
-  ];
-  const factory = new CaptainClaim__factory(signer);
-  const instance = await upgrades.deployProxy(factory, args);
-  console.log(`CaptainClaim deployed to: ${instance.address}`);
-  return instance as CaptainClaim;
-}
-
-export async function deployKakiGarden(rewardPerBlock = parseEther('10'), startBlock?: BigNumberish) {
-  const signer = await getSigner(0);
-  if (!startBlock) {
-    const currentBlock = await signer.provider?.getBlockNumber() as number;
-    startBlock = currentBlock + 10
-
-  }
-  const args: Parameters<Garden["initialize"]> = [
-    rewardPerBlock,
-    startBlock
-  ];
-
-  const factory = new Garden__factory(signer);
-  const instance = await upgrades.deployProxy(factory, args);
-  console.log(`Garden deployed to: ${instance.address}`);
-  return instance as Garden;
-}
-
 export async function deploySquidGame(ticket: Ticket, usdt: MockToken, chainlink: MockChainLink, payWallet: string) {
   const signer0 = await getSigner(0);
   const factory = new KakiSquidGame__factory(signer0);
-  const args: Parameters<KakiSquidGame['initialize']> = [
-    ticket.address,
-    usdt.address,
-    chainlink.address,
-    payWallet
-  ];
+  const args: Parameters<KakiSquidGame['initialize']> = [ticket.address, usdt.address, chainlink.address, payWallet];
   const instance = await upgrades.deployProxy(factory, args);
   console.log(`deploy squid game to: ${instance.address}`);
   await instance.deployed();
   return instance as KakiSquidGame;
 }
 
-export async function deployNoLoss(caption: KakiCaptain, kaki: MockToken, bnbToken: MockToken, busdToken: MockToken, kakiBNBToken: MockToken, kakiBUSDToken: MockToken, chainlink: MockChainLink) {
-  const signer0 = await getSigner(0);
-  const factory = new KakiNoLoss__factory(signer0);
-  const args: Parameters<KakiNoLoss['initialize']> = [
-    caption.address,
-    kaki.address,
-    bnbToken.address,
-    busdToken.address,
-    kakiBNBToken.address,
-    kakiBUSDToken.address,
-    chainlink.address
-  ];
-  const instance = await upgrades.deployProxy(factory, args);
-  console.log(`deploy noloss to: ${instance.address}`);
-  await instance.deployed();
-  return instance as KakiNoLoss;
-}
-
 export async function deployTicket() {
   const signer0 = await getSigner(0);
-  const factory = new Ticket__factory(signer0)
+  const factory = new Ticket__factory(signer0);
   const instance = await upgrades.deployProxy(factory);
-  console.log(`Ticket deployed to : ${instance.address}`)
+  console.log(`Ticket deployed to : ${instance.address}`);
   return instance as Ticket;
 }
 
-
 export async function deployOpenBox(ticket: Ticket, busd: IERC20, invalidTime: number, allowList: AddressList) {
   const signer0 = await getSigner(0);
-  const args: Parameters<OpenBox['initialize']> = [
-    ticket.address,
-    busd.address,
-    invalidTime,
-    allowList.address
-  ];
-  const factory = new OpenBox__factory(signer0)
-  const instance = await upgrades.deployProxy(factory, args)
+  const args: Parameters<OpenBox['initialize']> = [ticket.address, busd.address, invalidTime, allowList.address];
+  const factory = new OpenBox__factory(signer0);
+  const instance = await upgrades.deployProxy(factory, args);
   console.log(`OpenBox deployed to : ${instance.address}`);
   return instance as OpenBox;
 }
@@ -220,24 +134,25 @@ export async function deployMockRandom() {
 
 export async function deployBlindBox(kakiTicket: KakiTicket, busd: IERC20, chainlink: MockRandom) {
   const signer0 = await getSigner(0);
-  const args: Parameters<BlindBox['initialize']> = [
-    kakiTicket.address,
-    busd.address,
-    chainlink.address
-  ];
+  const args: Parameters<BlindBox['initialize']> = [kakiTicket.address, busd.address, chainlink.address];
   const factory = new BlindBox__factory(signer0);
   const instance = await upgrades.deployProxy(factory, args);
   console.log(`blindBox deployed to : ${instance.address}`);
   return instance as BlindBox;
 }
 
-export async function deployMockBlindBox(kakiTicket: KakiTicket, busd: IERC20, kakiCap: MockKakiCaptain, chainlink: MockRandom) {
+export async function deployMockBlindBox(
+  kakiTicket: KakiTicket,
+  busd: IERC20,
+  kakiCap: MockKakiCaptain,
+  chainlink: MockRandom
+) {
   const signer0 = await getSigner(0);
   const args: Parameters<MockBlindBox['initialize']> = [
     kakiTicket.address,
     busd.address,
     kakiCap.address,
-    chainlink.address
+    chainlink.address,
   ];
   const factory = new MockBlindBox__factory(signer0);
   const instance = await upgrades.deployProxy(factory, args);
@@ -256,10 +171,7 @@ export async function deployMockFarm() {
 
 export async function deployClaimLock(farm: MockFarm, kaki: IERC20) {
   const signer0 = await getSigner(0);
-  const args: Parameters<ClaimLock['initialize']> = [
-    farm.address,
-    kaki.address
-  ];
+  const args: Parameters<ClaimLock['initialize']> = [farm.address, kaki.address];
   const factory = new ClaimLock__factory(signer0);
   const instance = await upgrades.deployProxy(factory, args);
   console.log(`blindBox deployed to : ${instance.address}`);
@@ -283,39 +195,42 @@ export async function deployAll() {
   const allowList = await deployAddrssList();
   const openBox = await deployOpenBox(ticket, usdt, Math.ceil(Date.now() / 1000 + 24 * 3600), allowList);
   const game = await deploySquidGame(ticket, usdt, chainlink, signer0.address);
-  const kakiCaptain = await deployKakiCaptain();
   const mockKakiCaptain = await deployMockKakiCaptain();
-  const noLoss = await deployNoLoss(kakiCaptain, kakiToken, wbnbToken, usdt, kakiBnbLP, kakiUsdtLp, chainlink);
-  const garden = await deployKakiGarden();
-  const mysteryBox = await deployMysteryBox();
-  const captainClaim = await deployCaptainClaim(kakiCaptain, mysteryBox, chainlink);
   const mockFarm = await deployMockFarm();
   const mockRand = await deployMockRandom();
-  const blindBox = await deployBlindBox(kakiTicket, usdt, kakiCaptain, mockRand);
   const mockBlindBox = await deployMockBlindBox(kakiTicket, usdt, mockKakiCaptain, mockRand);
   const claimLock = await deployClaimLock(mockFarm, usdt);
 
-
   // , noLoss
-  return { usdt, kakiToken, wbnbToken, kakiUsdtLp, kakiBnbLP, chainlink, game, openBox, ticket, allowClaimTicket: allowList, kakiTicket, garden, kakiCaptain, mysteryBox, captainClaim, blindBox, mockBlindBox, mockFarm, claimLock, mockKakiCaptain, mockRand };
+  return {
+    usdt,
+    kakiToken,
+    wbnbToken,
+    kakiUsdtLp,
+    kakiBnbLP,
+    chainlink,
+    game,
+    openBox,
+    ticket,
+    allowClaimTicket: allowList,
+    kakiTicket,
+    mockBlindBox,
+    mockFarm,
+    claimLock,
+    mockKakiCaptain,
+    mockRand,
+  };
 }
 
-
 export async function deployChainlinkRandoms() {
-  const linkToken = "0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06";
-  const vrfCoordinator = "0xa555fC018435bef5A13C6c6870a9d4C11DEC329C";
-  const keyHash =
-    "0xcaf3c3727e033261d383b315559476f48034c13b18f8cafed4d871abe5049186";
-  const fee = ethers.utils.parseEther("0.1");
+  const linkToken = '0x84b9B910527Ad5C03A9Ca831909E21e236EA7b06';
+  const vrfCoordinator = '0xa555fC018435bef5A13C6c6870a9d4C11DEC329C';
+  const keyHash = '0xcaf3c3727e033261d383b315559476f48034c13b18f8cafed4d871abe5049186';
+  const fee = ethers.utils.parseEther('0.1');
 
   const singer = await getSigner(0);
   const factory = new ChainlinkRandoms__factory(singer);
-  const instance = await factory.deploy(
-    linkToken,
-    vrfCoordinator,
-    keyHash,
-    fee
-  );
+  const instance = await factory.deploy(linkToken, vrfCoordinator, keyHash, fee);
 
   console.log(`ChainlinkRandoms deployed to ${chalk.green(instance.address)}`);
   await instance.deployed();

@@ -113,7 +113,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         _totalBonus[_chapter] = _totalBonus[_chapter] + addBonus;
 
         _ticketNFT.transferFrom(msg.sender, address(0xdead), nftId);
-        emit StartGame(msg.sender, nftId,ticketInfo.ticketType);
+        emit StartGame(msg.sender, nftId, ticketInfo.ticketType);
     }
 
     function myInitChipCurrentChapter() public view returns (uint256) {
@@ -202,7 +202,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
                 _totalWinnerChip[_chapter] = _finalPut[_chapter][_roundSum - 1];
             }
             if (_totalWinnerChip[_chapter] == 0) {
-                _totalBonus[_chapter+1] = bonus;
+                _totalBonus[_chapter + 1] = bonus;
             }
             _chapter++;
             _nextGameTime = _nextGameTime.add(_gameInterval);
@@ -256,12 +256,16 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
             }
             bonus = totalBonus.mul(winChip).div(_totalWinnerChip[lastCheckChapter]);
             if (_joinNum[lastCheckChapter] - joinOrder < _lastAwardNum) {
-                uint256 lastAwrdUser = _joinNum[lastCheckChapter] < _lastAwardNum ? _joinNum[lastCheckChapter] : _lastAwardNum;
+                uint256 lastAwrdUser = _joinNum[lastCheckChapter] < _lastAwardNum
+                    ? _joinNum[lastCheckChapter]
+                    : _lastAwardNum;
                 bonus += lastUserAward / (lastAwrdUser);
             }
 
             if (joinOrder < _beforeAwrdNum) {
-                uint256 beforeAwrdUser = _joinNum[lastCheckChapter] > _beforeAwrdNum ? _joinNum[lastCheckChapter] : _beforeAwrdNum;
+                uint256 beforeAwrdUser = _joinNum[lastCheckChapter] > _beforeAwrdNum
+                    ? _joinNum[lastCheckChapter]
+                    : _beforeAwrdNum;
                 for (uint256 i = joinOrder; i <= beforeAwrdUser; i++) {
                     bonus += (40 * i) / beforeAwrdUser;
                 }
