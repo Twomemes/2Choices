@@ -1,8 +1,8 @@
 import { deployments, ethers, network } from 'hardhat';
 import {
-  BlindBox, //KakiGarden__factory, 
-  KakiTicket
-  , AddressList__factory, MockChainLink__factory, MockToken__factory, Ticket__factory, OpenBox__factory, KakiSquidGame, KakiSquidGame__factory, BlindBox__factory, KakiTicket__factory, ERC20__factory, TwoToken__factory, ClaimLock__factory, Tools__factory,
+  BlindBox,  //KakiGarden__factory, 
+  KakiTicket, AddressList__factory, MockChainLink__factory, MockToken__factory, Ticket__factory, OpenBox__factory, KakiSquidGame, KakiSquidGame__factory, BlindBox__factory, KakiTicket__factory, ERC20__factory, TwoToken__factory, ClaimLock__factory,  Tools__factory,          
+
 } from '~/typechain';
 
 import bsctest from './contractAddress/bscTest'

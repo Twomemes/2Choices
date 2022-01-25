@@ -4,239 +4,295 @@ import "../base/WithAdminRole.sol";
 import "../interfaces/IERC20.sol";
 import {IGarden} from "../interfaces/IGarden.sol";
 import "../interfaces/IClaimLock.sol";
-import {DebtToken} from "./DebtToken.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
-import {IVault} from "../interfaces/IVault.sol";
-import {IFairLaunch} from "../interfaces/IFairLaunch.sol";
-
-import "@openzeppelin/contracts-upgradeable/utils/math/MathUpgradeable.sol";
-import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import {ITwoToken} from "../interfaces/ITwoToken.sol";
+import "@openzeppelin/contracts/utils/math/Math.sol";
 import "../libraries/SafeToken.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-contract Garden is IGarden, WithAdminRole, ReentrancyGuardUpgradeable, PausableUpgradeable {
-    using SafeERC20Upgradeable for IERC20;
+import "hardhat/console.sol";
+
+contract Garden is IGarden, ReentrancyGuard, Ownable {
+    using SafeToken for address;
     // start mine block number
     uint256 public _startBlockNumber;
+    uint256 public _endBlockNumber;
     uint256 public _oneDayBlocks;
     // total allocation point
     uint256 public _totalAllocPoint;
     uint256 public _rewardPerBlock;
-    uint256 public _rewardTokenPrice;
-    // IERC20 public _rewardToken;
+    uint256 public _initRewardPercent;
+    uint256 public _squidGameAllocPoint;
+    address public _squidGameContract;
+    ITwoToken public _twoToken;
     IClaimLock public _rewardLocker;
-    mapping(address => uint256) public _poolId1; // poolId1 starting from 1,subtract 1 before using with poolInfo
+    address public _govVault;
     // Info of each user that stakes LP tokens. pid => user address => info
     mapping(uint256 => mapping(address => UserInfo)) public _userInfo;
     // Info of each pool.
     PoolInfo[] public _poolInfo;
+    uint256[] public _rewardMultiplier;
 
-    function initialize(
-        // IERC20 rewardToken,
+    constructor(
+        ITwoToken twoToken,
         uint256 rewardPerBlock,
-        uint256 startBlock
-    ) public initializer {
-        __WithAdminRole_init();
-        __ReentrancyGuard_init();
-        __Pausable_init();
-        // _rewardToken = rewardToken;
+        uint256 startBlock,
+        uint256 endBlock,
+        uint256 oneDayBlocks
+    ) {
         _rewardPerBlock = rewardPerBlock;
         _startBlockNumber = startBlock;
-        _oneDayBlocks = 22656;
+        _endBlockNumber = endBlock;
+        _oneDayBlocks = oneDayBlocks;
+        _twoToken = twoToken;
+        _rewardMultiplier = [32, 16, 14, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1];
+        _initRewardPercent = 22;
     }
 
-    function setRewardLocker(IClaimLock rewardLocker) public restricted {
+    function setRewardLocker(IClaimLock rewardLocker) public onlyOwner {
         _rewardLocker = rewardLocker;
     }
 
-    function setOneDayBlocks(uint256 oneDayBlocks) public restricted {
+    function setOneDayBlocks(uint256 oneDayBlocks) public onlyOwner {
         _oneDayBlocks = oneDayBlocks;
     }
 
-    function setRewardTokenPrice(uint256 rewardTokenPrice) public restricted {
-        _rewardTokenPrice = rewardTokenPrice;
+    function setEndBlockNumber(uint256 endBlockNumber) public onlyOwner {
+        _endBlockNumber = endBlockNumber;
     }
 
-    function addPool(
-        uint256 allocPoint,
-        IERC20 token,
-        uint256 price,
-        IVault vault,
-        IERC20 ibToken,
-        IFairLaunch fairLaunch,
-        uint256 flPid,
-        bool isNative,
-        string memory name
-    ) public restricted {
-        require(_poolId1[address(token)] == 0, "addPool: token is already in pool");
+    function setStartBlockNumber(uint256 startBlockNumber) public onlyOwner {
+        _startBlockNumber = startBlockNumber;
+    }
 
-        uint256 pl = _poolInfo.length;
-        _poolId1[address(token)] = pl + 1;
+    function setRewardPerBlock(uint256 rewardPerBlock) public onlyOwner {
+        _rewardPerBlock = rewardPerBlock;
+    }
 
-        _poolInfo.push(
-            PoolInfo({
-                allocPoint: allocPoint,
-                pid: pl,
-                stakingAmount: 0,
-                token: token,
-                price: price,
-                debtToken: new DebtToken(
-                    string(abi.encodePacked("k", token.name())),
-                    string(abi.encodePacked("k", token.symbol()))
-                ),
-                vault: vault,
-                ibToken: ibToken,
-                fairLaunch: fairLaunch,
-                flPid: flPid,
-                isNative: isNative,
-                name: name
-            })
-        );
+    function setGovVault(address vault) public onlyOwner {
+        _govVault = vault;
+    }
+
+    function setRewardMultiplier(uint256[] memory multiplier) public onlyOwner {
+        _rewardMultiplier = multiplier;
+    }
+
+    function setInitRewardPercent(uint256 percent) public onlyOwner {
+        _initRewardPercent = percent;
+    }
+
+    function addPool(uint256 allocPoint, address token) public onlyOwner {
+        checkForDuplicate(token); // ensure you cant add duplicate pools
+        massUpdatePools();
+        uint256 lastRewardBlock = block.number > _startBlockNumber ? block.number : _startBlockNumber;
         _totalAllocPoint += allocPoint;
-        if (address(token) != address(0)) {
-            token.approve(address(vault), type(uint256).max);
-        }
-        if (address(ibToken) != address(0)) {
-            ibToken.approve(address(fairLaunch), type(uint256).max);
+        _poolInfo.push(
+            PoolInfo({token: token, allocPoint: allocPoint, lastRewardBlock: lastRewardBlock, accTwoPerShare: 0})
+        );
+    }
+
+    function setAllocPoint(uint256 pid, uint256 allocPoint) public onlyOwner {
+        massUpdatePools();
+        _totalAllocPoint = _totalAllocPoint - _poolInfo[pid].allocPoint + allocPoint;
+        _poolInfo[pid].allocPoint = allocPoint;
+    }
+
+    function setSquidGameContract(address squid) public onlyOwner {
+        _squidGameContract = squid;
+    }
+
+    function setSquidGameAllocPoint(uint256 allocPoint) public onlyOwner {
+        _totalAllocPoint = _totalAllocPoint - _squidGameAllocPoint + allocPoint;
+        _squidGameAllocPoint = allocPoint;
+    }
+
+    function checkForDuplicate(address token) internal view {
+        uint256 length = _poolInfo.length;
+        for (uint256 pid; pid < length; pid++) {
+            require(_poolInfo[pid].token != token, "add: pool already exists!!!!");
         }
     }
 
-    function deposit(uint256 pid, uint256 amount) public payable override whenNotPaused nonReentrant {
-        uint256 currentBlock = block.number;
-        require(currentBlock >= _startBlockNumber, "not begin yet");
+    function getWeekth(uint256 blockNumber) public view returns (uint256) {
+        if (blockNumber < _startBlockNumber) {
+            return 0;
+        }
+        return (blockNumber - _startBlockNumber) / (_oneDayBlocks * 7);
+    }
+
+    function currentWeekth() public view returns (uint256) {
+        return getWeekth(block.number);
+    }
+
+    function getMultiplier(uint256 from, uint256 to) public view returns (uint256) {
+        console.log("from,to:", from, to);
+        if (to < _startBlockNumber) {
+            return 0;
+        }
+        if (from < _startBlockNumber) {
+            from = _startBlockNumber;
+        }
+        if (to > _endBlockNumber) {
+            to = _endBlockNumber;
+        }
+        uint256 weekth = getWeekth(to);
+        console.log("weekth,_rewardMultiplier.length:", weekth, _rewardMultiplier.length);
+        // return _rewardMultiplier[0];
+        uint256 multiplier = weekth > _rewardMultiplier.length - 1 ? 1 : _rewardMultiplier[weekth];
+        // return multiplier;
+        console.log("multiplier:", multiplier);
+        console.log("to", to);
+        console.log("from", from);
+        console.log("to-from", to - from);
+        return multiplier * (to - from);
+    }
+
+    function pendingReward(uint256 pid, address user) public view override returns (uint256) {
+        PoolInfo storage pool = _poolInfo[pid];
+        UserInfo storage user = _userInfo[pid][user];
+        uint256 accTwoPerShare = pool.accTwoPerShare;
+        uint256 lpSupply = pool.token.myBalance();
+        if (block.number > pool.lastRewardBlock && lpSupply != 0) {
+            uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
+            uint256 twoReward = (multiplier * _rewardPerBlock * pool.allocPoint) / _totalAllocPoint;
+            accTwoPerShare = accTwoPerShare + (twoReward * 1e12) / lpSupply;
+            //  accTwoPerShare.add(oxdReward.mul(1e12).div(lpSupply));
+        }
+        // return user.amount.mul(accOXDPerShare).div(1e12).sub(user.rewardDebt);
+        return (user.amount * accTwoPerShare) / 1e12 - user.rewardDebt;
+    }
+
+    function massUpdatePools() public {
+        uint256 length = _poolInfo.length;
+        for (uint256 pid; pid < length; pid++) {
+            updatePool(pid);
+        }
+    }
+
+    function updatePool(uint256 pid) public {
+        PoolInfo storage pool = _poolInfo[pid];
+        if (block.number <= pool.lastRewardBlock) {
+            return;
+        }
+        uint256 lpSupply = pool.token.myBalance();
+        if (lpSupply == 0) {
+            pool.lastRewardBlock = block.number;
+            return;
+        }
+        uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
+        uint256 twoReward = (multiplier * _rewardPerBlock * pool.allocPoint) / _totalAllocPoint;
+        _twoToken.mint(address(this), twoReward);
+        pool.accTwoPerShare = pool.accTwoPerShare + (twoReward * 1e12) / lpSupply;
+        pool.lastRewardBlock = block.number;
+    }
+
+    function deposit(uint256 pid, uint256 amount) public payable override nonReentrant {
+        PoolInfo storage pool = _poolInfo[pid];
         UserInfo storage user = _userInfo[pid][msg.sender];
-        if (user.amount > 0) {
-            _harvest(pid);
-        }
-        user.rewardAtBlock = currentBlock;
-        PoolInfo storage poolInfo = _poolInfo[pid];
-        if (poolInfo.isNative) {
-            require(amount == msg.value, "deposit amount must be equal to msg.value");
-        } else {
-            poolInfo.token.safeTransferFrom(msg.sender, address(this), amount);
-        }
-
-        IVault vault = poolInfo.vault;
-        if (address(vault) != address(0)) {
-            if (poolInfo.isNative) {
-                vault.deposit{value: amount}(amount);
-            } else {
-                vault.deposit(amount);
-            }
-
-            IFairLaunch fairLaunch = poolInfo.fairLaunch;
-            if (address(fairLaunch) != address(0)) {
-                fairLaunch.deposit(address(this), poolInfo.flPid, poolInfo.ibToken.balanceOf(address(this)));
-            }
-        }
+        updatePool(pid);
+        uint256 pending = ((user.amount * pool.accTwoPerShare) / 1e12) - user.rewardDebt;
         user.amount += amount;
-        poolInfo.stakingAmount += amount;
-        poolInfo.debtToken.mint(msg.sender, amount);
+        user.rewardDebt = (user.amount * pool.accTwoPerShare) / 1e12;
+        if (pending > 0) {
+            safeTwoTransfer(msg.sender, pending);
+        }
+        pool.token.safeTransferFrom(msg.sender, address(this), amount);
+        user.depositTime = block.timestamp;
         emit Deposit(msg.sender, pid, amount);
     }
 
-    function withdraw(uint256 pid, uint256 amount) public override whenNotPaused nonReentrant {
-        _withdraw(pid, amount);
-    }
-
-    // function withdrawAll(uint256 pid) public override whenNotPaused nonReentrant {
-    //     _harvest(pid);
-    //     UserInfo storage user = _userInfo[pid][msg.sender];
-    //     PoolInfo storage poolInfo = _poolInfo[pid];
-    //     uint256 amount = user.amount;
-    //     poolInfo.token.transfer(msg.sender, amount);
-    //     poolInfo.debtToken.burn(msg.sender, amount);
-    //     user.amount = 0;
-    //     poolInfo.stakingAmount -= amount;
-    //     emit Withdraw(msg.sender, pid, amount);
-    // }
-
-    function _withdraw(uint256 pid, uint256 amount) internal {
-        require(amount > 0, "amount cannot be zero");
-        address userAddr = msg.sender;
-        UserInfo storage user = _userInfo[pid][userAddr];
-        require(user.amount >= amount, "out of staking");
-        _harvest(pid);
-        PoolInfo storage poolInfo = _poolInfo[pid];
-        if (address(poolInfo.vault) != address(0)) {
-            IVault vault = poolInfo.vault;
-            uint256 tokenAmount = (amount * vault.totalSupply()) / vault.totalToken();
-            IFairLaunch fairLaunch = poolInfo.fairLaunch;
-            if (address(fairLaunch) != address(0)) {
-                fairLaunch.withdraw(address(this), poolInfo.flPid, tokenAmount);
-            }
-            poolInfo.vault.withdraw(amount);
-        }
-
-        uint256 realWithdraw;
-        if (poolInfo.isNative) {
-            realWithdraw = MathUpgradeable.min(address(this).balance, amount);
-            SafeToken.safeTransferETH(userAddr, realWithdraw);
-        } else {
-            IERC20 token = poolInfo.token;
-            realWithdraw = MathUpgradeable.min(token.balanceOf(address(this)), amount);
-            token.safeTransfer(userAddr, realWithdraw);
-        }
-        poolInfo.debtToken.burn(userAddr, amount);
-        user.amount -= amount;
-        poolInfo.stakingAmount -= amount;
-        emit Withdraw(userAddr, pid, amount);
-    }
-
-    function harvest(uint256 pid) public override nonReentrant whenNotPaused {
-        _harvest(pid);
-    }
-
-    function _harvest(uint256 pid) internal {
-        uint256 rAmount = onlyHarvest(pid);
-        if (rAmount > 0) {
-            _rewardLocker.lockFarmReward(msg.sender, rAmount);
-        }
-        emit Harvest(msg.sender, pid, rAmount);
-    }
-
-    function harvestMany(uint256[] memory pids) public override whenNotPaused nonReentrant {
-        uint256 pl = pids.length;
-        require(pl > 0, "empoty pids");
-
-        uint256 rAmountTotal;
-        uint256[] memory rAmounts = new uint256[](pl);
-        for (uint256 i; i < pl; i++) {
-            uint256 samount = onlyHarvest(pids[i]);
-            rAmountTotal += samount;
-            rAmounts[i] = samount;
-        }
-
-        if (rAmountTotal > 0) {
-            _rewardLocker.lockFarmReward(msg.sender, rAmountTotal);
-        } else {
-            revert("empty staking");
-        }
-        emit HarvestMany(msg.sender, pids, rAmounts);
-    }
-
-    function pendingReward(uint256 pid) public view override returns (uint256) {
-        PoolInfo memory pool = _poolInfo[pid];
-        UserInfo memory user = _userInfo[pid][msg.sender];
-        if (user.amount > 0) {
-            return (_rewardPerBlock * (block.number - user.rewardAtBlock) * pool.allocPoint) / _totalAllocPoint;
-        }
-    }
-
-    function dailyReward(uint256 pid) public view override returns (uint256) {
-        return (_rewardPerBlock * _oneDayBlocks * _poolInfo[pid].allocPoint) / _totalAllocPoint;
-    }
-
-    function onlyHarvest(uint256 pid) internal returns (uint256 rAmount) {
+    function withdraw(uint256 pid, uint256 amount) public override nonReentrant {
         PoolInfo storage pool = _poolInfo[pid];
         UserInfo storage user = _userInfo[pid][msg.sender];
-        if (user.amount > 0) {
-            uint256 currentBlock = block.number;
-            rAmount = (_rewardPerBlock * (currentBlock - user.rewardAtBlock) * pool.allocPoint) / _totalAllocPoint;
-            user.rewardAtBlock = currentBlock;
-        } else {
-            revert("no staking");
+
+        require(user.amount >= amount, "over withdraw");
+
+        updatePool(pid);
+
+        uint256 pending = (user.amount * pool.accTwoPerShare) / 1e12 - user.rewardDebt;
+
+        user.amount -= amount;
+        user.rewardDebt = (user.amount * pool.accTwoPerShare) / 1e12;
+
+        if (pending > 0) {
+            safeTwoTransfer(msg.sender, pending);
         }
+        uint256 percent = withdrawPercent(user.depositTime);
+        uint256 userAmount = (amount * percent) / 10000;
+        uint256 govAmount = amount - userAmount;
+        pool.token.safeTransfer(msg.sender, userAmount);
+        if (govAmount > 0) {
+            pool.token.safeTransfer(_govVault, govAmount);
+        }
+
+        emit Withdraw(msg.sender, pid, amount);
+    }
+
+    function canWithdraw(
+        uint256 pid,
+        address user,
+        uint256 amount
+    )
+        public
+        view
+        returns (
+            uint256 userAmount,
+            uint256 govVault,
+            uint256 percent
+        )
+    {
+        percent = withdrawPercent(_userInfo[pid][user].depositTime);
+        userAmount = (amount * percent) / 10000;
+        govVault = amount - userAmount;
+    }
+
+    function withdrawPercent(uint256 depositTime) public view returns (uint256) {
+        uint256 nowTime = block.timestamp;
+        if (depositTime == nowTime) {
+            return 7800; // 78%
+        }
+        uint256 diff = nowTime - depositTime;
+        if (diff > 2 weeks) {
+            return 10000; // 100%
+        } else if (diff > 1 weeks) {
+            return 9990; // 99.9%
+        } else if (diff > 3 days) {
+            return 9950; // 99.5%
+        } else if (diff > 1 days) {
+            return 9900; // 99%
+        } else if (diff > 1 hours) {
+            return 9700; // 97%
+        } else {
+            return 9500; // 95%
+        }
+    }
+
+    function harvestAll() public override {
+        uint256 length = _poolInfo.length;
+        uint256 calc;
+        uint256 pending;
+        UserInfo storage user;
+        PoolInfo storage pool;
+        uint256 totalPending;
+        for (uint256 pid = 0; pid < length; ++pid) {
+            user = _userInfo[pid][msg.sender];
+            if (user.amount > 0) {
+                pool = _poolInfo[pid];
+                updatePool(pid);
+
+                calc = (user.amount * pool.accTwoPerShare) / 1e12;
+                pending = calc - user.rewardDebt;
+                user.rewardDebt = calc;
+
+                if (pending > 0) {
+                    totalPending += pending;
+                }
+            }
+        }
+        if (totalPending > 0) {
+            safeTwoTransfer(msg.sender, totalPending);
+        }
+        emit HarvestAll(msg.sender, totalPending);
     }
 
     function poolInfoLength() public view returns (uint256) {
@@ -247,26 +303,57 @@ contract Garden is IGarden, WithAdminRole, ReentrancyGuardUpgradeable, PausableU
         return _poolInfo;
     }
 
-    function poolApr(uint256 pid) public view override returns (uint256) {
-        PoolInfo memory pool = _poolInfo[pid];
-        if (pool.stakingAmount == 0) {
-            return 0;
+    function safeTwoTransfer(address to, uint256 amount) internal {
+        uint256 twoBal = _twoToken.balanceOf(address(this));
+        uint256 sending = (amount * _initRewardPercent) / 100;
+        if (sending > twoBal) {
+            _twoToken.transfer(to, twoBal);
+        } else {
+            _twoToken.transfer(to, sending);
+            uint256 locked = twoBal - sending;
+            _twoToken.transfer(address(_rewardLocker), locked);
+            _rewardLocker.lockFarmReward(to, locked);
         }
-
-        return
-            (((_rewardPerBlock * _oneDayBlocks * pool.allocPoint) / _totalAllocPoint) *
-                _rewardTokenPrice *
-                365 *
-                10000) / (pool.stakingAmount * pool.price);
     }
 
-    function approve(IERC20 token, address spender) public restricted {
-        token.approve(spender, type(uint256).max);
+    function emergencyWithdraw(uint256 pid) public override {
+        PoolInfo storage pool = _poolInfo[pid];
+        UserInfo storage user = _userInfo[pid][msg.sender];
+
+        uint256 oldUserAmount = user.amount;
+        user.amount = 0;
+        user.rewardDebt = 0;
+        pool.token.safeTransfer(msg.sender, oldUserAmount);
+        emit EmergencyWithdraw(msg.sender, pid, oldUserAmount);
     }
 
-    receive() external payable {}
+    function daylyReward(uint256 pid) public view returns (uint256) {
+        uint256 multiplier = getMultiplier(block.number - 1, block.number);
+        PoolInfo memory pool = _poolInfo[pid];
+        return (multiplier * _rewardPerBlock * _oneDayBlocks * pool.allocPoint) / _totalAllocPoint;
+    }
 
-    function version() public pure returns (uint256) {
-        return 30;
+    function squidPoolCalim(uint256 from, uint256 to) public override returns (uint256) {
+        require(msg.sender == _squidGameContract, "none squid game");
+        uint256 amount = (_rewardPerBlock * getMultiplier(from, to) * _squidGameAllocPoint) / _totalAllocPoint;
+
+        _twoToken.mint(_squidGameContract, amount);
+        return amount;
+    }
+
+    function chainInfo()
+        public
+        view
+        returns (
+            uint256 chainId,
+            uint256 blockNumber,
+            uint256 timestamp
+        )
+    {
+        assembly {
+            chainId := chainid()
+        }
+        blockNumber = block.number;
+        timestamp = block.timestamp;
     }
 }

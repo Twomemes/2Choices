@@ -1,8 +1,8 @@
 import {ERC20PermitUpgradeable} from "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/draft-ERC20PermitUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
-import {IKaki} from "../interfaces/IKaki.sol";
+import {ITwoToken} from "../interfaces/ITwoToken.sol";
 
-contract TwoToken is ERC20PermitUpgradeable, IKaki, AccessControlUpgradeable {
+contract TwoToken is ERC20PermitUpgradeable, ITwoToken, AccessControlUpgradeable {
     bytes32 public constant MINTER = keccak256("MINTER");
     uint256 public constant MAX_SUPPLY = 222222222_222222222222222222;
 

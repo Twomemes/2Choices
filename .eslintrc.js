@@ -14,5 +14,9 @@ module.exports = {
     'no-empty': 'off',
     'no-empty-function': 'off',
     '@typescript-eslint/no-empty-function': 'off',
+    'no-constant-condition': 'off',
+    '@typescript-eslint/no-var-requires': 'off',
+    'prefer-const': 'off',
+    'no-var': 'off',
   },
 };

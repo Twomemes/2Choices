@@ -2,16 +2,16 @@ import type { ContractAddress } from "./bscTest";
 
 
 const addrs: ContractAddress = {
-  squidGame: '',
+  squidGame: '0x6E945f520A93DB97BfF9bd5028394c0409af0FF0',
   squidShortGame: '',
   busd: '',
-  oracle: '',
+  oracle: '0x7842459e306d9AF96D34b34466FcD26D08388A15',
   blindBoxDrop: '',
   squidAllowList: '',
   squidTicket: '',
   squidOpenBox: '',
   facet: '',
-  farm: '0x6D8Df75608Af20b74Fb9EfFd8b2cFc1155D444b3',
+  farm: '0xa88F52E2c5eFE96778eFEc33Efc87F6EAd3492Ba',
   kakiCaptain: '',
   captainClaim: '',
   captainMintList: '',
