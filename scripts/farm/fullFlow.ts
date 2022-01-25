@@ -1,5 +1,5 @@
 import { ERC20__factory, Garden, Garden__factory } from '~/typechain';
-import { farmContract, getSigner } from '../../utils/contract';
+import { farmContract, getSigner, twoTokenContract } from '../../utils/contract';
 import { parseEther } from 'ethers/lib/utils';
 import { contractAddress } from '../../utils/contract';
 import { printEtherResult, printEtherResultArray } from '../../utils/logutil';
@@ -35,6 +35,15 @@ async function deploy() {
 
 
 async function config(farm: Garden) {
+
+  const two = await twoTokenContract();
+
+  const mintRole = await two.MINTER();
+
+  const tx = await two.grantRole(mintRole, farm.address);
+
+  console.log(`grant mintRole: ${tx.hash}`);
+
   const lp = await farm.addPool(23, addrs.lp);
   console.log(`add lp pool : ${lp.hash}`);
   const wftm = await farm.addPool(3, addrs.wftm);
@@ -89,12 +98,12 @@ async function harvest(farm: Garden) {
 }
 
 (async () => {
-  // const farm = await deploy();
-  const farm = await farmContract();
-  // await config(farm);
-  // await deposit(farm);
+  const farm = await deploy();
+  // const farm = await farmContract();
+  await config(farm);
+  await deposit(farm);
 
-  // await delay(20 * 1000);
+  await delay(20 * 1000);
   await harvest(farm);
   await delay(20 * 1000);
   await withdraw(farm);
