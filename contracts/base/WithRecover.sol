@@ -16,7 +16,7 @@ contract WithRecover is WithAdminRole {
     }
 
     function withDraw(uint256 amount) public restricted {
-        msg.sender.call{value:amount}("");
+        msg.sender.call{value: amount}("");
     }
 
     function recoverERC721(IERC721Upgradeable _token, uint256[] memory tokenIds) public restricted {

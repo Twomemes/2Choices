@@ -8,6 +8,7 @@ import "../interfaces/IRandoms.sol";
 contract MockWithRandom is Initializable {
     IRandoms _randoms;
     uint256 seed;
+
     function __WithRandom_init(IRandoms randoms) internal initializer {
         __WithRandom_init_unchained(randoms);
     }

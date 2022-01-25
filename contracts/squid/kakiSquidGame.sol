@@ -80,8 +80,8 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         _ticketNFT = nftToken_;
         _farmGarden=farmGarden;
 
-        _ticketToBonus0 = 160 ether;
-        _ticketToBonus1 = 320 ether;
+        _ticketToBonus0 = 156800000000000000000;
+        _ticketToBonus1 = 313600000000000000000;
         _nextGameTime = 1638442800; //2021-12-2 16:00:00
 
         _lastUserAwardRate = 3;
@@ -224,8 +224,8 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         require(_nextGameTime <= time, "The chapter is not start.");
         require(!isChapterStart[_chapter], "The chapter is already start.");
 
-        //_nextGameTime = time;
-
+        //_nextGameTime = time;        
+        _totalBonus[_chapter] += _farmGarden.squidPoolCalim(_kakiPayWalletAddress);
         isChapterStart[_chapter] = true;
         _lastRound = 0;
         _lastRoundStartTime[_chapter][_lastRound] = time;

@@ -28,6 +28,6 @@ export async function bumpVersion(fname: string) {
 }
 export async function checkHasVersionFunction(fname: string) {
   const fpath = `contracts/${fname}`;
-  const src = await fs.readFile(fpath, { encoding: "utf8" });
+  const src = await fs.readFile(fpath, {encoding: 'utf8'});
   return /function\s+version\(\)/.test(src);
 }

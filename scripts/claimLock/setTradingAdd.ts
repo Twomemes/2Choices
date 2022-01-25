@@ -1,6 +1,6 @@
-import { parseEther } from 'ethers/lib/utils';
-import { contractAddress, claimLockContract } from "../../utils/contract";
-import { formatEther } from 'ethers/lib/utils'
+import {parseEther} from 'ethers/lib/utils';
+import {contractAddress, claimLockContract} from '../../utils/contract';
+import {formatEther} from 'ethers/lib/utils';
 
 (async () => {
   const claimlock = await claimLockContract();

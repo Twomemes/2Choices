@@ -1,7 +1,5 @@
-import { deploy } from '~/utils/upgrader';
+import {deploy} from '~/utils/upgrader';
 
-
-
-(async()=>{
+(async () => {
   await deploy(`mock/Tools.sol`);
-})()
+})();

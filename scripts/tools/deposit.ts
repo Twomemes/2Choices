@@ -1,10 +1,10 @@
-import { toolsContract } from '~/utils/contract';
-import { parseEther } from 'ethers/lib/utils';
+import {toolsContract} from '~/utils/contract';
+import {parseEther} from 'ethers/lib/utils';
 
 (async () => {
   const tools = await toolsContract();
-  const bnbVault = '0xf9d32C5E10Dd51511894b360e6bD39D7573450F9'
-  const busdVault = '0xe5ed8148fE4915cE857FC648b9BdEF8Bb9491Fa5'
+  const bnbVault = '0xf9d32C5E10Dd51511894b360e6bD39D7573450F9';
+  const busdVault = '0xe5ed8148fE4915cE857FC648b9BdEF8Bb9491Fa5';
   const value = parseEther('0.1');
   const tx = await tools.deposit(busdVault, value, false);
   console.log(tx.hash);

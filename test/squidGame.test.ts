@@ -56,12 +56,11 @@
 //     const [firstTicket, secondTicket, thirthTicket] = ticketTokenids;
 //     await expect(game.startGame(firstTicket), 'buyTicket first').emit(game, 'BuyTicket');
 
-
 //     // users[1].game.startGame()
 //     // await expect(game.buyTicket(), 'ticket buyed already').reverted;
 
 //     //expect(await game.getRoundChip(), 'init round chip must eq 16').eq(16)
-    
+
 //     await expect(game.addLoot(), 'The chapter is not start').revertedWith('The chapter is not start');
 
 //     // change chain time to nextGameTime
@@ -70,11 +69,10 @@
 //     await expect(game.addLoot(), 'addLoot').emit(game, 'AddLoot');
 //     await expect(game.addLoot(), 'duplicated addLoot').reverted;
 //     await expect(game.startGame(secondTicket), 'must buy before addLoot').reverted;
-    
+
 //     let totalBonus=await game.getTotalBonus(0);
-    
+
 //     console.log('*************************',totalBonus.toString());
-    
 
 //     // round 1
 //     await expect(game.placeBet(16), 'round 1 placeBet').emit(game, 'PlaceBet');
@@ -98,7 +96,7 @@
 //     // round 3
 //     await expect(game.placeBet(4), 'round 3 place bet').emit(game, 'PlaceBet');
 //     await network.provider.send("evm_increaseTime", [5 * 60])
-//     await expect(game.settle(), 'round 3 settle').emit(game, 'Settle'); 
+//     await expect(game.settle(), 'round 3 settle').emit(game, 'Settle');
 
 //     console.log(chalk.cyan('round 3 success'))
 //     // rount 4
@@ -108,8 +106,6 @@
 
 //     chip=await game.getRoundChip();
 //     console.log('chip 4 **************',chip.toString());
-
-    
 
 //     console.log(chalk.cyan('round 4 success'))
 //     // rount 5
@@ -123,23 +119,21 @@
 //     let totalChip=await game._totalWinnerChip(0);
 //     console.log('totalChip  **************',totalChip.toString());
 //     let chapter=await game._chapter();
-//     console.log('chapter**************',chapter.toString()); 
-    
+//     console.log('chapter**************',chapter.toString());
+
 //     let bonus=await game.getUserBonus();
-//     console.log('bonus**************',bonus.toString()); 
+//     console.log('bonus**************',bonus.toString());
 //     await game.claim();
 //     balanceOfUser = (await usdt.balanceOf(users[0].address));
 //     console.log('*************************balanceOfUser2',balanceOfUser.toString());
 
 //     bonus=await game.getUserBonus();
-//     console.log('bonus2**************',bonus.toString()); 
-//     console.log('end**************'); 
+//     console.log('bonus2**************',bonus.toString());
+//     console.log('end**************');
 //     // rount 6
 //     await expect(game.placeBet(1), 'non round 6').reverted;
 //     // await network.provider.send("evm_increaseTime", [5 * 60])
 //     await expect(game.settle(), 'non round 6').reverted;
-
-
 
 //     // const chapter = await game._chapter();
 //     // const totalBonus = await game.getTotalBonus(chapter.sub(1));

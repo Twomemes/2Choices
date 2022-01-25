@@ -5,7 +5,7 @@ import "../interfaces/IERC20.sol";
 import "../base/WithAdminRole.sol";
 
 contract ClaimLock is IClaimLock, WithAdminRole {
-    ITwoToken  _kaki;
+    ITwoToken  _two;
     uint256 constant THOUSAND = 10 ** 3;
     uint256 public _startTime;
     uint256 public _tradingStartTime;
@@ -36,7 +36,7 @@ contract ClaimLock is IClaimLock, WithAdminRole {
         // block number
         _farmPeriod = 9800000;
         _addFarm = farmAdd;
-        _kaki = kTokenAdd;
+        _two = kTokenAdd;
     }
 
     function lockFarmReward(address account, uint256 amount) public override isFarm {
@@ -54,8 +54,8 @@ contract ClaimLock is IClaimLock, WithAdminRole {
         require(index.length <= _userLockedFarmRewards[msg.sender].length, "Invalid index.");
         for (uint256 i; i < index.length; i++) {
             uint256 bonus = getClaimableFarmReward(msg.sender, index[i]);
-            _kaki.mint(msg.sender, bonus);
-            _kaki.mint(_treasury, (_userLockedFarmRewards[msg.sender][index[i]]._locked - bonus));
+            _two.transfer(msg.sender, bonus);
+            _two.transfer(_treasury, (_userLockedFarmRewards[msg.sender][index[i]]._locked - bonus));
             _userLockedFarmRewards[msg.sender][index[i]] = _userLockedFarmRewards[msg.sender][_userLockedFarmRewards[msg.sender].length - 1];
             _userLockedFarmRewards[msg.sender].pop();
         }
@@ -90,7 +90,7 @@ contract ClaimLock is IClaimLock, WithAdminRole {
     }
 
     function version() public pure returns (uint256) {
-        return 1;
+        return 3;
     }
 
 }

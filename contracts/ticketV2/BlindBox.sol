@@ -8,7 +8,6 @@ import "../interfaces/IKakiCaptain.sol";
 import "../interfaces/IBlindBox.sol";
 
 contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
-
     IERC20 _kaki;
     IKakiTicket _kakiTicket;
     IKakiCaptain _kakiCaptain;
@@ -16,7 +15,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     string[] _uri;
     bool _able;
     uint256 _startTime;
-    uint256 constant THOUSAND = 10 ** 3;
+    uint256 constant THOUSAND = 10**3;
     uint256 public _aPrice;
     uint256 public _bPrice;
     uint256 public _sTicketProb;
@@ -30,12 +29,16 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     address constant BlackHole = 0x0000000000000000000000000000000000000000;
     mapping(uint256 => uint256) _sTicketCount;
 
-    function initialize(IKakiTicket ercAdd, IERC20 kTokenAdd, IRandoms radomAdd) public initializer {
+    function initialize(
+        IKakiTicket ercAdd,
+        IERC20 kTokenAdd,
+        IRandoms radomAdd
+    ) public initializer {
         __WithAdminRole_init();
         __WithRandom_init(radomAdd);
         _kaki = kTokenAdd;
         _kakiTicket = ercAdd;
-        _startTime = 7776000;   //start time set before deploy!
+        _startTime = 7776000; //start time set before deploy!
         _aPrice = 100 ether;
         _bPrice = 222 ether;
         _commonChip = 16;
@@ -43,7 +46,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         _sTicketProb = 49;
         _foundationRate = 20; //2%
         _foundation = 0x958f0991D0e847C06dDCFe1ecAd50ACADE6D461d; // kaki foundation address
-        _squidGameFound = 0x958f0991D0e847C06dDCFe1ecAd50ACADE6D461d;//
+        _squidGameFound = 0x958f0991D0e847C06dDCFe1ecAd50ACADE6D461d; //
         _squidCoinBase = 0x958f0991D0e847C06dDCFe1ecAd50ACADE6D461d;
     }
 
@@ -58,13 +61,13 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     }
 
     function aBoxOpen(uint256 num) public override isAble {
-        for (uint256 i; i < num; i ++) {
+        for (uint256 i; i < num; i++) {
             _aBoxOpen();
         }
     }
 
     function bBoxOpen(uint256 num) public override isAble {
-        for (uint256 i; i < num; i ++) {
+        for (uint256 i; i < num; i++) {
             _bBoxOpen();
         }
     }
@@ -93,7 +96,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     //     require(totalType == 3 && totalChip == 80, "Invalid NFT.");
     //     uint256 rand = random(1, 100);
     //     totalProb = totalProb + extraProb;
-        
+
     //     for (uint256 i; i < 3; i++){
     //         _kakiTicket.transferFrom(msg.sender, address(0xdead), ticket[i]);
     //     }
@@ -111,12 +114,12 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     }
 
     function _bBoxOpen() internal {
-        uint256 fee = _bPrice * _foundationRate / THOUSAND;
+        uint256 fee = (_bPrice * _foundationRate) / THOUSAND;
         _kaki.transferFrom(msg.sender, _foundation, fee);
         _kaki.transferFrom(msg.sender, _squidCoinBase, _bPrice - fee);
         uint256 randTicket = random(1, 100);
         uint256 rand = random(0, 10);
- 
+
         if (randTicket <= 85) {
             _kakiTicket.mint(msg.sender, _commonChip, rand + 5, _aPrice, 0);
             emit BuyBBox(msg.sender, 0);
@@ -125,7 +128,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
             emit BuyBBox(msg.sender, 1);
         } else {
             _kakiTicket.mint(msg.sender, _rareChip, _sTicketProb, _bPrice, 2);
-            emit BuyBBox(msg.sender, 2); 
+            emit BuyBBox(msg.sender, 2);
         }
     }
 
@@ -133,7 +136,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     function setSTicketProb(uint256 newProb) public onlyOwner {
         _sTicketProb = newProb;
     }
-    
+
     function setABoxPrice(uint256 aPrice) public onlyOwner {
         _aPrice = aPrice;
     }

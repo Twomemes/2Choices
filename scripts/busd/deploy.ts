@@ -1,4 +1,4 @@
-import { deployMockUsdt } from '~/utils/deployer'
+import {deployMockUsdt} from '~/utils/deployer';
 
 (async () => {
   await deployMockUsdt();

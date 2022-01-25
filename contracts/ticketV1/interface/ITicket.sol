@@ -22,5 +22,6 @@ interface ITicket is IBaseERC721 {
     ) external returns (uint256 tokenId);
 
     function getTicketInfo(uint256 tokenId) external view returns (TicketPara memory);
+
     function getUserTokenInfo(address user) external view returns (TicketPara[] memory ticketList);
 }

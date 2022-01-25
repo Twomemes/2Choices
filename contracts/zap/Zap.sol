@@ -6,8 +6,8 @@ import "../interfaces/IPancakeRouter02.sol";
 import "../interfaces/IZap.sol";
 import "../interfaces/IWETH.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-contract KakiZap is IZap, WithAdminRole {
 
+contract KakiZap is IZap, WithAdminRole {
     address private constant KAKI = 0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56;
     address private constant BUSD = 0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56;
     address private constant WBNB = 0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c;
@@ -27,8 +27,12 @@ contract KakiZap is IZap, WithAdminRole {
     }
 
     receive() external payable {}
-    
-    function zapInToken(address from, uint amount, address to) public override {
+
+    function zapInToken(
+        address from,
+        uint256 amount,
+        address to
+    ) public override {
         IERC20(from).transferFrom(msg.sender, address(this), amount);
         _approveTokenIfNeeded(from);
         if (isLP(to)) {
@@ -38,12 +42,14 @@ contract KakiZap is IZap, WithAdminRole {
             if (from == token0 || from == token1) {
                 address other = from == token0 ? token1 : token0;
                 _approveTokenIfNeeded(other);
-                uint halfAmount = amount / 2;
-                uint otherAmount = _swap(from, halfAmount, other, address(this));
+                uint256 halfAmount = amount / 2;
+                uint256 otherAmount = _swap(from, halfAmount, other, address(this));
                 pair.skim(address(this));
                 ROUTER.addLiquidity(from, other, amount - halfAmount, otherAmount, 0, 0, msg.sender, block.timestamp);
             } else {
-                uint bnbAmount = from == WBNB ? _safeSwapToBNB(amount) : _swapTokenForBNB(from, amount, address(this));
+                uint256 bnbAmount = from == WBNB
+                    ? _safeSwapToBNB(amount)
+                    : _swapTokenForBNB(from, amount, address(this));
                 _swapBNBToLp(to, bnbAmount, msg.sender);
             }
         } else {
@@ -55,7 +61,7 @@ contract KakiZap is IZap, WithAdminRole {
         _swapBNBToLp(to, msg.value, msg.sender);
     }
 
-    function zapOut(address from, uint amount) public override {
+    function zapOut(address from, uint256 amount) public override {
         IERC20(from).transferFrom(msg.sender, address(this), amount);
         _approveTokenIfNeeded(from);
 
@@ -80,11 +86,18 @@ contract KakiZap is IZap, WithAdminRole {
 
     function _approveTokenIfNeeded(address token) private {
         if (IERC20(token).allowance(address(this), address(ROUTER)) == 0) {
-            IERC20(token).approve(address(ROUTER), uint(0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)); 
+            IERC20(token).approve(
+                address(ROUTER),
+                uint256(0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff)
+            );
         }
     }
 
-    function _swapBNBToLp(address lp, uint amount, address receiver) private {
+    function _swapBNBToLp(
+        address lp,
+        uint256 amount,
+        address receiver
+    ) private {
         if (!isLP(lp)) {
             _swapBNBForToken(lp, amount, receiver);
         } else {
@@ -93,15 +106,15 @@ contract KakiZap is IZap, WithAdminRole {
             address token1 = pair.token1();
             if (token0 == WBNB || token1 == WBNB) {
                 address token = token0 == WBNB ? token1 : token0;
-                uint swapValue = amount / 2;
-                uint tokenAmount = _swapBNBForToken(token, swapValue, address(this));
+                uint256 swapValue = amount / 2;
+                uint256 tokenAmount = _swapBNBForToken(token, swapValue, address(this));
                 _approveTokenIfNeeded(token);
                 pair.skim(address(this));
-                ROUTER.addLiquidityETH{value : amount - swapValue}(token, tokenAmount, 0, 0, receiver, block.timestamp);
+                ROUTER.addLiquidityETH{value: amount - swapValue}(token, tokenAmount, 0, 0, receiver, block.timestamp);
             } else {
-                uint swapValue = amount / 2;
-                uint token0Amount = _swapBNBForToken(token0, swapValue, address(this));
-                uint token1Amount = _swapBNBForToken(token1, amount - swapValue, address(this));
+                uint256 swapValue = amount / 2;
+                uint256 token0Amount = _swapBNBForToken(token0, swapValue, address(this));
+                uint256 token1Amount = _swapBNBForToken(token1, amount - swapValue, address(this));
                 _approveTokenIfNeeded(token0);
                 _approveTokenIfNeeded(token1);
                 pair.skim(address(this));
@@ -110,29 +123,42 @@ contract KakiZap is IZap, WithAdminRole {
         }
     }
 
-    function _swapBNBForToken(address token, uint amount, address receiver) private returns (uint) {
+    function _swapBNBForToken(
+        address token,
+        uint256 amount,
+        address receiver
+    ) private returns (uint256) {
         address[] memory path;
         path = new address[](2);
         path[0] = WBNB;
         path[1] = token;
 
-        uint[] memory amounts = ROUTER.swapExactETHForTokens{value : amount}(0, path, receiver, block.timestamp);
+        uint256[] memory amounts = ROUTER.swapExactETHForTokens{value: amount}(0, path, receiver, block.timestamp);
         return amounts[amounts.length - 1];
     }
 
-    function _swapTokenForBNB(address token, uint amount, address receiver) private returns (uint) {
+    function _swapTokenForBNB(
+        address token,
+        uint256 amount,
+        address receiver
+    ) private returns (uint256) {
         address[] memory path;
         path = new address[](2);
         path[0] = token;
         path[1] = WBNB;
 
-        uint[] memory amounts = ROUTER.swapExactTokensForETH(amount, 0, path, receiver, block.timestamp);
+        uint256[] memory amounts = ROUTER.swapExactTokensForETH(amount, 0, path, receiver, block.timestamp);
         return amounts[amounts.length - 1];
     }
 
-    function _swap(address from, uint amount, address to, address receiver) private returns (uint) {
+    function _swap(
+        address from,
+        uint256 amount,
+        address to,
+        address receiver
+    ) private returns (uint256) {
         address[] memory path;
-        if (from ==WBNB || to == WBNB) {
+        if (from == WBNB || to == WBNB) {
             path = new address[](2);
             path[0] = from;
             path[1] = to;
@@ -143,17 +169,17 @@ contract KakiZap is IZap, WithAdminRole {
             path[2] = to;
         }
 
-        uint[] memory amounts = ROUTER.swapExactTokensForTokens(amount, 0, path, to, block.timestamp);
+        uint256[] memory amounts = ROUTER.swapExactTokensForTokens(amount, 0, path, to, block.timestamp);
         return amounts[amounts.length - 1];
     }
 
-    function _safeSwapToBNB(uint amount) private returns (uint) {
+    function _safeSwapToBNB(uint256 amount) private returns (uint256) {
         require(IERC20(WBNB).balanceOf(address(this)) >= amount, "Not enough WBNB balance.");
-        uint beforeBNB = address(this).balance;
+        uint256 beforeBNB = address(this).balance;
 
         IERC20(WBNB).transferFrom(msg.sender, address(this), amount);
         IWETH(WBNB).withdraw(amount);
-        (bool success, ) = msg.sender.call{ value: amount }(new bytes(0));
+        (bool success, ) = msg.sender.call{value: amount}(new bytes(0));
         require(success, "! safe transfer bnb");
 
         return address(this).balance - beforeBNB;
@@ -173,7 +199,7 @@ contract KakiZap is IZap, WithAdminRole {
         notLPToken[token] = true;
     }
 
-    function removeToken(uint index) public onlyOwner {
+    function removeToken(uint256 index) public onlyOwner {
         address token = tokens[index];
         notLPToken[token] = false;
         tokens[index] = tokens[tokens.length - 1];
@@ -181,10 +207,10 @@ contract KakiZap is IZap, WithAdminRole {
     }
 
     function cleanLeft() public onlyOwner {
-        for (uint i = 0; i < tokens.length; i++) {
+        for (uint256 i = 0; i < tokens.length; i++) {
             address token = tokens[i];
             if (token == address(0)) continue;
-            uint amount = IERC20(token).balanceOf(address(this));
+            uint256 amount = IERC20(token).balanceOf(address(this));
             if (amount > 0) {
                 _swapTokenForBNB(token, amount, kakiFoundation);
             }
