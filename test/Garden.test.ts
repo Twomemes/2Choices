@@ -82,6 +82,21 @@ describe('garden', async () => {
     expect((await farm._userInfo(0, users[0].address)).amount).to.eq(value);
 
   });
+  it('add pool -> deposit -> emergencyWithdraw ', async () => {
+    const { users, farm, mockLp } = await setup();
+
+    await farm.addPool(3, mockLp.address);
+    const value = parseEther('10.1');
+
+    const lpBl = await mockLp.balanceOf(users[0].address);
+    await farm.deposit(0, value);
+
+    await expect(farm.emergencyWithdraw(0)).to.be.revertedWith('can not now');
+
+    await farm.setCanEmergencyWithdraw(true);
+    await farm.emergencyWithdraw(0);
+
+  });
   it('add pool-> deposit -> harvest', async () => {
     const { users, farm, mockLp, two } = await setup();
     await farm.addPool(3, mockLp.address);
@@ -120,7 +135,7 @@ describe('garden', async () => {
 
     await users[1].farm.squidPoolCalim(users[1].address);
 
-    console.log(`_squidGameLastClaimBlockNumber : ${await farm._squidGameLastClaimBlockNumber()}`);
+    console.log(`_squidGameLastRewardBlock : ${await farm._squidGameLastRewardBlock()}`);
 
     const squidBl = await two.balanceOf(users[1].address)
     console.log(`squidBl : ${formatEther(squidBl)}`);
