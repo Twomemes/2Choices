@@ -27,9 +27,10 @@ interface IGarden {
     function deposit(uint256 pid, uint256 amount) external payable;
 
     function pendingReward(uint256 pid, address user) external view returns (uint256);
-    function emergencyWithdraw(uint256 pid) external ;
+
+    function emergencyWithdraw(uint256 pid) external;
 
     function poolInfo() external view returns (PoolInfo[] memory);
 
-    function squidPoolCalim(uint256 from, uint256 to) external returns(uint256);
+    function squidPoolCalim() external returns (uint256);
 }
