@@ -40,18 +40,18 @@
 //       let balanceOfUser = (await ticket.balanceOf(users[0].address));
 //       expect(balanceOfUser).to.equal(1);
 //     });
-  
+
 //     it('buyTicket', async () => {
 //       const { users, openBox, usdt, ticket, allowClaimTicket } = await setup();
 //       await ticket.setupAdmin(openBox.address);
 //       for (let i = 1; i < users.length; i++) {
 //         await usdt.transfer(users[i].address, parseEther('10000'));
 //       }
-  
+
 //       for (let i = 0; i < users.length; i++) {
 //         await users[i].usdt.approve(openBox.address, parseEther(`1${'0'.repeat(20)}`));
 //       }
-  
+
 //       for (let i = 0; i < users.length; i++) {
 //         await users[i].openBox.buyTicket(1);
 //         let balanceOfUser = (await ticket.balanceOf(users[i].address));
@@ -69,7 +69,7 @@
 //       console.log(balanceOfUser);
 //     });
 //   })
-  
+
 //   context("should failed", async() => {
 //     it('buyTicket is not able', async () => {
 //       const { users, openBox, usdt, ticket, allowClaimTicket } = await setup();

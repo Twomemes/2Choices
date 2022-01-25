@@ -8,20 +8,14 @@ import "@openzeppelin/contracts-upgradeable/utils/CountersUpgradeable.sol";
 
 import "./WithAdminRole.sol";
 
-abstract contract AllowERC721 is BaseERC721{
-    
+abstract contract AllowERC721 is BaseERC721 {
     modifier checkAllowByTokenId(uint256 tokenId) {
-        (bool isAllow) = allowTransfer(tokenId);
+        bool isAllow = allowTransfer(tokenId);
         require(isAllow, "Using");
         _;
     }
 
-    function allowTransfer(uint256 tokenId)
-        public
-        view
-        virtual
-        returns (bool isAllow)
-    {
+    function allowTransfer(uint256 tokenId) public view virtual returns (bool isAllow) {
         isAllow = true;
     }
 
@@ -50,11 +44,7 @@ abstract contract AllowERC721 is BaseERC721{
         address from,
         address to,
         uint256 tokenId
-    )
-        public
-        override
-        checkAllowByTokenId(tokenId)
-    {
+    ) public override checkAllowByTokenId(tokenId) {
         super.safeTransferFrom(from, to, tokenId);
     }
 
@@ -62,11 +52,7 @@ abstract contract AllowERC721 is BaseERC721{
         address from,
         address to,
         uint256 tokenId
-    )
-        public
-        override
-        checkAllowByTokenId(tokenId)
-    {
+    ) public override checkAllowByTokenId(tokenId) {
         super.transferFrom(from, to, tokenId);
     }
 
@@ -75,12 +61,7 @@ abstract contract AllowERC721 is BaseERC721{
         address to,
         uint256 tokenId,
         bytes calldata data
-    )
-        public
-        override
-        checkAllowByTokenId(tokenId)
-    {
+    ) public override checkAllowByTokenId(tokenId) {
         super.safeTransferFrom(from, to, tokenId, data);
     }
 }
-

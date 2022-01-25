@@ -26,7 +26,7 @@ contract MockRandom is IRandoms {
 
     uint256 private seed;
 
-    constructor(){}
+    constructor() {}
 
     // Views
     function getRandomSeed(address user) external view override returns (uint256) {
@@ -36,7 +36,7 @@ contract MockRandom is IRandoms {
     function getRandomSeedUsingHash(address user, bytes32 hash) public view override returns (uint256) {
         return uint256(keccak256(abi.encodePacked(user, seed, hash, gasleft())));
     }
-    
+
     function setRandom(uint256 _seed) public {
         seed = _seed;
     }

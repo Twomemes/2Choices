@@ -1,5 +1,5 @@
-import type { mnemonicToSeedSync as mnemonicToSeedSyncT } from "ethereum-cryptography/bip39";
-import type { HDKey as HDKeyT } from "ethereum-cryptography/hdkey";
+import type {mnemonicToSeedSync as mnemonicToSeedSyncT} from 'ethereum-cryptography/bip39';
+import type {HDKey as HDKeyT} from 'ethereum-cryptography/hdkey';
 import {
   bufferToHex,
   toBuffer,
@@ -10,29 +10,26 @@ import {
   generateAddress2,
   Address,
   privateToPublic,
-} from "ethereumjs-util";
-import { BigNumber, BigNumberish } from "ethers";
-import BN from "bn.js";
+} from 'ethereumjs-util';
+import {BigNumber, BigNumberish} from 'ethers';
+import BN from 'bn.js';
 
 export function deriveKeyFromMnemonicAndIndex(mnemonic: string, index: number) {
-  return deriveKeyFromMnemonicAndPath(mnemonic, `m/44'/60'/0'/0/${index.toString()}`)
+  return deriveKeyFromMnemonicAndPath(mnemonic, `m/44'/60'/0'/0/${index.toString()}`);
 }
-export function deriveKeyFromMnemonicAndPath(
-  mnemonic: string,
-  hdPath: string
-): Buffer | undefined {
+export function deriveKeyFromMnemonicAndPath(mnemonic: string, hdPath: string): Buffer | undefined {
   const {
     mnemonicToSeedSync,
   }: {
     mnemonicToSeedSync: typeof mnemonicToSeedSyncT;
-  } = require("ethereum-cryptography/bip39");
+  } = require('ethereum-cryptography/bip39');
   const seed = mnemonicToSeedSync(mnemonic);
 
   const {
     HDKey,
   }: {
     HDKey: typeof HDKeyT;
-  } = require("ethereum-cryptography/hdkey");
+  } = require('ethereum-cryptography/hdkey');
 
   const masterKey = HDKey.fromMasterSeed(seed);
   const derived = masterKey.derive(hdPath);
@@ -44,7 +41,7 @@ export function deriveAccount(mnemonic: string, index: BigNumberish) {
   const pk = <Buffer>deriveKeyFromMnemonicAndIndex(mnemonic, Number(index));
   const publicKey = privateToPublic(pk);
   const address = bufferToHex(privateToAddress(pk)).toLowerCase();
-  return { address, index, privateKey: bufferToHex(pk), publicKey: bufferToHex(publicKey) };
+  return {address, index, privateKey: bufferToHex(pk), publicKey: bufferToHex(publicKey)};
 }
 
 export function choseContractAddress(mnemonic: string) {
@@ -64,7 +61,7 @@ export function choseContractAddress(mnemonic: string) {
 
 export function generateContractAddressFor(sender: string, nonce: number) {
   const buffer = [Buffer.from(sender), nonce == 0 ? null : nonce];
-  const addr = keccak256(rlp.encode(buffer)).toString("hex").slice(-40);
+  const addr = keccak256(rlp.encode(buffer)).toString('hex').slice(-40);
   return addr;
 }
 

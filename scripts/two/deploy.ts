@@ -1,13 +1,10 @@
-import { MockToken__factory } from '~/typechain';
-import { getSigner } from '~/utils/contract';
-import { deployments, ethers } from 'hardhat';
-import { deploy } from '../../utils/upgrader';
+import {MockToken__factory} from '~/typechain';
+import {getSigner} from '~/utils/contract';
+import {deployments, ethers} from 'hardhat';
+import {deploy} from '../../utils/upgrader';
 
-
-(async ()=>{
-
-
-  await deploy('two/TwoToken.sol')
+(async () => {
+  await deploy('two/TwoToken.sol');
 
   // const signer0 = await getSigner(0);
   // const factory = new MockToken__factory(signer0);

@@ -36,16 +36,16 @@ contract Ticket is BaseERC721, ITicket {
     }
 
     function getUserTokenInfo(address user) public view override returns (TicketPara[] memory ticketList) {
-        uint256[] memory tokenList  = tokensOfOwner(user);
+        uint256[] memory tokenList = tokensOfOwner(user);
         ticketList = new TicketPara[](tokenList.length);
-        for(uint256 i; i < tokenList.length; i++) {
+        for (uint256 i; i < tokenList.length; i++) {
             ticketList[i] = getTicketInfo(tokenList[i]);
         }
     }
 
-    function setInvalidTime(uint256[] memory idList,uint256 newTime) public onlyOwner {
+    function setInvalidTime(uint256[] memory idList, uint256 newTime) public onlyOwner {
         for (uint256 i; i < idList.length; i++) {
-            _ticketInfo[idList[i]].invalidTime=newTime;
+            _ticketInfo[idList[i]].invalidTime = newTime;
         }
     }
 

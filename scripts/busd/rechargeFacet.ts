@@ -1,6 +1,6 @@
-import { parseEther } from 'ethers/lib/utils';
-import { busdContract } from '~/utils/contract';
-import { contractAddress } from '../../utils/contract';
+import {parseEther} from 'ethers/lib/utils';
+import {busdContract} from '~/utils/contract';
+import {contractAddress} from '../../utils/contract';
 
 (async () => {
   const busd = await busdContract();

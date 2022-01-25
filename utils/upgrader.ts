@@ -1,11 +1,11 @@
-import { getSigner } from '~/utils/contract';
+import {getSigner} from '~/utils/contract';
 import chalk from 'chalk';
-import { BaseContract, BigNumber, CallOverrides, ContractFactory, Overrides, Signer } from 'ethers';
-import { ethers, network, upgrades } from 'hardhat';
-import { bumpVersion, checkHasVersionFunction } from './bumpVersion';
-import gitP, { SimpleGit } from 'simple-git/promise';
-import { TransactionRequest } from '@ethersproject/providers';
-import * as typechain from "~/typechain";
+import {BaseContract, BigNumber, CallOverrides, ContractFactory, Overrides, Signer} from 'ethers';
+import {ethers, network, upgrades} from 'hardhat';
+import {bumpVersion, checkHasVersionFunction} from './bumpVersion';
+import gitP, {SimpleGit} from 'simple-git/promise';
+import {TransactionRequest} from '@ethersproject/providers';
+import * as typechain from '~/typechain';
 import fs from 'fs/promises';
 declare class MyContract extends BaseContract {
   version(overrides?: CallOverrides): Promise<BigNumber>;
@@ -13,8 +13,8 @@ declare class MyContract extends BaseContract {
 
 declare class MyContractFactory extends ContractFactory {
   constructor(signer?: Signer);
-  deploy(overrides?: Overrides & { from?: string | Promise<string> }): Promise<MyContract>;
-  getDeployTransaction(overrides?: Overrides & { from?: string | Promise<string> }): TransactionRequest;
+  deploy(overrides?: Overrides & {from?: string | Promise<string>}): Promise<MyContract>;
+  getDeployTransaction(overrides?: Overrides & {from?: string | Promise<string>}): TransactionRequest;
   attach(address: string): MyContract;
   connect(signer: Signer): MyContractFactory;
 }
@@ -22,7 +22,12 @@ declare class MyContractFactory extends ContractFactory {
 const manifestRepo = process.env['MANIFEST_REPO'] as any;
 
 const origin = 'origin';
-export async function upgrade(fileName: string, address: string, factory: MyContractFactory | any = null, check = true) {
+export async function upgrade(
+  fileName: string,
+  address: string,
+  factory: MyContractFactory | any = null,
+  check = true
+) {
   const name = fileName.split('.')[0];
 
   const narr = name.split('/');
@@ -31,11 +36,11 @@ export async function upgrade(fileName: string, address: string, factory: MyCont
     factory = (<any>typechain)[`${fname}__factory`];
   }
 
-  const dir = './.openzeppelin'
+  const dir = './.openzeppelin';
   try {
     await fs.stat(dir);
   } catch (e) {
-    await fs.mkdir(dir)
+    await fs.mkdir(dir);
   }
   const repo = gitP(dir);
 
@@ -67,14 +72,13 @@ export async function upgrade(fileName: string, address: string, factory: MyCont
   const contract = await ethers.getContractAt(fname, address);
   let vb;
   try {
-
     vb = (await contract.version()).toString();
   } catch (e) {
-    vb = ''
+    vb = '';
   }
   console.log(`will upgrade ${chalk.green(branchName)}, current version: ${chalk.cyan(vb)} address: ${address}`);
   const instance = await upgrades.upgradeProxy(address, new factory(signer0));
-  console.log(`upgraded`)
+  console.log(`upgraded`);
   const version = await instance.version();
   const v = version.toString();
   console.log(`${chalk.green(fileName)} upgrade to ${chalk.green(v)} ${chalk.cyan(address)}`);
@@ -88,8 +92,6 @@ export async function upgrade(fileName: string, address: string, factory: MyCont
   const nextv = await bumpVersion(fileName);
   console.log(`bump  version to ${chalk.cyan(nextv.toString())}`);
 }
-
-
 
 export async function deploy(
   fileName: string,
@@ -108,16 +110,16 @@ export async function deploy(
     );
     throw new Error(`add version function for ${fileName}`);
   }
-  const name = fileName.split(".")[0];
+  const name = fileName.split('.')[0];
 
-  const pn = name.split("/");
+  const pn = name.split('/');
   const contractName = pn[pn.length - 1];
 
   if (!factory) {
     factory = (<any>typechain)[`${contractName}__factory`];
   }
 
-  const dir = './.openzeppelin'
+  const dir = './.openzeppelin';
   try {
     await fs.stat(dir);
   } catch (e) {
@@ -127,28 +129,23 @@ export async function deploy(
   const branchName = `${name}-${network.name}`;
   const rst = await repo.init();
   // }
-  const r = await repo.remote(["-v"]);
-  console.log({ remote: r, branchName });
+  const r = await repo.remote(['-v']);
+  console.log({remote: r, branchName});
   if (!(r && r.includes(origin))) {
     await repo.addRemote(origin, manifestRepo);
   }
   if (check) {
     if (await (await repo.status()).isClean()) {
       try {
-
-        console.log(`git fetch ${origin} ${branchName}`)
+        console.log(`git fetch ${origin} ${branchName}`);
         await repo.fetch(origin, branchName);
         // await repo.pull(origin, branchName);
-        console.log(`git checkout ${branchName}`)
+        console.log(`git checkout ${branchName}`);
         await repo.checkout(branchName);
         console.log(`git merge ${origin}/${branchName} ${branchName}`);
         await repo.mergeFromTo(`${origin}/${branchName}`, branchName);
       } catch (e) {
-        console.log(
-          `branch: ${chalk.cyan(branchName)} not exists ${chalk.green(
-            ".openzeppelin"
-          )}`
-        );
+        console.log(`branch: ${chalk.cyan(branchName)} not exists ${chalk.green('.openzeppelin')}`);
         const baseBranch = `${network.name}-base`;
         try {
           await repo.checkoutBranch(branchName, baseBranch);
@@ -163,15 +160,12 @@ export async function deploy(
     }
   }
   console.log(`will deploy ${chalk.green(branchName)}`);
-  const instance = await upgrades.deployProxy(
-    new factory(await getSigner(0)),
-    args
-  );
+  const instance = await upgrades.deployProxy(new factory(await getSigner(0)), args);
   console.log(`${name} deploy to ${instance.address}`);
   const nextv = await bumpVersion(fileName);
   console.log(`bump  version to ${chalk.cyan(nextv.toString())}`);
   if (check) {
-    await repo.add(".");
+    await repo.add('.');
     await repo.commit(`${name} - v${nextv - 1} ${instance.address}`);
     await repo.push(origin, branchName);
   }

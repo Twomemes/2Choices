@@ -23,7 +23,7 @@ contract MockChainLink is Ownable {
         }
     }
 
-    function random(uint256 answer) public returns(uint256) {
+    function random(uint256 answer) public returns (uint256) {
         _lastAnswer = answer;
         return _lastAnswer;
     }

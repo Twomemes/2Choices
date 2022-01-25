@@ -19,14 +19,12 @@ const addrs = {
   chainlinkRandoms: '',
   claimLock: '',
   two: '',
-  noLoss:'',
+  noLoss: '',
   kakiBusdLP: '',
   kakiBnbLP: '',
   tools: '',
   blindBox: '',
   kakiTicket: '',
-
-
-}
+};
 
 export default addrs;

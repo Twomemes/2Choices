@@ -1,5 +1,4 @@
-import { deriveAccount } from '../../utils/generateAddr';
-
+import {deriveAccount} from '../../utils/generateAddr';
 
 (async () => {
   const mnemonic = process.env.MNEMONIC;

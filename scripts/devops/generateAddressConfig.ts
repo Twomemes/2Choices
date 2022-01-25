@@ -1,47 +1,43 @@
-import fs from "fs/promises";
-import {
-  contractAddress,
-  frontendUsedContracts,
-  mutiContractAddrs,
-} from "~/utils/contract";
-import { network } from "hardhat";
+import fs from 'fs/promises';
+import {contractAddress, frontendUsedContracts, mutiContractAddrs} from '~/utils/contract';
+import {network} from 'hardhat';
 
 const genTypechainDir = `./typechain-tiny`;
 const genTypechainFactoriesDir = `${genTypechainDir}/factories`;
 
 async function cleanCode() {
   const indexFile = `${genTypechainDir}/index.ts`;
-  const content = await fs.readFile(`./typechain/index.ts`, "utf8");
+  const content = await fs.readFile(`./typechain/index.ts`, 'utf8');
 
-  const lines = content.split("\n");
+  const lines = content.split('\n');
 
   const cleaned = lines.filter((l) => {
     return frontendUsedContracts.find((k) => l.includes(k));
   });
-  await fs.writeFile(indexFile, cleaned.join("\n"));
+  await fs.writeFile(indexFile, cleaned.join('\n'));
 
-  for (const d of ["./typechain", "./typechain/factories"]) {
+  for (const d of ['./typechain', './typechain/factories']) {
     const files = await fs.readdir(d);
     for (const f of files) {
       if (frontendUsedContracts.find((k) => f.includes(k))) {
         const chosen = `${d}/${f}`;
         console.log(`chose ${chosen}`);
-        if (chosen.includes("factories")) {
-          const content = await fs.readFile(chosen, "utf8");
+        if (chosen.includes('factories')) {
+          const content = await fs.readFile(chosen, 'utf8');
           await fs.writeFile(
             `${genTypechainFactoriesDir}/${f}`,
             content
-              .split("\n")
+              .split('\n')
               .map((e) => {
-                if (e.includes("static readonly bytecode =")) {
+                if (e.includes('static readonly bytecode =')) {
                   return 'static readonly bytecode ="";';
                 } else {
                   return e;
                 }
               })
-              .join("\n")
+              .join('\n')
           );
-        } else if (!f.includes("index.ts")) {
+        } else if (!f.includes('index.ts')) {
           await fs.copyFile(chosen, `${genTypechainDir}/${f}`);
         }
       }
@@ -52,7 +48,7 @@ async function cleanCode() {
 async function generateContractAddress() {
   const caddr = {} as any;
   for (const key in contractAddress) {
-    if (!["new", "old"].includes(key)) {
+    if (!['new', 'old'].includes(key)) {
       caddr[key] = (<any>contractAddress)[key];
     }
   }
@@ -68,10 +64,7 @@ async function generateContractAddress() {
   const src = `export const contractAddress= ${body}; \n export default contractAddress;`;
 
   await fs.writeFile(`${genTypechainDir}/contractAddress.ts`, src);
-  await fs.appendFile(
-    `${genTypechainDir}/index.ts`,
-    `\nexport { contractAddress } from "./contractAddress";`
-  );
+  await fs.appendFile(`${genTypechainDir}/index.ts`, `\nexport { contractAddress } from "./contractAddress";`);
 }
 
 (async () => {
@@ -80,7 +73,7 @@ async function generateContractAddress() {
   } catch (err) {
     console.log(err);
     console.log(`create dir ${genTypechainFactoriesDir}`);
-    await fs.mkdir(genTypechainFactoriesDir, { recursive: true });
+    await fs.mkdir(genTypechainFactoriesDir, {recursive: true});
   }
 
   await cleanCode();

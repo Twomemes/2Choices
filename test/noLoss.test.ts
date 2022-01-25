@@ -33,7 +33,6 @@
 //       }
 //     }
 
-
 //     await noLoss.createFaction(0);
 //     let list=await noLoss.getFactionList();
 //     console.log(list);
@@ -44,18 +43,17 @@
 //     await noLoss.addLoot();
 //     console.log('addLoot1');
 
-
-//     const kc0 = await noLoss.getChapterKC(1); 
+//     const kc0 = await noLoss.getChapterKC(1);
 //     console.log('kc:*********2', kc0.toString());
 //     await noLoss.addBonus(parseEther('100'));
 //     await noLoss.fire(1,parseEther(`9`),true);
 //     await noLoss.fire(1,parseEther(`4`),false);
 //     await network.provider.send("evm_increaseTime", [5 * 60]);
-//     await noLoss.battleDamage();   
+//     await noLoss.battleDamage();
 //     await noLoss.fire(1,parseEther(`10`),true);
 //     await noLoss.fire(1,parseEther(`5`),false);
 //     await network.provider.send("evm_increaseTime", [5 * 60]);
-//     await noLoss.battleDamage();   
+//     await noLoss.battleDamage();
 //     await noLoss.fire(1,parseEther(`16`),true);
 //     await noLoss.fire(1,parseEther(`6`),false);
 //     await network.provider.send("evm_increaseTime", [5 * 60]);
@@ -69,15 +67,15 @@
 //     await noLoss.fire(1,parseEther(`18`),true);
 //     await noLoss.fire(1,parseEther(`8`),false);
 //     await network.provider.send("evm_increaseTime", [5 * 60]);
-//     await noLoss.battleDamage();    
+//     await noLoss.battleDamage();
 //     await network.provider.send("evm_increaseTime", [5 * 60]);
 //     await noLoss.battleDamage();
 //     await network.provider.send("evm_increaseTime", [5 * 60]);
 //     await noLoss.battleDamage();
 //     await noLoss.fire(1,parseEther(`19`),true);
 //     await noLoss.fire(1,parseEther(`9`),false);
-//     await network.provider.send("evm_increaseTime", [5 * 60]);    
-//     await noLoss.battleDamage();    
+//     await network.provider.send("evm_increaseTime", [5 * 60]);
+//     await noLoss.battleDamage();
 //     await network.provider.send("evm_increaseTime", [5 * 60]);
 //     await noLoss.battleDamage();
 //     console.log('user0 addStake!!!!!!!!!!!!!!!!!!!!!!!!!');
@@ -86,7 +84,7 @@
 //     await noLoss.addLoot();
 //     console.log('addLoot2');
 
-//     const kc = await noLoss.getChapterKC(1); 
+//     const kc = await noLoss.getChapterKC(1);
 //     console.log('kc:*********3', kc.toString());
 //     await users[1].noLoss.joinFaction(1,1,parseEther('300'));
 //     await noLoss.addBonus(parseEther('100'));
@@ -98,12 +96,12 @@
 //     await noLoss.battleDamage();
 //     await noLoss.addStake(1,1,parseEther('200'));
 //     await network.provider.send("evm_increaseTime", [7 * 24 * 60 * 60-10*60]);
-    
+
 //     await noLoss.addLoot();
 //     console.log('addLoot3');
 
 //     await noLoss.addBonus(parseEther('100'));
-//     const kc2 = await noLoss.getChapterKC(1); 
+//     const kc2 = await noLoss.getChapterKC(1);
 //     console.log('kc:*********4', kc2.toString());
 //     await noLoss.fire(1,parseEther(`10`),true);
 //     await noLoss.fire(1,parseEther(`10`),false);
@@ -119,7 +117,6 @@
 //     await network.provider.send("evm_increaseTime", [7 * 24 * 60 * 60]);
 //     await noLoss.addLoot();
 //     console.log('addLoot4');
-    
 
 //     /*await noLoss.addBonus(parseEther('100'));
 //     await noLoss.fire(1,parseEther(`10`),true);
@@ -141,11 +138,10 @@
 //     await users[4].noLoss.leaveFaction(3);
 
 //     await network.provider.send("evm_increaseTime", [6 * 24 * 60 * 60]);
-    
+
 //     await noLoss.addLoot();
 //     console.log('user2 clainBonus!!!!!!!!!!!!!!!!!!!!!!!!!');
 //     users[2].noLoss.claimBonus();*/
-
 
 //   });
 // });

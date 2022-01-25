@@ -31,7 +31,11 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     address constant BlackHole = 0x0000000000000000000000000000000000000000;
     mapping(uint256 => uint256) _sTicketCount;
 
-    function initialize(IKakiTicket ercAdd, IERC20 kTokenAdd, IRandoms radomAdd) public initializer {
+    function initialize(
+        IKakiTicket ercAdd,
+        IERC20 kTokenAdd,
+        IRandoms radomAdd
+    ) public initializer {
         __WithAdminRole_init();
         __WithRandom_init(radomAdd);
         _two = kTokenAdd;
@@ -60,7 +64,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     }
 
     function aBoxOpen(uint256 num) public override isAble {
-        for (uint256 i; i < num; i ++) {
+        for (uint256 i; i < num; i++) {
             _aBoxOpen();
         }
     }
@@ -82,7 +86,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     function _bBoxOpen() internal {
         uint256 randTicket = random(1, 100);
         uint256 rand = random(0, 10);
- 
+
         if (randTicket <= 85) {
             _kakiTicket.mint(msg.sender, _commonChip, rand + 5, _lowPrice, 0);
 
@@ -114,7 +118,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     function setSTicketProb(uint256 newProb) public onlyOwner {
         _sTicketProb = newProb;
     }
-    
+
     function setABoxPrice(uint256 aPrice) public onlyOwner {
         _lowPrice = aPrice;
     }

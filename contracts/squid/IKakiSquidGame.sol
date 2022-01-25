@@ -11,9 +11,9 @@ interface IKakiSquidGame {
     }
 
     event BuyTicket(address indexed account, uint256 amount);
-    event AddBonus(address indexed account, uint256 chapter,uint256 amount);
+    event AddBonus(address indexed account, uint256 chapter, uint256 amount);
     event PlaceBet(address indexed account, uint256 amount);
-    event StartGame(address indexed account, uint256 nftId,uint256 ticketType);
+    event StartGame(address indexed account, uint256 nftId, uint256 ticketType);
     event Claim(address indexed account, uint256 amount);
     event Settle(address indexed handler, uint256 _lastRound, uint256 time, uint256 price1, uint256 price2);
     event AddLoot(address indexed handler, uint256 time, uint256 bonus);
@@ -48,5 +48,15 @@ interface IKakiSquidGame {
 
     function getTimestamp() external view returns (uint256);
 
-    function getDataForRobot() external view returns (uint256,uint256,uint256,bool,uint256,uint256);
+    function getDataForRobot()
+        external
+        view
+        returns (
+            uint256,
+            uint256,
+            uint256,
+            bool,
+            uint256,
+            uint256
+        );
 }

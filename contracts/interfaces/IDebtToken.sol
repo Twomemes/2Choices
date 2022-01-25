@@ -5,5 +5,6 @@ import "@openzeppelin/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 interface IDebtToken is IERC20Metadata {
     function burn(address account, uint256 amount) external;
+
     function mint(address account, uint256 amount) external;
 }
