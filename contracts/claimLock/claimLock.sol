@@ -54,8 +54,8 @@ contract ClaimLock is IClaimLock, WithAdminRole {
         require(index.length <= _userLockedFarmRewards[msg.sender].length, "Invalid index.");
         for (uint256 i; i < index.length; i++) {
             uint256 bonus = getClaimableFarmReward(msg.sender, index[i]);
-            _kaki.mint(msg.sender, bonus);
-            _kaki.mint(_treasury, (_userLockedFarmRewards[msg.sender][index[i]]._locked - bonus));
+            _kaki.transfer(msg.sender, bonus);
+            _kaki.transfer(_treasury, (_userLockedFarmRewards[msg.sender][index[i]]._locked - bonus));
             _userLockedFarmRewards[msg.sender][index[i]] = _userLockedFarmRewards[msg.sender][_userLockedFarmRewards[msg.sender].length - 1];
             _userLockedFarmRewards[msg.sender].pop();
         }
@@ -90,7 +90,7 @@ contract ClaimLock is IClaimLock, WithAdminRole {
     }
 
     function version() public pure returns (uint256) {
-        return 1;
+        return 2;
     }
 
 }
