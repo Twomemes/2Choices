@@ -7,9 +7,10 @@ import {deploy} from '~/utils/upgrader';
 (async () => {
   const args: Parameters<KakiSquidGame['initialize']> = [
     contractAddress.kakiTicket,
+    contractAddress.farm,
     contractAddress.two,
     contractAddress.oracle,
-    '0x580377aA000B374785122a8cbe6033120461552d',
+    '0x73a0aA76D57CFd77a840DC18CE2C469C5610D993',
   ];
   console.log({args});
   // await deploySquidGame(ticket, busd, oracle);
