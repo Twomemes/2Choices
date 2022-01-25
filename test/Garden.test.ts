@@ -3,7 +3,7 @@ import { deployments, ethers, getUnnamedAccounts, network, upgrades } from 'hard
 import { expect } from './chai-setup';
 import { deployAll } from '~/utils/deployer';
 import { setupUsers } from './utils';
-import { parseEther } from 'ethers/lib/utils';
+import { formatEther, parseEther } from 'ethers/lib/utils';
 import { printEtherResult } from '../utils/logutil';
 import { getSigner } from '~/utils/contract';
 import { toBuffer, fromUtf8, bufferToHex, zeroAddress } from 'ethereumjs-util';
@@ -104,9 +104,27 @@ describe('garden', async () => {
     await farm.deposit(0, value);
 
     await delay(5 * 1000);
-    await farm.withdraw(0, 1);
+    await farm.withdraw(0, value);
+  });
 
+  it('squidGame mint', async () => {
+    const { users, farm, mockLp, two } = await setup();
 
+    await farm.setGovVault(users[1].address);
+    await farm.addPool(30, mockLp.address);
+
+    await farm.setSquidGameAllocPoint(50);
+    const value = parseEther('10.1');
+    await farm.setSquidGameContract(users[1].address);
+    await delay(1 * 1000);
+
+    await users[1].farm.squidPoolCalim();
+
+    console.log(`_squidGameLastClaimBlockNumber : ${await farm._squidGameLastClaimBlockNumber()}`);
+
+    const squidBl = await two.balanceOf(users[1].address)
+    console.log(`squidBl : ${formatEther(squidBl)}`);
+    expect(squidBl).gt(0);
 
   });
 
