@@ -34,5 +34,5 @@ interface IGarden {
 
     function poolInfo() external view returns (PoolInfo[] memory);
 
-    function squidPoolCalim() external returns (uint256);
+    function squidPoolCalim(address forUser) external returns (uint256);
 }
