@@ -1,5 +1,5 @@
 import { ERC20__factory, Garden, Garden__factory } from '~/typechain';
-import { farmContract, getSigner, twoTokenContract } from '../../utils/contract';
+import { claimLockContract, farmContract, getSigner, twoTokenContract } from '../../utils/contract';
 import { parseEther } from 'ethers/lib/utils';
 import { contractAddress } from '../../utils/contract';
 import { printEtherResult, printEtherResultArray } from '../../utils/logutil';
@@ -38,6 +38,8 @@ async function config(farm: Garden) {
 
   const two = await twoTokenContract();
 
+  const claimLock = await claimLockContract();
+
   const mintRole = await two.MINTER();
 
   const tx = await two.grantRole(mintRole, farm.address);
@@ -59,6 +61,9 @@ async function config(farm: Garden) {
   console.log(`setGovVault ${setGovVault.hash}`);
   const squidSetting = await farm.setSquidGameContract(contractAddress.squidGame);
   console.log(`squid game setting: ${squidSetting.hash}`);
+
+  const setFarmForLock = await claimLock.setFarmAdd(farm.address);
+  console.log(`set farm for lock: ${setFarmForLock.hash}`);
 }
 
 
@@ -89,6 +94,22 @@ async function withdraw(farm: Garden) {
   console.log(`withdraw: ${tx.hash}`);
 }
 
+async function transferStaking(users: string[]) {
+  const signer = await getSigner()
+  const lp = ERC20__factory.connect(addrs.lp, signer);
+  const wftm = ERC20__factory.connect(addrs.wftm, signer);
+
+  const v = parseEther('1000000')
+  for (const u of users) {
+    const tx0 = await lp.transfer(u, v)
+    console.log(`transfer lp to ${u}: ${tx0.hash}`);
+
+    const tx1 = await wftm.transfer(u, v)
+    console.log(` transfer wftm to ${u}: ${tx1.hash}`);
+  }
+
+}
+
 async function harvest(farm: Garden) {
   const h = await farm.harvestAll({ gasLimit: 500000 });
   console.log(`harvest ${h.hash}`);
@@ -97,6 +118,9 @@ async function harvest(farm: Garden) {
 (async () => {
   const farm = await deploy();
   // const farm = await farmContract();
+
+  // await transferStaking(['0x7Fc4fdbBf6F4a16ca076e1Eca5364D6e9db68994'])
+
   await config(farm);
   await deposit(farm);
 
@@ -107,3 +131,5 @@ async function harvest(farm: Garden) {
   const pool = await farm.poolInfo();
   printEtherResultArray(pool);
 })();
+
+
