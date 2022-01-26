@@ -4,12 +4,9 @@ import { parseEther } from 'ethers/lib/utils';
 import { contractAddress } from '../../utils/contract';
 import { printEtherResult, printEtherResultArray } from '../../utils/logutil';
 import delay from 'delay';
+import { addrs } from './cfg'
 
 
-const addrs = {
-  wftm: '0x432247280466bf16537dcE5817b24Ee945F3E43E',
-  lp: '0x8FCacfeFF8988c3e4792f585CCC148f67Ae29432',
-};
 async function deploy() {
 
   const signer = await getSigner(0);
