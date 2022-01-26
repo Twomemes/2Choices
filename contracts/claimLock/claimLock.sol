@@ -47,8 +47,10 @@ contract ClaimLock is IClaimLock, WithAdminRole {
 
     function claimFarmReward(uint256[] memory index) public override noReentrant {
         require(index.length <= _userLockedFarmRewards[msg.sender].length, "Invalid index.");
+        uint256[] memory orderIndex;
         orderIndex = new uint256[](index.length);
         orderIndex[0] = index[0];
+        
         for (uint256 i; i < index.length; i++) {
             uint256 bonus = getClaimableFarmReward(msg.sender, index[i]);
             _two.transfer(msg.sender, bonus);
@@ -56,7 +58,7 @@ contract ClaimLock is IClaimLock, WithAdminRole {
             if (i > 0) {
                 uint256 j = i - 1;
                 while (index[i] < orderIndex[j]) {
-                    orderIndex[j + 1] = orderIndex[j];
+                    orderIndex[j + 1] = orderIndex[j]; 
                     j--;
                 }
                 orderIndex[j + 1] = index[i];
