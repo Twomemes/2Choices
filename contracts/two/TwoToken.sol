@@ -40,7 +40,6 @@ contract TwoToken is ERC20Permit, ITwoToken, Ownable {
         emit Mint(to, msg.sender, amount);
     }
 
-
     function burn(uint256 amount) public override  {
         _burn(msg.sender, amount);
     }
@@ -48,6 +47,6 @@ contract TwoToken is ERC20Permit, ITwoToken, Ownable {
     function setFarm(address newFarm) public onlyOwner {
         require(!isSetFarm, "Upper Limit");
         _farm = newFarm;
-        isSetFarm = !isSetFarm;
+        isSetFarm = true;
     }
 }
