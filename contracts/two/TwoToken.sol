@@ -3,14 +3,11 @@ pragma solidity ^0.8.0;
 import {ERC20Permit} from "@openzeppelin/contracts/token/ERC20/extensions/draft-ERC20Permit.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
 import {ITwoToken} from "../interfaces/ITwoToken.sol";
 
 contract TwoToken is ERC20Permit, ITwoToken, Ownable {
-    bytes32 public constant MINTER = keccak256("MINTER");
-    //uint256 public constant MAX_SUPPLY = 222222222_222222222222222222;
-    uint256 public constant MAX_SUPPLY = 222222000 * 1e18;
-    uint256 public constant PREMINT = 977777 * 1e18;
+    uint256 public constant MAX_SUPPLY = 222222000  ether;
+    uint256 public constant PREMINT = 977777 ether;
     address public constant AIRDROP = 0xa525bC8E6eeaB54b3e35cAaFa3C3Bc04228096eD;
 
     address public constant INITIAL_LIQUID = 0xc09fa50C69695E612b54829C158a63D52E62656B;

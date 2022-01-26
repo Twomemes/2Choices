@@ -39,9 +39,6 @@ async function config(farm: Garden) {
 
   const mintRole = await two.MINTER();
 
-  const tx = await two.grantRole(mintRole, farm.address);
-
-  console.log(`grant mintRole: ${tx.hash}`);
 
   const lp = await farm.addPool(23, addrs.lp);
   console.log(`add lp pool : ${lp.hash}`);
