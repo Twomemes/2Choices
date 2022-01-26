@@ -5,7 +5,7 @@ import {contractAddress, squidGameContract} from '../../utils/contract';
   /*const tx = await squidGame.getWinChipOfOwner("0x087f35339deb5f4b28fd4afdb9f933816137d7ec",20);
   console.log(tx.toString());
   const tx2 = await squidGame.getWinChipOfOwner("0x30F8602eD71Dd66ec5701265FC277f4C34129EF5",20);
-  console.log(tx2.toString());*/
+  console.log(tx2.toString());
   let tx = await squidGame._price(20, 0);
   console.log(tx.toString());
   tx = await squidGame._price(20, 1);
@@ -17,5 +17,7 @@ import {contractAddress, squidGameContract} from '../../utils/contract';
   tx = await squidGame._price(20, 4);
   console.log(tx.toString());
   tx = await squidGame._price(20, 5);
-  console.log(tx.toString());
+  console.log(tx.toString());*/
+  let bonux=await squidGame._totalBonus(4);
+  console.log(bonux.toString());
 })();

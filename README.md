@@ -10,5 +10,5 @@ yarn  ht scripts/openBox/upgrade.ts
 ## verify
 
 ```
-yarn hardhat verify --network ftm --contract contracts/two/TwoToken.sol:TwoToken  0xd91cfd064F4C1a9ee91Fc58fCa671c4cF6A68ADB
+yarn hardhat verify --network ftm --contract contracts/two/TwoToken.sol:TwoToken  0x9F1851f29374eFb292cFa78503fc02A9b640c45b
 ```

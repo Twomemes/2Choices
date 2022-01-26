@@ -7,7 +7,7 @@ import {ITwoToken} from "../interfaces/ITwoToken.sol";
 
 contract TwoToken is ERC20Permit, ITwoToken, Ownable {
     uint256 public constant MAX_SUPPLY = 222222000  ether;
-    uint256 public constant PREMINT = 977777 ether;
+    uint256 public constant PREMINT = 9777768 * 1e17 ;
     address public constant AIRDROP = 0xa525bC8E6eeaB54b3e35cAaFa3C3Bc04228096eD;
 
     address public constant INITIAL_LIQUID = 0xc09fa50C69695E612b54829C158a63D52E62656B;
