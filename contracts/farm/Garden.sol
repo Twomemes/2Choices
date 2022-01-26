@@ -324,7 +324,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
             _twoToken.transfer(to, twoBal);
         } else {
             _twoToken.transfer(to, sending);
-            uint256 locked = twoBal - sending;
+            uint256 locked = amount - sending;
             _twoToken.transfer(address(_rewardLocker), locked);
             _rewardLocker.lockFarmReward(to, locked);
         }
