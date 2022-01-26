@@ -10,7 +10,7 @@ const addrs: ContractAddress = {
   squidTicket: '',
   squidOpenBox: '',
   facet: '',
-  farm: '0x23f757704d6ab60763c5066589AB9a0aCB5Ddd12',
+  farm: '0xEB7d5C471a4f7bBe45C9b5881d578dD0eEf6960A',
   kakiCaptain: '',
   captainClaim: '',
   captainMintList: '',

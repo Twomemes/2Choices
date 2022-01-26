@@ -1,4 +1,4 @@
-import { ERC20__factory, Garden, Garden__factory } from '~/typechain';
+import { ERC20__factory, Garden, Garden__factory, MockTwo__factory } from '~/typechain';
 import { claimLockContract, farmContract, getSigner, twoTokenContract } from '../../utils/contract';
 import { parseEther } from 'ethers/lib/utils';
 import { contractAddress } from '../../utils/contract';
@@ -33,12 +33,13 @@ async function deploy() {
 
 async function config(farm: Garden) {
 
-  const two = await twoTokenContract();
+  const two = MockTwo__factory.connect(contractAddress.two, await getSigner());
 
   const claimLock = await claimLockContract();
 
   const mintRole = await two.MINTER();
-
+  const tx = await two.grantRole(mintRole, farm.address);
+  console.log(`grant mintRole: ${tx.hash}`);
 
   const lp = await farm.addPool(23, addrs.lp);
   console.log(`add lp pool : ${lp.hash}`);
