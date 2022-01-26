@@ -5,15 +5,12 @@ import "@openzeppelin/contracts-upgradeable/utils/cryptography/draft-EIP712Upgra
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "../interfaces/IAirdrop.sol";
 
-contract Airdrop is IAirdrop, OwnableUpgradeable, EIP712Upgradeable {
+contract Airdrop is IAirdrop, OwnableUpgradeable {
     address public _signer;
     IERC20 _two;
     mapping(address => uint256) public _claimList;
 
-    function initialize() public initializer {
-        __EIP712_init("two", "0");
-        __Ownable_init();
-    }
+    function initialize() public initializer {}
 
     function claim(
         uint256 amount,
@@ -22,7 +19,8 @@ contract Airdrop is IAirdrop, OwnableUpgradeable, EIP712Upgradeable {
         bytes32 s
     ) public override {
         require(_claimList[msg.sender] == 0, "HAD CLAIMED");
-        bytes32 signature = keccak256(abi.encode(msg.sender,amount));
+        bytes32 hash = keccak256(abi.encode(msg.sender,amount));
+        bytes32 signature = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
         address signer = ecrecover(signature, v, r, s);
 
         require(signer == _signer, "INVALID SIGNATURE");
