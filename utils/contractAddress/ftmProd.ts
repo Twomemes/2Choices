@@ -18,7 +18,7 @@ const addrs: ContractAddress = {
   mysteryBox: '',
   chainlinkRandoms: '',
   claimLock: '',
-  two: '0xd91cfd064F4C1a9ee91Fc58fCa671c4cF6A68ADB',
+  two: '0x9F1851f29374eFb292cFa78503fc02A9b640c45b',
   noLoss: '',
   kakiBusdLP: '',
   kakiBnbLP: '',

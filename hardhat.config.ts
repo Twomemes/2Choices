@@ -13,7 +13,7 @@ import 'tsconfig-paths/register';
 import {HardhatUserConfig} from 'hardhat/types';
 import {accounts, node_url, getMnemonic} from './utils/network';
 import {bufferToHex, privateToAddress} from 'ethereumjs-util';
-
+import "@nomiclabs/hardhat-etherscan";
 // import "./config.json";
 // import config from './config.json';
 import {deriveKeyFromMnemonicAndIndex} from './utils/generateAddr';
@@ -108,7 +108,7 @@ const cfg: HardhatUserConfig = {
     },
   },
   solidity: {
-    version: '0.8.9',
+    version: '0.8.11',
     settings: {
       optimizer: {
         enabled: true,
@@ -129,6 +129,11 @@ const cfg: HardhatUserConfig = {
     currency: 'CHF',
     gasPrice: 21,
     enabled: true,
+  },
+  etherscan: {
+    // Your API key for Etherscan
+    // Obtain one at https://etherscan.io/
+    apiKey: "U8VQN1Y5XRSXG3HCHQERMY1IUBMB9T2ZY6", //ftm
   },
   // abiExporter: {
   //   path: './data',
