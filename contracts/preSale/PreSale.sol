@@ -5,7 +5,7 @@ import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import "../interfaces/IPresale.sol";
 
 contract Presale is IPresale, Ownable {
-    uint256 public twoLeftPart = 4400;
+    uint256 public twoLeftPart = 200;
     uint256 public constant LOWER_LIMIT = 22 * 1e18;
     uint256 public constant TWO_EACHPART = 22222 * 1e16;
     uint256 public constant SALE_PERIOD = 86400;  //24h
@@ -34,7 +34,7 @@ contract Presale is IPresale, Ownable {
     function sale() public payable override isStart {
         require(msg.value >= LOWER_LIMIT, "INVALID AMOUNT.");
         require(twoLeftPart != 0, "SOLD OUT.");
-        uint256 part = (msg.value - msg.value % 22) / 22;
+        uint256 part = msg.value  / 22;
         require(saleList[msg.sender] + part < 10, "UPPER LIMIT");
 
         if (part > twoLeftPart) {
