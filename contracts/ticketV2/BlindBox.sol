@@ -21,6 +21,8 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     uint256 public _highPrice;
     uint256 public _ticketPrice;
     uint256 public _sTicketProb;
+    uint256 public _rPr;
+    uint256 public _srPr;
     uint256 public _commonChip;
     uint256 public _rareChip;
     uint256 public _foundationRate;
@@ -47,6 +49,8 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         _commonChip = 16;
         _rareChip = 32;
         _sTicketProb = 49;
+        _rPr = 85;
+        _srPr = 99;
         _foundationRate = 20; //2%
         _foundation = 0x958f0991D0e847C06dDCFe1ecAd50ACADE6D461d; // kaki foundation address
         _feeFound = 0x958f0991D0e847C06dDCFe1ecAd50ACADE6D461d;//
@@ -87,7 +91,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         uint256 randTicket = random(1, 100);
         uint256 rand = random(0, 10);
 
-        if (randTicket <= 85) {
+        if (randTicket <= _rPr) {
             _kakiTicket.mint(msg.sender, _commonChip, rand + 5, _lowPrice, 0);
 
             uint256 fee = _lowPrice * _foundationRate / THOUSAND;
@@ -95,7 +99,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
             _two.transferFrom(_foundation, _squidCoinBase, _lowPrice - fee);
             emit BuyBBox(msg.sender, 0);
 
-        } else if (randTicket <= 99) {
+        } else if (randTicket <= _srPr) {
             _kakiTicket.mint(msg.sender, _rareChip, rand + 10, _highPrice, 1);
 
             uint256 fee = _highPrice * _foundationRate / THOUSAND;
@@ -114,6 +118,15 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         }
     }
 
+    function getRand() public view returns (uint256) {
+        uint256 a = random(1, 100);
+        return a;
+    }
+
+    function getrPr() public view returns (uint256) {
+        return _rPr;
+    }
+
     //****************************** admin function ***************************************** */
     function setSTicketProb(uint256 newProb) public onlyOwner {
         _sTicketProb = newProb;
@@ -127,6 +140,10 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         _ticketPrice = ticketPrice;
     }
 
+    function setRPr(uint256 newRPr) public onlyOwner {
+        _rPr = newRPr;
+    }
+
     function setERC721(address ercAdd) public onlyOwner {
         _kakiTicket = IKakiTicket(ercAdd);
     }
@@ -134,6 +151,11 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     function setFeeFound(address newFeeFound) public onlyOwner {
         require(newFeeFound != BlackHole, "Invalid address");
         _feeFound = newFeeFound;
+    }
+
+    function setFound(address newFound) public onlyOwner {
+        require(newFound != BlackHole, "Invalid address");
+        _foundation = newFound;
     }
 
     function setSquidCoinBaseAdd(address newSquidCoinBaseAdd) public onlyOwner {
@@ -146,6 +168,6 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     }
 
     function version() public pure returns (uint256) {
-        return 1;
+        return 5;
     }
 }

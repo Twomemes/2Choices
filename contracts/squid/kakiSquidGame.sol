@@ -68,7 +68,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
      */
     function initialize(
         IKakiTicket nftToken_,
-        IGarden farmGarden;
+        IGarden farmGarden,
         IERC20 kakiToken,
         IAggregatorInterface aggregator_,
         address payWallet

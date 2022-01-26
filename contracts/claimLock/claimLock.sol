@@ -94,8 +94,12 @@ contract ClaimLock is IClaimLock, WithAdminRole {
         _treasury = newTreasury;
     }
 
+    function setBlockNumber(uint256 newBlockNumber) public onlyOwner {
+        _farmPeriod = newBlockNumber;
+    }
+
     function version() public pure returns (uint256) {
-        return 4;
+        return 5;
     }
 
 }

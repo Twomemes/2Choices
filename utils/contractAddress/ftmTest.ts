@@ -23,7 +23,7 @@ const addrs: ContractAddress = {
   kakiBusdLP: '',
   kakiBnbLP: '',
   tools: '',
-  blindBox: '0x9b5149046A81e631F1f859Dd41e810a1eDaF4732',
+  blindBox: '0x0B4eee1609aC91a26F0D080C229C9055C5A158f7',
   kakiTicket: '0x35604605628691F5285CaBb71250829AcE6C0651',
 };
 
