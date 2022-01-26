@@ -5,8 +5,8 @@ import "../interfaces/IERC20.sol";
 import "../base/WithAdminRole.sol";
 
 contract ClaimLock is IClaimLock, WithAdminRole {
-    ITwoToken  _two;
-    uint256 constant THOUSAND = 10 ** 3;
+    ITwoToken _two;
+    uint256 constant THOUSAND = 10**3;
     uint256 public _startTime;
     uint256 public _tradingStartTime;
     uint256 public _farmPeriod;
@@ -42,43 +42,56 @@ contract ClaimLock is IClaimLock, WithAdminRole {
     function lockFarmReward(address account, uint256 amount) public override isFarm {
         uint256 currentBlockNumber = block.number;
         _userFarmLockedAmount[account] += amount;
-        _userLockedFarmRewards[account].push(
-            LockedFarmReward({
-                    _locked: amount,
-                    _blockNumber: currentBlockNumber
-                })
-        );
+        _userLockedFarmRewards[account].push(LockedFarmReward({_locked: amount, _blockNumber: currentBlockNumber}));
     }
 
     function claimFarmReward(uint256[] memory index) public override noReentrant {
         require(index.length <= _userLockedFarmRewards[msg.sender].length, "Invalid index.");
+        orderIndex = new uint256[](index.length);
+        orderIndex[0] = index[0];
         for (uint256 i; i < index.length; i++) {
             uint256 bonus = getClaimableFarmReward(msg.sender, index[i]);
             _two.transfer(msg.sender, bonus);
             _two.transfer(_treasury, (_userLockedFarmRewards[msg.sender][index[i]]._locked - bonus));
-            _userLockedFarmRewards[msg.sender][index[i]] = _userLockedFarmRewards[msg.sender][_userLockedFarmRewards[msg.sender].length - 1];
+            if (i > 0) {
+                uint256 j = i - 1;
+                while (index[i] < orderIndex[j]) {
+                    orderIndex[j + 1] = orderIndex[j];
+                    j--;
+                }
+                orderIndex[j + 1] = index[i];
+            }
+        }
+        for (uint256 i = orderIndex.length; i > 0; i--) {
+            _userLockedFarmRewards[msg.sender][orderIndex[i-1]] = _userLockedFarmRewards[msg.sender][
+                _userLockedFarmRewards[msg.sender].length - 1
+            ];
             _userLockedFarmRewards[msg.sender].pop();
         }
     }
 
     //******************************** view **********************************/
-    function getFarmAccInfo(address account) public override view returns (LockedFarmReward[] memory lockedReward, uint256[] memory claimableReward) {
+    function getFarmAccInfo(address account)
+        public
+        view
+        override
+        returns (LockedFarmReward[] memory lockedReward, uint256[] memory claimableReward)
+    {
         lockedReward = _userLockedFarmRewards[account];
         claimableReward = new uint256[](lockedReward.length);
-        for(uint256 i = 0; i < _userLockedFarmRewards[account].length; i++) {
+        for (uint256 i = 0; i < _userLockedFarmRewards[account].length; i++) {
             claimableReward[i] = getClaimableFarmReward(account, i);
         }
     }
 
-    function getClaimableFarmReward(address account, uint256 index) public override view returns (uint256) {
+    function getClaimableFarmReward(address account, uint256 index) public view override returns (uint256) {
         uint256 currentBlockNumber = block.number;
         uint256 unlockedAmount;
         LockedFarmReward[] memory user = _userLockedFarmRewards[account];
-        if(index < user.length) {
-            if(currentBlockNumber - user[index]._blockNumber < _farmPeriod){
-                unlockedAmount = user[index]._locked * (currentBlockNumber - user[index]._blockNumber) / _farmPeriod;
-            }
-            else unlockedAmount = user[index]._locked;
+        if (index < user.length) {
+            if (currentBlockNumber - user[index]._blockNumber < _farmPeriod) {
+                unlockedAmount = (user[index]._locked * (currentBlockNumber - user[index]._blockNumber)) / _farmPeriod;
+            } else unlockedAmount = user[index]._locked;
         }
         return unlockedAmount;
     }
@@ -101,5 +114,4 @@ contract ClaimLock is IClaimLock, WithAdminRole {
     function version() public pure returns (uint256) {
         return 5;
     }
-
 }

@@ -78,7 +78,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         _aggregator = aggregator_;
         _token = kakiToken;
         _ticketNFT = nftToken_;
-        _farmGarden=farmGarden;
+        _farmGarden = farmGarden;
 
         _ticketToBonus0 = 156800000000000000000;
         _ticketToBonus1 = 313600000000000000000;
@@ -92,7 +92,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         _roundTime = 5 * 60; //  5min = 300
         _tradingTime = 3 * 60; //  3min = 180
 
-        kakiFoundationAddress = 0x8F1EAa1F61bc1997B345665537DcdcE00867a4B2;
+        kakiFoundationAddress = 0x8329FAdFf375a203B491badFEc7DBAd7D8E0e27e;
         _kakiPayWalletAddress = payWallet;
     }
 
@@ -224,7 +224,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         require(_nextGameTime <= time, "The chapter is not start.");
         require(!isChapterStart[_chapter], "The chapter is already start.");
 
-        //_nextGameTime = time;        
+        //_nextGameTime = time;
         _totalBonus[_chapter] += _farmGarden.squidPoolCalim(_kakiPayWalletAddress);
         isChapterStart[_chapter] = true;
         _lastRound = 0;

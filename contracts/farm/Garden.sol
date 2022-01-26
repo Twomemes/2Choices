@@ -24,7 +24,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     uint256 public _rewardPerBlock;
     uint256 public _initRewardPercent;
     uint256 public _squidGameAllocPoint;
-    uint256 public _squidGameLastClaimBlockNumber;
+    uint256 public _squidGameLastRewardBlock;
     address public _squidGameContract;
     ITwoToken public _twoToken;
     IClaimLock public _rewardLocker;
@@ -34,6 +34,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     // Info of each pool.
     PoolInfo[] public _poolInfo;
     uint256[] public _rewardMultiplier;
+    bool public _canEmergencyWithdraw;
 
     constructor(
         ITwoToken twoToken,
@@ -81,6 +82,10 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
 
     function setInitRewardPercent(uint256 percent) public onlyOwner {
         _initRewardPercent = percent;
+    }
+
+    function setCanEmergencyWithdraw(bool canEmergencyWithdraw) public onlyOwner {
+        _canEmergencyWithdraw = canEmergencyWithdraw;
     }
 
     function addPool(uint256 allocPoint, IERC20 token) public onlyOwner {
@@ -198,7 +203,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         if (pending > 0) {
             safeTwoTransfer(msg.sender, pending);
         }
-        console.log("pool.token.safeTransferFrom",msg.sender,address(this),amount);
+        console.log("pool.token.safeTransferFrom", msg.sender, address(this), amount);
         pool.token.safeTransferFrom(msg.sender, address(this), amount);
         user.depositTime = block.timestamp;
         emit Deposit(msg.sender, pid, amount);
@@ -326,6 +331,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     }
 
     function emergencyWithdraw(uint256 pid) public override {
+        require(_canEmergencyWithdraw, "can not now");
         PoolInfo storage pool = _poolInfo[pid];
         UserInfo storage user = _userInfo[pid][msg.sender];
 
@@ -345,9 +351,9 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     function squidPoolCalim(address forUser) public override returns (uint256) {
         require(msg.sender == _squidGameContract, "none squid game");
         uint256 amount = (_rewardPerBlock *
-            getMultiplier(_squidGameLastClaimBlockNumber, block.number) *
+            getMultiplier(_squidGameLastRewardBlock, block.number) *
             _squidGameAllocPoint) / _totalAllocPoint;
-        _squidGameLastClaimBlockNumber = block.number;
+        _squidGameLastRewardBlock = block.number;
         _twoToken.mint(forUser, amount);
         return amount;
     }

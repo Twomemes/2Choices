@@ -1,19 +1,13 @@
-import {MockToken__factory} from '~/typechain';
-import {getSigner} from '~/utils/contract';
-import {deployments, ethers} from 'hardhat';
-import {deploy} from '../../utils/upgrader';
+import { MockToken__factory, TwoToken__factory } from '~/typechain';
+import { getSigner } from '~/utils/contract';
+import { deployments, ethers } from 'hardhat';
+import { deploy } from '../../utils/upgrader';
 
 (async () => {
-  await deploy('two/TwoToken.sol');
+  // await deploy('two/TwoToken.sol');
 
-  // const signer0 = await getSigner(0);
-  // const factory = new MockToken__factory(signer0);
-  // const instance = await deployments.deploy('MockToken', {
-  //   from: signer0.address,
-  //   log: true,
-  //   autoMine: true,
-  //   args: ['test Kaki', 'KAKI', 18, ethers.utils.parseEther(`1${'0'.repeat(10)}`)],
-  // });
-  // // factory.deploy('USDT', "USDT", 18, ethers.utils.parseEther(`1${'0'.repeat(10)}`));
-  // console.log(`deploy test kakio to: ${instance.address}`);
+  const signer0 = await getSigner(0);
+  const factory = new TwoToken__factory(signer0);
+  const tx = await factory.deploy();
+  console.log(`deploy  two token to: ${tx.address}`);
 })();
