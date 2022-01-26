@@ -13,7 +13,7 @@ contract TwoToken is ERC20Permit, ITwoToken, Ownable {
     uint256 public constant PREMINT = 977777 * 1e18;
     address public constant AIRDROP = 0xa525bC8E6eeaB54b3e35cAaFa3C3Bc04228096eD;
 
-    address public constant INITIAL_LIQUID = 0xa525bC8E6eeaB54b3e35cAaFa3C3Bc04228096eD;
+    address public constant INITIAL_LIQUID = 0xc09fa50C69695E612b54829C158a63D52E62656B;
 
     address public constant INITIAL_TREASURY = 0x9b0057f98A95f3C7Fb7F8a8540ADF871F4DB14a1;
     address public constant AUCTION = 0xc09fa50C69695E612b54829C158a63D52E62656B;
