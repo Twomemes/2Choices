@@ -41,9 +41,10 @@ async function config(farm: Garden) {
   const tx = await two.grantRole(mintRole, farm.address);
   console.log(`grant mintRole: ${tx.hash}`);
 
-  const lp = await farm.addPool(23, addrs.lp);
+  const lp = await farm.addPool(74, addrs.lp);
   console.log(`add lp pool : ${lp.hash}`);
-  const wftm = await farm.addPool(3, addrs.wftm);
+  await lp.wait();
+  const wftm = await farm.addPool(2, addrs.wftm);
   console.log(`add wftm: ${wftm.hash}`);
 
   const squidAlloc = await farm.setSquidGameAllocPoint(20);
