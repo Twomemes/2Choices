@@ -59,6 +59,11 @@ contract Presale is IPresale, Ownable {
         require(success, "! safe transfer FTM");
     }
 
+    function withdrawTwo() public override onlyAdmin {
+        uint256 leftAmount = _two.balanceOf(address(this));
+        _two.transfer(_admin, leftAmount);
+    }
+
     function setAdmin(address newAdmin) public onlyOwner {
         require(newAdmin != address(0), "INVALID ADDRESS");
         _admin = newAdmin;

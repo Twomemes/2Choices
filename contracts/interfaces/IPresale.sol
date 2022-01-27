@@ -7,4 +7,6 @@ interface IPresale {
     function sale() external payable;
     function getLeftAmount() external view returns(uint256);
     function withdraw() external;
+    function withdrawTwo() external;
+
 }
