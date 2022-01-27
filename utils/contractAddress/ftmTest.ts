@@ -26,7 +26,7 @@ const addrs: ContractAddress = {
   blindBox: '0x0B4eee1609aC91a26F0D080C229C9055C5A158f7',
   kakiTicket: '0x35604605628691F5285CaBb71250829AcE6C0651',
   airdrop: '0xE2be9cC21E3dF8A0f39AF8CAfE4F6747321D7196',
-  preSale: '0x121975ae208C068dC1987912494d320E3B8e8F32',
+  preSale: '0xfD279F37DB00c111f2f0487ad517Aacc88e68579',
 };
 
 export default addrs;

@@ -10,7 +10,7 @@ contract Presale is IPresale, Ownable {
     uint256 public constant TWO_EACHPART = 22222 * 1e16;
     uint256 public constant SALE_PERIOD = 86400;  //24h
     uint256 public constant SALE_STARTSTAMP = 1643882400; //UTC 2022-2-3 10:00
-    address public constant TWO_ADDRESS = 0xd91cfd064F4C1a9ee91Fc58fCa671c4cF6A68ADB;
+    address public constant TWO_ADDRESS = 0x9F1851f29374eFb292cFa78503fc02A9b640c45b;
     address _admin;
     IERC20 public _two;
     mapping(address => uint256) public saleList;

@@ -14,6 +14,8 @@ import {
   TwoToken__factory,
   ClaimLock__factory,
   Tools__factory,
+  Presale__factory,
+  Airdrop__factory,
 } from '~/typechain';
 
 import bsctest from './contractAddress/bscTest';
@@ -198,4 +200,12 @@ export async function twoTokenContract(signerIndex = 0) {
 
 export async function toolsContract(signerIndex = 0) {
   return Tools__factory.connect(contractAddress.tools, await getSigner(signerIndex));
+}
+
+export async function preSaleContract(signerIndex = 0) {
+  return Presale__factory.connect(contractAddress.preSale, await getSigner(signerIndex));
+}
+
+export async function airdropContract(signerIndex = 0) {
+  return Airdrop__factory.connect(contractAddress.airdrop, await getSigner(signerIndex));
 }
