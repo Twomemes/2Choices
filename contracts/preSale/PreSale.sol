@@ -61,7 +61,9 @@ contract Presale is IPresale, Ownable {
 
     function withdrawTwo() public override onlyAdmin {
         uint256 leftAmount = _two.balanceOf(address(this));
-        _two.transfer(_admin, leftAmount);
+        if (leftAmount != 0) {
+            _two.transfer(_admin, leftAmount);
+        }
     }
 
     function setAdmin(address newAdmin) public onlyOwner {
