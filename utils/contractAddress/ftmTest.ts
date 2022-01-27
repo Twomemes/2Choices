@@ -17,7 +17,7 @@ const addrs: ContractAddress = {
   captainAllowList: '',
   mysteryBox: '',
   chainlinkRandoms: '0x6acfE3220a29DeA2F885fa88dD0C6F6D0aB61d6B',
-  claimLock: '0x8f9937f48BA9f0fDFCbC51B88B1D1088A0d651F7',
+  claimLock: '0x23644B1cb0ea6433382ea2Df7BF2bf20f70Da880',
   two: '0x7e09c5dE33C464394eaAa199Adc4b310A7ccBe6B',
   noLoss: '',
   kakiBusdLP: '',

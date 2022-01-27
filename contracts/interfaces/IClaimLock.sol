@@ -5,6 +5,7 @@ interface IClaimLock {
     struct LockedFarmReward {
         uint256 _locked;
         uint256 _blockNumber;
+        uint256 _currentTime;
     }
 
     function lockFarmReward(address account, uint256 amount) external;

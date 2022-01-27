@@ -42,7 +42,7 @@ contract ClaimLock is IClaimLock, WithAdminRole {
     function lockFarmReward(address account, uint256 amount) public override isFarm {
         uint256 currentBlockNumber = block.number;
         _userFarmLockedAmount[account] += amount;
-        _userLockedFarmRewards[account].push(LockedFarmReward({_locked: amount, _blockNumber: currentBlockNumber}));
+        _userLockedFarmRewards[account].push(LockedFarmReward({_locked: amount, _blockNumber: currentBlockNumber, _currentTime: block.timestamp}));
     }
 
     function claimFarmReward(uint256[] memory index) public override noReentrant {
@@ -114,6 +114,6 @@ contract ClaimLock is IClaimLock, WithAdminRole {
     }
 
     function version() public pure returns (uint256) {
-        return 6;
+        return 7;
     }
 }
