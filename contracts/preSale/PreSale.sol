@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "../interfaces/IPresale.sol";
 
-contract Presale is IPresale, Ownable {
+contract Presale is IPresale, OwnableUpgradeable {
     uint256 public twoLeftPart = 200;
     uint256 public constant LOWER_LIMIT = 22 * 1e18;
     uint256 public constant TWO_EACHPART = 22222 * 1e16;
@@ -15,7 +15,7 @@ contract Presale is IPresale, Ownable {
     IERC20 public _two;
     mapping(address => uint256) public saleList;
 
-    constructor() {
+    function initialize() public initializer {
         _two = IERC20(TWO_ADDRESS);
     }
 
