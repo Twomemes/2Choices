@@ -11,7 +11,9 @@ contract Airdrop is OwnableUpgradeable {
 
     event Claim(address indexed account, uint256 amount);
 
-    function initialize() public initializer {}
+    function initialize(address signer) public initializer {
+        _signer=signer;
+    }
 
     function claim(
         uint256 amount,
@@ -35,6 +37,6 @@ contract Airdrop is OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 1;
+        return 2;
     }
 }

@@ -8,7 +8,7 @@ import { getSigner } from '~/utils/contract';
     const airdrop = await airdropContract();
     const signer0 = await getSigner(0);
     
-    let a = await airdrop.setSigner("0xcbD85865d39C7bcB6A67A436A5e4E7127479657A", {gasLimit: 2000000});
-    console.log(a);
+    let a = await airdrop.setSigner("0xcbD85865d39C7bcB6A67A436A5e4E7127479657A", {gasLimit: 5000000});
+    console.log(a.hash);
 
 })();
