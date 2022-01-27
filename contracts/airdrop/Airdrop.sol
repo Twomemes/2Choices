@@ -38,6 +38,6 @@ contract Airdrop is IAirdrop, OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 0;
+        return 1;
     }
 }

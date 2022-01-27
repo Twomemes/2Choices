@@ -1,4 +1,4 @@
-import type {ContractAddress} from './bscTest';
+import type { ContractAddress } from './bscTest';
 
 const addrs: ContractAddress = {
   squidGame: '0x7c9b2d8a80cebC33f2a8ecAf1eC47057F35943Ae',
@@ -25,6 +25,8 @@ const addrs: ContractAddress = {
   tools: '',
   blindBox: '0x0B4eee1609aC91a26F0D080C229C9055C5A158f7',
   kakiTicket: '0x35604605628691F5285CaBb71250829AcE6C0651',
+  airdrop: '0xE2be9cC21E3dF8A0f39AF8CAfE4F6747321D7196',
+  preSale: '0x121975ae208C068dC1987912494d320E3B8e8F32',
 };
 
 export default addrs;

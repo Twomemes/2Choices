@@ -70,4 +70,8 @@ contract Presale is IPresale, Ownable {
         require(newAdmin != address(0), "INVALID ADDRESS");
         _admin = newAdmin;
     }
+
+    function version() public pure returns (uint256) {
+        return 0;
+    }
 }
