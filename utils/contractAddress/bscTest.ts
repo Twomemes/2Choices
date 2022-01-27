@@ -25,6 +25,8 @@ const addrs = {
   tools: '',
   blindBox: '',
   kakiTicket: '',
+  airdrop: '',
+  preSale: '',
 };
 
 export default addrs;

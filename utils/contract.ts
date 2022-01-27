@@ -6,8 +6,6 @@ import {
   AddressList__factory,
   MockChainLink__factory,
   MockToken__factory,
-  Ticket__factory,
-  OpenBox__factory,
   KakiSquidGame,
   KakiSquidGame__factory,
   BlindBox__factory,
@@ -129,6 +127,12 @@ export const contractAddress = {
   get tools() {
     return getItem('tools');
   },
+  get airdrop() {
+    return getItem('airdrop');
+  },
+  get preSale() {
+    return getItem('preSale');
+  },
 };
 
 function getItem(key: string) {
@@ -159,13 +163,6 @@ export async function squidAllowListContract(signerIndex = 0) {
   return AddressList__factory.connect(contractAddress.squidAllowList, await getSigner(signerIndex));
 }
 
-export async function squidTicketContract(signerIndex = 0) {
-  return Ticket__factory.connect(contractAddress.squidTicket, await getSigner(signerIndex));
-}
-
-export async function squidOpenBoxContract(signerIndex = 0) {
-  return OpenBox__factory.connect(contractAddress.squidOpenBox, await getSigner(signerIndex));
-}
 
 export async function squidGameContract(signerIndex = 0) {
   return KakiSquidGame__factory.connect(contractAddress.squidGame, await getSigner(signerIndex));
