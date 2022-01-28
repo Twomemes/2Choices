@@ -25,7 +25,7 @@ const addrs: ContractAddress = {
   tools: '',
   blindBox: '',
   kakiTicket: '',
-  airdrop: '',
+  airdrop: '0xEA3AC548368f9B0DB76a38ac8440DE04c95DBa35',
   preSale: '',
 };
 
