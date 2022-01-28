@@ -18,6 +18,6 @@ import {contractAddress, squidGameContract} from '../../utils/contract';
   console.log(tx.toString());
   tx = await squidGame._price(20, 5);
   console.log(tx.toString());*/
-  let bonux=await squidGame._totalBonus(8);
+  let bonux=await squidGame._totalBonus(9);
   console.log(bonux.toString());
 })();
