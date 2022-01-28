@@ -24,7 +24,7 @@ const addrs: ContractAddress = {
   kakiBnbLP: '',
   tools: '',
   blindBox: '',
-  kakiTicket: '',
+  kakiTicket: '0xeEa27589F67d69c703aC8f2f8F75BF926411eB79',
   airdrop: '0xEA3AC548368f9B0DB76a38ac8440DE04c95DBa35',
   tokenPresale: '',
 };

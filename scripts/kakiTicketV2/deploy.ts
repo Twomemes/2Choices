@@ -1,4 +1,4 @@
-import {contractAddress, kakiCaptainContract, mysteryBoxContract} from '~/utils/contract';
+import {contractAddress} from '~/utils/contract';
 import {KakiTicket} from '~/typechain';
 import {deploy} from '~/utils/upgrader';
 (async () => {
