@@ -8,14 +8,15 @@ contract Presale is IPresale, OwnableUpgradeable {
     uint256 public twoLeftPart = 200;
     uint256 public constant LOWER_LIMIT = 22 * 1e18;
     uint256 public constant TWO_EACHPART = 22222 * 1e16;
-    uint256 public constant SALE_PERIOD = 86400;  //24h
-    uint256 public constant SALE_STARTSTAMP = 1643882400; //UTC 2022-2-3 10:00
-    address public constant TWO_ADDRESS = 0x9F1851f29374eFb292cFa78503fc02A9b640c45b;
+    uint256 public constant SALE_PERIOD = 86400;  //24h  86400
+    uint256 public constant SALE_STARTSTAMP = 1643350647; //UTC 2022-2-3 10:00  1643882400
+    address public constant TWO_ADDRESS = 0x7e09c5dE33C464394eaAa199Adc4b310A7ccBe6B;//0x9F1851f29374eFb292cFa78503fc02A9b640c45b
     address _admin;
     IERC20 public _two;
     mapping(address => uint256) public saleList;
 
     function initialize() public initializer {
+        __Ownable_init();
         _two = IERC20(TWO_ADDRESS);
     }
 
@@ -34,7 +35,7 @@ contract Presale is IPresale, OwnableUpgradeable {
     function sale() public payable override isStart {
         require(msg.value >= LOWER_LIMIT, "INVALID AMOUNT.");
         require(twoLeftPart != 0, "SOLD OUT.");
-        uint256 part = msg.value  / 22;
+        uint256 part = msg.value  / 22 ether;
         require(saleList[msg.sender] + part < 10, "UPPER LIMIT");
 
         if (part > twoLeftPart) {
