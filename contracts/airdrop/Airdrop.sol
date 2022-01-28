@@ -5,14 +5,20 @@ import "@openzeppelin/contracts-upgradeable/utils/cryptography/ECDSAUpgradeable.
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract Airdrop is OwnableUpgradeable {
-    address public _signer;
-    IERC20 _two;
-    mapping(address => uint256) public _claimList;
+    using ECDSAUpgradeable for bytes32;
 
     event Claim(address indexed account, uint256 amount);
 
+    address public _signer;
+    uint256 public _remain;
+    IERC20 _two;
+    mapping(address => uint256) public _claimList;
+
+
     function initialize(address signer) public initializer {
+        __Ownable_init();
         _signer=signer;
+        _remain =1000;
     }
 
     function claim(
@@ -22,13 +28,14 @@ contract Airdrop is OwnableUpgradeable {
         bytes32 s
     ) public {
         require(_claimList[msg.sender] == 0, "HAD CLAIMED");
-        bytes32 hash = keccak256(abi.encode(msg.sender,amount));
-        bytes32 signature = keccak256(abi.encodePacked("\x19Ethereum Signed Message:\n32", hash));
-        address signer = ecrecover(signature, v, r, s);
-
-        require(signer == _signer, "INVALID SIGNATURE");
+        require(_remain != 0, "OVER");
+        require(
+            keccak256(abi.encodePacked(msg.sender, amount)).toEthSignedMessageHash().recover(v, r, s) == _signer,
+            "claim:Invalid signarure"
+        );
         _two.transfer(msg.sender, amount);
         _claimList[msg.sender] = amount;
+        _remain -= 1;
         emit Claim(msg.sender, amount);
     }
 
@@ -37,6 +44,6 @@ contract Airdrop is OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 2;
+        return 4;
     }
 }
