@@ -8,12 +8,8 @@ import {
   MockToken,
   KakiSquidGame,
   KakiSquidGame__factory,
-  Ticket,
-  Ticket__factory,
   AddressList,
   AddressList__factory,
-  OpenBox,
-  OpenBox__factory,
   IERC20,
   BlindBox,
   BlindBox__factory,
@@ -80,32 +76,7 @@ export async function deployMockKakiCaptain() {
   return instance as MockKakiCaptain;
 }
 
-export async function deploySquidGame(ticket: Ticket, usdt: MockToken, chainlink: MockChainLink, payWallet: string) {
-  const signer0 = await getSigner(0);
-  const factory = new KakiSquidGame__factory(signer0);
-  const args: Parameters<KakiSquidGame['initialize']> = [ticket.address, usdt.address, chainlink.address, payWallet];
-  const instance = await upgrades.deployProxy(factory, args);
-  console.log(`deploy squid game to: ${instance.address}`);
-  await instance.deployed();
-  return instance as KakiSquidGame;
-}
 
-export async function deployTicket() {
-  const signer0 = await getSigner(0);
-  const factory = new Ticket__factory(signer0);
-  const instance = await upgrades.deployProxy(factory);
-  console.log(`Ticket deployed to : ${instance.address}`);
-  return instance as Ticket;
-}
-
-export async function deployOpenBox(ticket: Ticket, busd: IERC20, invalidTime: number, allowList: AddressList) {
-  const signer0 = await getSigner(0);
-  const args: Parameters<OpenBox['initialize']> = [ticket.address, busd.address, invalidTime, allowList.address];
-  const factory = new OpenBox__factory(signer0);
-  const instance = await upgrades.deployProxy(factory, args);
-  console.log(`OpenBox deployed to : ${instance.address}`);
-  return instance as OpenBox;
-}
 
 export async function deployAddrssList() {
   const signer0 = await getSigner(0);
@@ -188,13 +159,10 @@ export async function deployAll() {
   const kakiBnbLP = await deployMockERC20('BNB-KAKI', 'bk-LP', ethers.utils.parseEther(`1${'0'.repeat(10)}`));
 
   const chainlink = await deployMockChainLink();
-  const ticket = await deployTicket();
   const kakiTicket = await deployKakiTicket();
 
   const signer0 = await getSigner(0);
   const allowList = await deployAddrssList();
-  const openBox = await deployOpenBox(ticket, usdt, Math.ceil(Date.now() / 1000 + 24 * 3600), allowList);
-  const game = await deploySquidGame(ticket, usdt, chainlink, signer0.address);
   const mockKakiCaptain = await deployMockKakiCaptain();
   const mockFarm = await deployMockFarm();
   const mockRand = await deployMockRandom();
@@ -209,9 +177,6 @@ export async function deployAll() {
     kakiUsdtLp,
     kakiBnbLP,
     chainlink,
-    game,
-    openBox,
-    ticket,
     allowClaimTicket: allowList,
     kakiTicket,
     mockBlindBox,
