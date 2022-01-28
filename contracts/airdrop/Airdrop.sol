@@ -43,6 +43,10 @@ contract Airdrop is OwnableUpgradeable {
         _signer = signer;
     }
 
+    function airDropEnd(address airdropAdress) public onlyOwner {
+        _two.transfer(airdropAdress, _two.balanceOf(address(this)));
+    }
+
     function version() public pure returns (uint256) {
         return 4;
     }
