@@ -45,6 +45,8 @@ contract Airdrop is OwnableUpgradeable {
 
     function setTwo(IERC20 twoAddress) public onlyOwner {
         _two = twoAddress;
+    function airDropEnd(address airdropAdress) public onlyOwner {
+        _two.transfer(airdropAdress, _two.balanceOf(address(this)));
     }
 
     function version() public pure returns (uint256) {
