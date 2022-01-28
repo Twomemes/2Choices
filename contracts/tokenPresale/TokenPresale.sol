@@ -2,12 +2,12 @@
 pragma solidity ^0.8.0;
 import { IERC20 } from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "../interfaces/IPresale.sol";
+import "../interfaces/ITokenPresale.sol";
 
-contract Presale is IPresale, OwnableUpgradeable {
-    uint256 public twoLeftPart = 200;
+contract TokenPresale is ITokenPresale, OwnableUpgradeable {
+    uint256 public twoLeftPart ;
     uint256 public constant LOWER_LIMIT = 22 * 1e18;
-    uint256 public constant TWO_EACHPART = 22222 * 1e16;
+    uint256 public constant TWO_EACHPART = 22222 * 1e17;
     uint256 public constant SALE_PERIOD = 86400;  //24h  86400
     uint256 public constant SALE_STARTSTAMP = 1643350647; //UTC 2022-2-3 10:00  1643882400
     address public constant TWO_ADDRESS = 0x7e09c5dE33C464394eaAa199Adc4b310A7ccBe6B;//0x9F1851f29374eFb292cFa78503fc02A9b640c45b
@@ -15,9 +15,10 @@ contract Presale is IPresale, OwnableUpgradeable {
     IERC20 public _two;
     mapping(address => uint256) public saleList;
 
-    function initialize() public initializer {
+    function initialize(IERC20 twoadd) public initializer {
         __Ownable_init();
-        _two = IERC20(TWO_ADDRESS);
+        twoLeftPart = 200;
+        _two = twoadd;
     }
 
     receive() external payable {}
@@ -73,6 +74,6 @@ contract Presale is IPresale, OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 0;
+        return 1;
     }
 }

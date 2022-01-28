@@ -4,6 +4,6 @@ import {upgrade} from '~/utils/upgrader';
 
 (async () => {
   
-  await upgrade(`presale/PreSale.sol`, contractAddress.preSale);
+  await upgrade(`tokenPresale/TokenPresale.sol`, contractAddress.tokenPresale);
 
 })();

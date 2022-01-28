@@ -26,7 +26,7 @@ const addrs: ContractAddress = {
   blindBox: '',
   kakiTicket: '',
   airdrop: '0xEA3AC548368f9B0DB76a38ac8440DE04c95DBa35',
-  preSale: '',
+  tokenPresale: '',
 };
 
 export default addrs;
