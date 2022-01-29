@@ -22,7 +22,6 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     // total allocation point
     uint256 public _totalAllocPoint;
     uint256 public _rewardPerBlock;
-    uint256 public _initRewardPercent;
     uint256 public _squidGameAllocPoint;
     uint256 public _squidGameLastRewardBlock;
     address public _squidGameContract;
@@ -34,6 +33,8 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     // Info of each pool.
     PoolInfo[] public _poolInfo;
     uint256[] public _rewardMultiplier;
+    uint256[] public _initRewardPercent;
+    uint256 public _normalInitRewardPercent;
     bool public _canEmergencyWithdraw;
 
     constructor(
@@ -49,7 +50,29 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         _oneDayBlocks = oneDayBlocks;
         _twoToken = twoToken;
         _rewardMultiplier = [32, 16, 14, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1];
-        _initRewardPercent = 22;
+        _initRewardPercent = [
+            600,
+            1200,
+            1600,
+            2000,
+            2200,
+            2400,
+            2600,
+            2800,
+            3000,
+            3200,
+            3400,
+            3600,
+            3800,
+            4000,
+            4200,
+            4400,
+            4600,
+            4800,
+            5000,
+            5000
+        ];
+        _normalInitRewardPercent = 5000;
     }
 
     function setRewardLocker(IClaimLock rewardLocker) public onlyOwner {
@@ -84,8 +107,12 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         _rewardMultiplier = multiplier;
     }
 
-    function setInitRewardPercent(uint256 percent) public onlyOwner {
-        _initRewardPercent = percent;
+    function setInitRewardPercent(uint256[] memory initRewardPercent) public onlyOwner {
+        _initRewardPercent = initRewardPercent;
+    }
+
+    function setNormalInitRewardPercent(uint256 normalInitRewardPercent) public onlyOwner {
+        _normalInitRewardPercent = normalInitRewardPercent;
     }
 
     function setCanEmergencyWithdraw(bool canEmergencyWithdraw) public onlyOwner {
@@ -156,6 +183,14 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         console.log("from", from);
         console.log("to-from", to - from);
         return multiplier * (to - from);
+    }
+
+    function getInitRewardPercent(uint256 blockNumber) public view returns (uint256 percent) {
+        if (blockNumber < _startBlockNumber) {
+            return 0;
+        }
+        uint256 weekth = getWeekth(blockNumber);
+        percent = weekth > _initRewardPercent.length - 1 ? _normalInitRewardPercent : _initRewardPercent[weekth];
     }
 
     function pendingReward(uint256 pid, address user) public view override returns (uint256) {
@@ -323,7 +358,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
 
     function safeTwoTransfer(address to, uint256 amount) internal {
         uint256 twoBal = _twoToken.balanceOf(address(this));
-        uint256 sending = (amount * _initRewardPercent) / 100;
+        uint256 sending = (amount * getInitRewardPercent(block.number)) / 100;
         if (sending > twoBal) {
             _twoToken.transfer(to, twoBal);
         } else {
