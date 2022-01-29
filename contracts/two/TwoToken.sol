@@ -15,6 +15,7 @@ contract TwoToken is ERC20Permit, ITwoToken, Ownable {
     address public constant INITIAL_TREASURY = 0x9b0057f98A95f3C7Fb7F8a8540ADF871F4DB14a1;
     address public constant AUCTION = 0xc09fa50C69695E612b54829C158a63D52E62656B;
     address public farmContract;
+    address public swapAddress;
     bool public isSetFarm;
 
     // ------------------------------
@@ -52,14 +53,16 @@ contract TwoToken is ERC20Permit, ITwoToken, Ownable {
         uint256 amount
     ) internal override {
         require(allowBuy, "not allow buy");
-        address user = tx.origin;
-        if (maxBuyAmount > 0) {
-            require(amount <= maxBuyAmount, "exceeds maximum transfer");
+        if (from == swapAddress || to == swapAddress) {
+            address user = tx.origin;
+            if (maxBuyAmount > 0) {
+                require(amount <= maxBuyAmount, "exceeds maximum transfer");
+            }
+            if (buyDelayBlock > 0 && lastBuy[user] > 0) {
+                require(block.number - lastBuy[user] > buyDelayBlock, "delay block");
+            }
+            lastBuy[user] = block.number;
         }
-        if (buyDelayBlock > 0 && lastBuy[user] > 0) {
-            require(block.number - lastBuy[user] > buyDelayBlock, "delay block");
-        }
-        lastBuy[user] = block.number;
     }
 
     function burn(uint256 amount) public override {
@@ -72,15 +75,19 @@ contract TwoToken is ERC20Permit, ITwoToken, Ownable {
         isSetFarm = true;
     }
 
-    function setMaxBuyAmount(uint256 _maxBuyAmount) external onlyOwner {
+    function setMaxBuyAmount(uint256 _maxBuyAmount) public onlyOwner {
         maxBuyAmount = _maxBuyAmount;
     }
 
-    function setAllowBuy(bool _allowBuy) external onlyOwner {
+    function setAllowBuy(bool _allowBuy) public onlyOwner {
         allowBuy = _allowBuy;
     }
 
-    function setBuyDelayBlock(uint256 _buyDelayBlock) external onlyOwner {
+    function setBuyDelayBlock(uint256 _buyDelayBlock) public onlyOwner {
         buyDelayBlock = _buyDelayBlock;
+    }
+
+    function setSwapAddress(address _swapAddress) public onlyOwner {
+        swapAddress = _swapAddress;
     }
 }
