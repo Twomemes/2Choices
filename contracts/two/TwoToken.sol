@@ -57,7 +57,7 @@ contract TwoToken is ERC20Permit, ITwoToken, Ownable {
             require(amount <= maxBuyAmount, "exceeds maximum transfer");
         }
         if (buyDelayBlock > 0 && lastBuy[user] > 0) {
-            require(lastBuy[user] + buyDelayBlock <= block.number, "delay block");
+            require(block.number - lastBuy[user] > buyDelayBlock, "delay block");
         }
         lastBuy[user] = block.number;
     }
