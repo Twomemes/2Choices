@@ -15,7 +15,6 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
 
     string[] _uri;
     bool _able;
-    uint256 _startTime;
     uint256 constant THOUSAND = 10 ** 3;
     uint256 public _lowPrice;
     uint256 public _highPrice;
@@ -42,7 +41,6 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         __WithRandom_init(radomAdd);
         _two = kTokenAdd;
         _kakiTicket = ercAdd;
-        _startTime = 7776000;   //start time set before deploy!
         _lowPrice = 160 ether;
         _highPrice = 320 ether;
         _ticketPrice = 222 ether;
@@ -52,9 +50,9 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         _rPr = 85;
         _srPr = 99;
         _foundationRate = 20; //2%
-        _foundation = 0x958f0991D0e847C06dDCFe1ecAd50ACADE6D461d; // kaki foundation address
-        _feeFound = 0x958f0991D0e847C06dDCFe1ecAd50ACADE6D461d;//
-        _squidCoinBase = 0x958f0991D0e847C06dDCFe1ecAd50ACADE6D461d;
+        _foundation = 0x9b0057f98A95f3C7Fb7F8a8540ADF871F4DB14a1; // kaki foundation address
+        _feeFound = 0xD4b887b40393Ab960138EA1cD7Fb49EBE221d7A0;//
+        _squidCoinBase = 0x73a0aA76D57CFd77a840DC18CE2C469C5610D993;
     }
 
     modifier isAble() {
@@ -158,6 +156,10 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         _foundation = newFound;
     }
 
+    function setTWO(IERC20 newTwo) public onlyOwner {
+        _two = newTwo;
+    }
+
     function setSquidCoinBaseAdd(address newSquidCoinBaseAdd) public onlyOwner {
         require(newSquidCoinBaseAdd != BlackHole, "Invalid address");
         _squidCoinBase = newSquidCoinBaseAdd;
@@ -168,6 +170,6 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     }
 
     function version() public pure returns (uint256) {
-        return 5;
+        return 6;
     }
 }

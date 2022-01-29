@@ -17,8 +17,8 @@ contract Airdrop is OwnableUpgradeable {
 
     function initialize(address signer) public initializer {
         __Ownable_init();
-        _signer = signer;
-        _remain = 1000;
+        _signer=signer;
+        _remain =1000;
     }
 
     function claim(
@@ -43,16 +43,15 @@ contract Airdrop is OwnableUpgradeable {
         _signer = signer;
     }
 
-    
     function airDropEnd(address airdropAdress) public onlyOwner {
         _two.transfer(airdropAdress, _two.balanceOf(address(this)));
     }
 
-    function setTwo(IERC20 twoAddress) public onlyOwner {
-        _two=twoAddress;
+    function setTWO(IERC20 newTwo) public onlyOwner {
+        _two = newTwo;
     }
 
     function version() public pure returns (uint256) {
-        return 7;
+        return 6;
     }
 }

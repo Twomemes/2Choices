@@ -117,7 +117,7 @@ async function harvest(farm: Garden) {
 
   // await transferStaking(['0x7Fc4fdbBf6F4a16ca076e1Eca5364D6e9db68994'])
 
-  await config(farm);
+  /*await config(farm);
   await deposit(farm);
 
   await delay(20 * 1000);
@@ -125,7 +125,7 @@ async function harvest(farm: Garden) {
   await delay(20 * 1000);
   await withdraw(farm);
   const pool = await farm.poolInfo();
-  printEtherResultArray(pool);
+  printEtherResultArray(pool);*/
 })();
 
 

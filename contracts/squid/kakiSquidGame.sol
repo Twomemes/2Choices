@@ -417,7 +417,15 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         _kakiPayWalletAddress = wallet;
     }
 
+    function setFarm(IGarden newFarm) public onlyOwner {
+        _farmGarden = newFarm;
+    }
+
+    function setTwoToken(IERC20 newTwo) public onlyOwner {
+        _token = newTwo;
+    }
+
     function version() public pure returns (uint256) {
-        return 15;
+        return 17;
     }
 }

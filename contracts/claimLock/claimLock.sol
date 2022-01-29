@@ -104,6 +104,10 @@ contract ClaimLock is IClaimLock, WithAdminRole {
         _addFarm = newFarmAdd;
     }
 
+    function setTwoToken(ITwoToken newToken) public onlyOwner {
+        _two = newToken;
+    }
+
     function setTreasury(address newTreasury) public onlyOwner {
         require(newTreasury != address(0), "Invalid address.");
         _treasury = newTreasury;
@@ -114,6 +118,6 @@ contract ClaimLock is IClaimLock, WithAdminRole {
     }
 
     function version() public pure returns (uint256) {
-        return 7;
+        return 9;
     }
 }

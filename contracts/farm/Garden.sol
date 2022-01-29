@@ -72,6 +72,10 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         _rewardPerBlock = rewardPerBlock;
     }
 
+    function setTwoToken(ITwoToken newToken) public onlyOwner {
+        _twoToken = newToken;
+    }
+
     function setGovVault(address vault) public onlyOwner {
         _govVault = vault;
     }
