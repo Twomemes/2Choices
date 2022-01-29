@@ -14,7 +14,7 @@ import {
   TwoToken__factory,
   ClaimLock__factory,
   Tools__factory,
-  Presale__factory,
+  TokenPresale__factory,
   Airdrop__factory,
 } from '~/typechain';
 
@@ -132,8 +132,8 @@ export const contractAddress = {
   get airdrop() {
     return getItem('airdrop');
   },
-  get preSale() {
-    return getItem('preSale');
+  get tokenPresale() {
+    return getItem('tokenPresale');
   },
 };
 
@@ -202,8 +202,8 @@ export async function toolsContract(signerIndex = 0) {
   return Tools__factory.connect(contractAddress.tools, await getSigner(signerIndex));
 }
 
-export async function preSaleContract(signerIndex = 0) {
-  return Presale__factory.connect(contractAddress.preSale, await getSigner(signerIndex));
+export async function tokenPresaleContract(signerIndex = 0) {
+  return TokenPresale__factory.connect(contractAddress.tokenPresale, await getSigner(signerIndex));
 }
 
 export async function airdropContract(signerIndex = 0) {

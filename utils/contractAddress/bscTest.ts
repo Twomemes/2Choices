@@ -26,7 +26,7 @@ const addrs = {
   blindBox: '',
   kakiTicket: '',
   airdrop: '',
-  preSale: '',
+  tokenPresale: '',
 };
 
 export default addrs;
