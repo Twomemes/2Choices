@@ -3,8 +3,10 @@ import { getSigner } from "../../utils/contract";
 
 
 export const addrs = {
-  wftm: '0x432247280466bf16537dcE5817b24Ee945F3E43E',
-  lp: '0x8FCacfeFF8988c3e4792f585CCC148f67Ae29432',
+  //测试 wftm: '0x432247280466bf16537dcE5817b24Ee945F3E43E',
+  //测试 lp: '0x8FCacfeFF8988c3e4792f585CCC148f67Ae29432',
+  wftm: '0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83',
+  lp: '0x40640062cf7a19557ed541df06f48bc7486eb8ba',
 };
 
 export async function lpContract() {

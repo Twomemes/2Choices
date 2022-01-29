@@ -1,4 +1,4 @@
-import { ERC20__factory, Garden, Garden__factory, MockTwo__factory } from '~/typechain';
+import { ERC20__factory, Garden, Garden__factory, TwoToken__factory, MockTwo__factory } from '~/typechain';
 import { claimLockContract, farmContract, getSigner, twoTokenContract } from '../../utils/contract';
 import { parseEther } from 'ethers/lib/utils';
 import { contractAddress } from '../../utils/contract';
@@ -32,14 +32,18 @@ async function deploy() {
 
 
 async function config(farm: Garden) {
-
-  const two = MockTwo__factory.connect(contractAddress.two, await getSigner());
-
+  console.log('start config');
+  const two = TwoToken__factory.connect(contractAddress.two, await getSigner());
+  
   const claimLock = await claimLockContract();
 
-  const mintRole = await two.MINTER();
-  const tx = await two.grantRole(mintRole, farm.address);
-  console.log(`grant mintRole: ${tx.hash}`);
+  const tx = await two.setFarm(farm.address);
+  console.log(`setFarm: ${tx.hash}`);
+
+  /*const mintRole = await two.MINTER();
+  console.log('start grandRole');
+  const tx = await two.grantRole(mintRole, farm.address,{gasLimit:200000});
+  console.log(`grant mintRole: ${tx.hash}`);*/
 
   const lp = await farm.addPool(74, addrs.lp);
   console.log(`add lp pool : ${lp.hash}`);
@@ -52,14 +56,17 @@ async function config(farm: Garden) {
 
   const lock = await farm.setRewardLocker(contractAddress.claimLock);
   console.log(`set reward lock: ${lock.hash}`);
-  const signer = await getSigner(1);
-  const setGovVault = await farm.setGovVault(signer.address);
-  console.log(`setGovVault ${setGovVault.hash}`);
+  //const signer = await getSigner(1);
+  //const setGovVault = await farm.setGovVault(signer.address);
+  
   const squidSetting = await farm.setSquidGameContract(contractAddress.squidGame);
   console.log(`squid game setting: ${squidSetting.hash}`);
 
   const setFarmForLock = await claimLock.setFarmAdd(farm.address);
   console.log(`set farm for lock: ${setFarmForLock.hash}`);
+
+  const setGovVault = await farm.setGovVault("0x56558DDEF9bDff3C9bBf777ba891E71c3C09b76A");
+  console.log(`setGovVault ${setGovVault.hash}`);
 }
 
 
@@ -112,13 +119,14 @@ async function harvest(farm: Garden) {
 }
 
 (async () => {
-  const farm = await deploy();
-  // const farm = await farmContract();
+  //const farm = await deploy();
+  
+  const farm = await farmContract();
 
   // await transferStaking(['0x7Fc4fdbBf6F4a16ca076e1Eca5364D6e9db68994'])
 
-  /*await config(farm);
-  await deposit(farm);
+  await config(farm);
+  /*await deposit(farm);
 
   await delay(20 * 1000);
   await harvest(farm);

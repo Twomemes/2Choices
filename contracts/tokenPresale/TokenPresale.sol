@@ -75,6 +75,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 5;
+        return 6;
     }
 }

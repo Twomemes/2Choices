@@ -31,7 +31,7 @@ const addrs: ContractAddress = {
   airdrop: '0xfD7Fed305a62c46Bda4204A393400357B08d81EA',
   //第一次空投'0xEA3AC548368f9B0DB76a38ac8440DE04c95DBa35'
   //第二次空投'0xfD7Fed305a62c46Bda4204A393400357B08d81EA'
-  tokenPresale: '',
+  tokenPresale: '0x9a79f5757E1AC9874e7030662bc28005B4e56910',
 };
 
 export default addrs;
