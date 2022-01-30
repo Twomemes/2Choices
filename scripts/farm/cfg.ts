@@ -2,13 +2,34 @@ import { ClaimLock, ERC20__factory } from "../../typechain";
 import { getSigner } from "../../utils/contract";
 import { ClaimLock__factory, MockClaimLock__factory, TwoToken__factory } from '~/typechain';
 import { TwoToken } from '../../typechain/TwoToken';
-import { upgrades } from "hardhat";
+import { network, upgrades } from "hardhat";
+
+
 
 export const addrs = {
-  //测试 wftm: '0x432247280466bf16537dcE5817b24Ee945F3E43E',
-  //测试 lp: '0x8FCacfeFF8988c3e4792f585CCC148f67Ae29432',
-  wftm: '0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83',
-  lp: '0x40640062cf7a19557ed541df06f48bc7486eb8ba',
+  get wftm(){
+    if(network.name ==='ftmtest'){
+      return '0x432247280466bf16537dcE5817b24Ee945F3E43E'
+    }else if(network.name ==='ftm' || network.name === 'ftmpre'){
+      return '0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83'
+    }else{
+      throw new Error(`unknown network ${network.name}`)
+    }
+  },
+
+  get lp(){
+    if(network.name ==='ftmtest'){
+      return '0x8FCacfeFF8988c3e4792f585CCC148f67Ae29432'
+    }else if(network.name ==='ftm' || network.name === 'ftmpre'){
+      return '0x40640062cf7a19557ed541df06f48bc7486eb8ba'
+    }else{
+      throw new Error(`unknown network ${network.name}`)
+    }
+  },
+  // 测试 wftm: '0x432247280466bf16537dcE5817b24Ee945F3E43E',
+  // 测试 lp: '0x8FCacfeFF8988c3e4792f585CCC148f67Ae29432',
+  // wftm: '0x21be370d5312f44cb42ce377bc9b8a0cef1a4c83',
+  // lp: '0x40640062cf7a19557ed541df06f48bc7486eb8ba',
 };
 
 export async function lpContract() {
