@@ -16,7 +16,6 @@ const setup = deployments.createFixture(async () => {
 
   const mockLp = await new MockToken__factory(signer).deploy('Mock LP', 'MOCK', 18, parseEther('100000000000000'));
 
-
   const currentBlock = (await signer.provider?.getBlockNumber()) as number;
   const farm = await new Garden__factory(signer).deploy(
     two.address,
@@ -25,13 +24,8 @@ const setup = deployments.createFixture(async () => {
     currentBlock + 100000 * 365,
     100000
   );
-
-  const mintRole = await two.MINTER();
-
-  await two.grantRole(mintRole, farm.address);
-  await two.grantRole(mintRole, signer.address);
+  await two.setFarm(farm.address);
   await mockLp.approve(farm.address, parseEther('100000000000000'));
-
 
   const lock = <ClaimLock>await upgrades.deployProxy(new ClaimLock__factory(signer), [farm.address, two.address]);
 
@@ -176,6 +170,35 @@ describe('garden', async () => {
       );
     }
   });
+
+  it('init reward percent', async () => {
+    const initRewardPercent = [
+      600,
+      1200,
+      1600,
+      2000,
+      2200,
+      2400,
+      2600,
+      2800,
+      3000,
+      3200,
+      3400,
+      3600,
+      3800,
+      4000,
+      4200,
+      4400,
+      4600,
+      4800,
+      5000,
+      5000,
+      5000,
+      5000,
+      5000,
+    ];
+
+  })
 
   it(`withdraw percent`, async () => {
     const { farm } = await setup();
