@@ -91,7 +91,7 @@ const cfg: HardhatUserConfig = {
       // gasPrice: 20000000000,
       accounts: [process.env.PROD_PRIVATEKEY as any],
     },
-    preftm: {
+    ftmpre: {
       url: 'https://rpcapi.fantom.network/',
       chainId: 250,
       // gasPrice: 20000000000,

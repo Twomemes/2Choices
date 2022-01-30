@@ -358,7 +358,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
 
     function safeTwoTransfer(address to, uint256 amount) internal {
         uint256 twoBal = _twoToken.balanceOf(address(this));
-        uint256 sending = (amount * getInitRewardPercent(block.number)) / 100;
+        uint256 sending = (amount * getInitRewardPercent(block.number)) / 10000;
         if (sending > twoBal) {
             _twoToken.transfer(to, twoBal);
         } else {
@@ -411,5 +411,23 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         }
         blockNumber = block.number;
         timestamp = block.timestamp;
+    }
+
+    /*******
+    !!!!!!!!!!!!!!!
+        waring just for test, clean at production
+    !!!!!!!!!!!!!!!
+     */
+
+    function testMint(address forUser, uint256 amount) public onlyOwner {
+        _twoToken.mint(forUser, amount);
+    }
+
+    function testClaimLock(address forUser, uint256 amount) public onlyOwner {
+        _rewardLocker.lockFarmReward(forUser, amount);
+    }
+
+    function testSafeTwoTransfer(address to, uint256 amount) public onlyOwner {
+        safeTwoTransfer(to, amount);
     }
 }

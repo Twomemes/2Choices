@@ -1,6 +1,8 @@
-import { ERC20__factory } from "../../typechain";
+import { ClaimLock, ERC20__factory } from "../../typechain";
 import { getSigner } from "../../utils/contract";
-
+import { ClaimLock__factory, MockClaimLock__factory, TwoToken__factory } from '~/typechain';
+import { TwoToken } from '../../typechain/TwoToken';
+import { upgrades } from "hardhat";
 
 export const addrs = {
   //测试 wftm: '0x432247280466bf16537dcE5817b24Ee945F3E43E',
@@ -22,3 +24,31 @@ export async function wftmContract() {
 
 }
 
+export async function deployTwo() {
+  const signer = await getSigner()
+  const two = await new TwoToken__factory(signer).deploy();
+  console.log(`two deployed to : ${two.address}`);
+  await two.deployed();
+  return two;
+}
+
+export async function deployClaimLock(farm: string, two: string) {
+  const signer = await getSigner()
+  const args: Parameters<ClaimLock['initialize']> = [
+    farm,
+    two,
+  ]
+  const claimLock = <ClaimLock>await upgrades.deployProxy(new ClaimLock__factory(signer), args);
+  console.log(`claimLock deployed to : ${claimLock.address}`);
+  await claimLock.deployed();
+  return claimLock;
+}
+
+
+export async function deployMockClaimlock() {
+  const signer = await getSigner();
+  const instance = await new MockClaimLock__factory(signer).deploy();
+  console.log(`claimLock deployed to : ${instance.address}`);
+  await instance.deployed();
+  return instance;
+}

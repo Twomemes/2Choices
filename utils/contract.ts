@@ -21,6 +21,7 @@ import {
 import bsctest from './contractAddress/bscTest';
 import ftmtest from './contractAddress/ftmTest';
 import ftm from './contractAddress/ftmProd';
+import ftmpre from './contractAddress/ftmPre';
 
 export const frontendUsedContracts = [
   'index',
@@ -57,6 +58,7 @@ export const mutiContractAddrs = {
   bsctest,
   ftmtest,
   ftm,
+  ftmpre,
 };
 
 export const contractAddress = {

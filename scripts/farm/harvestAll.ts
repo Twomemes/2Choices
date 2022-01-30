@@ -6,6 +6,10 @@ import { parseEther, formatEther } from 'ethers/lib/utils';
   const farm = await farmContract();
   const signer = await getSigner(0);
 
+  const block = await signer.provider?.getBlockNumber() as number;
+
+  const initLock = await farm.getInitRewardPercent(block);
+  console.log(`init reward percent ${initLock.toNumber()/100}%`);
   const pend0 = await farm.pendingReward(0, signer.address);
   const pend1 = await farm.pendingReward(1, signer.address);
   console.log(`pool0: ${formatEther(pend0)}`);
