@@ -11,3 +11,5 @@ typechain-tiny/
 .vscode
 deployments/
 coverage
+.DS_Store
+scripts/devops/dataProcess.ts
