@@ -91,6 +91,12 @@ const cfg: HardhatUserConfig = {
       // gasPrice: 20000000000,
       accounts: [process.env.PROD_PRIVATEKEY as any],
     },
+    preftm: {
+      url: 'https://rpcapi.fantom.network/',
+      chainId: 250,
+      // gasPrice: 20000000000,
+      accounts: {...accounts(), initialIndex: 0, count: 10},
+    },
     bsctest: {
       url: 'https://data-seed-prebsc-1-s1.binance.org:8545',
       chainId: 97,
