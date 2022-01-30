@@ -5,7 +5,7 @@ import "../interfaces/IERC20.sol";
 import "../base/WithAdminRole.sol";
 
 contract ClaimLock is IClaimLock, WithAdminRole {
-    ITwoToken _two;
+    ITwoToken public _two;
     uint256 constant THOUSAND = 10**3;
     uint256 public _startTime;
     uint256 public _tradingStartTime;
@@ -118,6 +118,6 @@ contract ClaimLock is IClaimLock, WithAdminRole {
     }
 
     function version() public pure returns (uint256) {
-        return 9;
+        return 11;
     }
 }

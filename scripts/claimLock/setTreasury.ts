@@ -4,6 +4,6 @@ import { formatEther } from 'ethers/lib/utils'
 
 (async () => {
   const claimlock = await claimLockContract();
-  const tx = await claimlock.setTreasury('0xAdCE766F4b29F603FdB25b97Cf27eF50d4d1a31F');
+  const tx = await claimlock.setTreasury('0xB9BA0B2FB9C3c98f8a40304D6316c1ddCca53CCA');
   console.log(tx.hash);
 })();
