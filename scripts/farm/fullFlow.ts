@@ -34,15 +34,10 @@ async function deploy() {
 async function config(farm: Garden, two: TwoToken) {
   console.log('start config');
   // const two = TwoToken__factory.connect(contractAddress.two, await getSigner());
-  const claimLock = await claimLockContract();
-  // const claimLock = await deployClaimLock(farm.address, two.address);
+  // const claimLock = await claimLockContract();
+  const claimLock = await deployClaimLock(farm.address, two.address);
   const tx = await two.setFarm(farm.address);
   console.log(`setFarm for two: ${tx.hash}`);
-
-  /*const mintRole = await two.MINTER();
-  console.log('start grandRole');
-  const tx = await two.grantRole(mintRole, farm.address,{gasLimit:200000});
-  console.log(`grant mintRole: ${tx.hash}`);*/
 
   const lp = await farm.addPool(74, addrs.lp);
   console.log(`add lp pool : ${lp.hash}`);
@@ -118,13 +113,13 @@ async function harvest(farm: Garden) {
 }
 
 (async () => {
-  // const farm = await deploy();
+  const farm = await deploy();
 
-  const farm = await farmContract();
+  // const farm = await farmContract();
 
   // await transferStaking(['0x7Fc4fdbBf6F4a16ca076e1Eca5364D6e9db68994'])
-  // const two = await deployTwo();
-  const two = await twoTokenContract();
+  const two = await deployTwo();
+  // const two = await twoTokenContract();
 
   await config(farm, two);
 

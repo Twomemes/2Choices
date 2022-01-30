@@ -1,3 +1,4 @@
+import chalk from 'chalk';
 import { farmContract } from '~/utils/contract';
 import { printEtherResultArray } from '../../utils/logutil';
 
@@ -5,35 +6,28 @@ import { printEtherResultArray } from '../../utils/logutil';
   const farm = await farmContract();
 
   for (const k of [
+    '_startBlockNumber',
     '_endBlockNumber',
     '_govVault',
-    '_initRewardPercent',
     '_oneDayBlocks',
-    '_poolInfo',
     '_rewardLocker',
-    '_rewardMultiplier',
     '_rewardPerBlock',
     '_squidGameAllocPoint',
     '_squidGameContract',
-    '_squidGameLastClaimBlockNumber',
-    '_startBlockNumber',
+    '_squidGameLastRewardBlock',
     '_totalAllocPoint',
     '_twoToken',
-    '_userInfo',
-    'canWithdraw',
+    '_canEmergencyWithdraw',
     'chainInfo',
     'currentWeekth',
-    'daylyReward',
-    'getMultiplier',
-    'getWeekth',
     'owner',
-    'pendingReward',
     'poolInfo',
     'poolInfoLength',
-    'withdrawPercent',
+    '_squidGameLastRewardBlock',
+    // 'withdrawPercent',
   ]) {
     try {
-      console.log(`${k}: ${await (<any>farm)[k]().toString()}`);
+      console.log(`${chalk.cyan(k)}: ${(await (<any>farm)[k]()).toString()}`);
     } catch (e: any) {
       console.log(`error: ${k} ${e.message}`);
     }
