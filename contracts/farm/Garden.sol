@@ -10,7 +10,6 @@ import "../libraries/SafeToken.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-import "hardhat/console.sol";
 
 contract Garden is IGarden, ReentrancyGuard, Ownable {
     // using SafeToken for address;
@@ -163,7 +162,6 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     }
 
     function getMultiplier(uint256 from, uint256 to) public view returns (uint256) {
-        console.log("from,to:", from, to);
         if (to < _startBlockNumber) {
             return 0;
         }
@@ -174,14 +172,8 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
             to = _endBlockNumber;
         }
         uint256 weekth = getWeekth(to);
-        console.log("weekth,_rewardMultiplier.length:", weekth, _rewardMultiplier.length);
         // return _rewardMultiplier[0];
         uint256 multiplier = weekth > _rewardMultiplier.length - 1 ? 1 : _rewardMultiplier[weekth];
-        // return multiplier;
-        console.log("multiplier:", multiplier);
-        console.log("to", to);
-        console.log("from", from);
-        console.log("to-from", to - from);
         return multiplier * (to - from);
     }
 
@@ -242,7 +234,6 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         if (pending > 0) {
             safeTwoTransfer(msg.sender, pending);
         }
-        console.log("pool.token.safeTransferFrom", msg.sender, address(this), amount);
         pool.token.safeTransferFrom(msg.sender, address(this), amount);
         user.depositTime = block.timestamp;
         emit Deposit(msg.sender, pid, amount);
@@ -267,14 +258,8 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         uint256 percent = withdrawPercent(user.depositTime);
         uint256 userAmount = (amount * percent) / 10000;
         uint256 govAmount = amount - userAmount;
-        console.log("pool.token", address(pool.token));
-        console.log("msg.sender", msg.sender);
-        console.log("userAmount", userAmount);
-        console.log("balance", pool.token.balanceOf(address(this)));
         pool.token.safeTransfer(msg.sender, userAmount);
         if (govAmount > 0) {
-            console.log("_govVault", _govVault);
-            console.log("govAmount", govAmount);
             pool.token.safeTransfer(_govVault, govAmount);
         }
 
@@ -415,19 +400,14 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
 
     /*******
     !!!!!!!!!!!!!!!
-        waring just for test, clean at production
+     just for test
     !!!!!!!!!!!!!!!
      */
 
-    function testMint(address forUser, uint256 amount) public onlyOwner {
-        _twoToken.mint(forUser, amount);
+    function testMint(address forUser) public onlyOwner {
+        _twoToken.mint(forUser, 1);
     }
-
-    function testClaimLock(address forUser, uint256 amount) public onlyOwner {
-        _rewardLocker.lockFarmReward(forUser, amount);
-    }
-
-    function testSafeTwoTransfer(address to, uint256 amount) public onlyOwner {
-        safeTwoTransfer(to, amount);
+    function testClaimLock(address forUser) public onlyOwner {
+        _rewardLocker.lockFarmReward(forUser, 1);
     }
 }
