@@ -17,9 +17,9 @@ interface IGarden {
     // Info of each pool.
     struct PoolInfo {
         IERC20 token; // Address of LP token contract.
-        uint256 allocPoint; // How many allocation points assigned to this pool. OXDs to distribute per block.
+        uint256 allocPoint; // How many allocation points assigned to this pool. TWOs to distribute per block.
         uint256 lastRewardBlock; // Last block time that OXDs distribution occurs.
-        uint256 accTwoPerShare; // Accumulated OXDs per share, times 1e12. See below.
+        uint256 accTwoPerShare; // Accumulated TWOs per share, times 1e12. See below.
     }
 
     function harvestAll() external;
