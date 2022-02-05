@@ -7,36 +7,66 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 contract Airdrop is OwnableUpgradeable {
     using ECDSAUpgradeable for bytes32;
 
-    event Claim(address indexed account, uint256 amount);
+    event Claim(uint256 indexed aid, address indexed account, uint256 amount);
 
     address public _signer;
-    uint256 public _remain;
+    address public _airdropVault;
     IERC20 _two;
-    mapping(address => uint256) public _claimList;
+    mapping(uint256 => mapping(address => uint256)) public _claimList;
 
+    Airdrop[] public _airdrop;
+    struct Airdrop {
+        uint256 remain;
+        uint256 total;
+        uint256 count;
+        uint256 startTime;
+        uint256 endTime;
+        string desc;
+    }
 
-    function initialize(address signer) public initializer {
+    function initialize(
+        address signer,
+        address airdropVault,
+        IERC20 two
+    ) public initializer {
         __Ownable_init();
-        _signer=signer;
-        _remain =1000;
+        _signer = signer;
+        _airdropVault = airdropVault;
+        _two = two;
     }
 
     function claim(
+        uint256 aid,
         uint256 amount,
         uint8 v,
         bytes32 r,
         bytes32 s
     ) public {
-        require(_claimList[msg.sender] == 0, "HAD CLAIMED");
-        require(_remain != 0, "OVER");
+        uint256 currentTime = block.timestamp;
+        Airdrop storage airdrop = _airdrop[aid];
+        require(airdrop.startTime < currentTime, "not started yet");
+        require(airdrop.endTime > currentTime, "expired");
+        require(airdrop.count < airdrop.remain, "out of remain");
+
+        require(_claimList[aid][msg.sender] == 0, "HAD CLAIMED");
         require(
-            keccak256(abi.encodePacked(msg.sender, amount)).toEthSignedMessageHash().recover(v, r, s) == _signer,
+            keccak256(abi.encodePacked(msg.sender, aid, amount)).toEthSignedMessageHash().recover(v, r, s) == _signer,
             "claim:Invalid signarure"
         );
-        _two.transfer(msg.sender, amount);
-        _claimList[msg.sender] = amount;
-        _remain -= 1;
-        emit Claim(msg.sender, amount);
+        _two.transferFrom(_airdropVault, msg.sender, amount);
+        _claimList[aid][msg.sender] = amount;
+        airdrop.count += 1;
+        airdrop.total += amount;
+
+        emit Claim(aid, msg.sender, amount);
+    }
+
+    function getAirdrops() public view returns (Airdrop[] memory) {
+        return _airdrop;
+    }
+
+    function addAirdrop(Airdrop memory airdrop) public onlyOwner {
+        _airdrop.push(airdrop);
     }
 
     function setSigner(address signer) public onlyOwner {
@@ -52,6 +82,6 @@ contract Airdrop is OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 6;
+        return 9;
     }
 }
