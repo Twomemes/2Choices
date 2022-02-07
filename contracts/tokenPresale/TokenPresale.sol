@@ -6,19 +6,22 @@ import "../interfaces/ITokenPresale.sol";
 
 contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     uint256 public twoLeftPart ;
+    uint256 public saleStartStamp ; //UTC 2022-2-3 10:00  1643882400
+    uint256 public salePeriod;  //24h  86400
     uint256 public constant LOWER_LIMIT = 22 * 1e18;
     uint256 public constant TWO_EACHPART = 222222 * 1e15;
-    uint256 public constant SALE_PERIOD = 86400;  //24h  86400
-    uint256 public constant SALE_STARTSTAMP = 1643350647; //UTC 2022-2-3 10:00  1643882400
     address public constant TWO_ADDRESS = 0x7e09c5dE33C464394eaAa199Adc4b310A7ccBe6B;//0x9F1851f29374eFb292cFa78503fc02A9b640c45b
     address _admin;
     IERC20 public _two;
     mapping(address => uint256) public saleList;
+    
 
     function initialize(IERC20 twoadd) public initializer {
         __Ownable_init();
         twoLeftPart = 200;
         _two = twoadd;
+        saleStartStamp=1644224400;
+        salePeriod = 86400*3;  
     }
 
     receive() external payable {}
@@ -29,7 +32,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     modifier isStart() {
-        require(block.timestamp > SALE_STARTSTAMP && block.timestamp < SALE_STARTSTAMP + SALE_PERIOD, "END");
+        require(block.timestamp > saleStartStamp && block.timestamp < saleStartStamp + salePeriod, "END");
         _;
     }
 
@@ -57,16 +60,28 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function withdraw() public override onlyAdmin {
+        require(_admin != address(0), "INVALID admin");
+
         uint256 amount = address(this).balance;
         (bool success, ) = msg.sender.call{ value: amount } (new bytes(0));
         require(success, "! safe transfer FTM");
     }
 
     function withdrawTwo() public override onlyAdmin {
+        require(_admin != address(0), "INVALID admin");
+        
         uint256 leftAmount = _two.balanceOf(address(this));
         if (leftAmount != 0) {
             _two.transfer(_admin, leftAmount);
         }
+    }
+
+    function setSaleStartStamp(uint256 newStart) public onlyOwner {    
+        saleStartStamp = newStart;
+    }
+
+    function setSalePeriod(uint256 newPeriod) public onlyOwner {    
+        salePeriod = newPeriod;
     }
 
     function setAdmin(address newAdmin) public onlyOwner {
@@ -75,6 +90,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 6;
+        return 7;
     }
 }
