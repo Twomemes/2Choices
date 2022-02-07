@@ -3,7 +3,7 @@ import {contractAddress} from '~/utils/contract';
 import {upgrade} from '~/utils/upgrader';
 
 (async () => {
-  
-  await upgrade(`airdrop/Airdrop.sol`, contractAddress.airdrop);
+
+  await upgrade(`airdrop/Airdrop.sol`, contractAddress.airdrop, null,false);
 
 })();

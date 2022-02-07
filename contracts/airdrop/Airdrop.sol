@@ -11,7 +11,7 @@ contract Airdrop is OwnableUpgradeable {
 
     address public _signer;
     address public _airdropVault;
-    IERC20 _two;
+    IERC20 public _two;
     mapping(uint256 => mapping(address => uint256)) public _claimList;
 
     Airdrop[] public _airdrop;
@@ -82,6 +82,6 @@ contract Airdrop is OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 9;
+        return 10;
     }
 }
