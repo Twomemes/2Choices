@@ -224,7 +224,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         pool.lastRewardBlock = block.number;
     }
 
-    function deposit(uint256 pid, uint256 amount) public payable override nonReentrant {
+    function deposit(uint256 pid, uint256 amount) public  override nonReentrant {
         PoolInfo storage pool = _poolInfo[pid];
         UserInfo storage user = _userInfo[pid][msg.sender];
         updatePool(pid);

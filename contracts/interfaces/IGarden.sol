@@ -26,7 +26,7 @@ interface IGarden {
 
     function withdraw(uint256 pid, uint256 amount) external;
 
-    function deposit(uint256 pid, uint256 amount) external payable;
+    function deposit(uint256 pid, uint256 amount) external ;
 
     function pendingReward(uint256 pid, address user) external view returns (uint256);
 
