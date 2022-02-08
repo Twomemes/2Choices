@@ -23,8 +23,8 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         __Ownable_init();
         twoLeftPart = 440;
         _two = twoadd;
-        saleStartStamp = 1644224400;
-        salePeriod = 2400;  //60 * 20 * 3
+        saleStartStamp = 1644303948;
+        salePeriod = 60 * 60 *10;  //60 * 20 * 3
         wlSalePeriod = 1200;
     }
 
