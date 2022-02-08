@@ -8,24 +8,27 @@ import "../interfaces/ITokenPresale.sol";
 contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     using ECDSAUpgradeable for bytes32;
 
-    uint256 public twoLeftPart;
-    uint256 public saleStartStamp ; //UTC 2022-2-3 10:00  1643882400
-    uint256 public salePeriod;  //24h  86400
-    uint256 public wlSalePeriod;
+    uint256 public _twoLeftPart;
+    uint256 public _saleStartStamp ; //UTC 2022-2-3 10:00  1643882400
+    uint256 public _salePeriod;  //24h  86400
+    uint256 public _wlSalePeriod;
+    uint256 public _claimPeriod;
     uint256 public constant SINGLEPART = 11 * 1e18;
     uint256 public constant TWO_EACHPART = 2222.22 * 1e18;
     address public _admin;
     address public _signer;
     IERC20 public _two;
-    mapping(address => uint256) public saleList;    
+    mapping(address => uint256) public saleList;
+    mapping(address => bool) public claimList;    
 
     function initialize(IERC20 twoadd) public initializer {
         __Ownable_init();
-        twoLeftPart = 440;
+        _twoLeftPart = 440;
         _two = twoadd;
-        saleStartStamp = 1644303948;
-        salePeriod = 60 * 60 *10;  //60 * 20 * 3
-        wlSalePeriod = 1200;
+        _saleStartStamp = 1644303948;
+        _salePeriod = 60 * 60 *10;  //60 * 20 * 3
+        _wlSalePeriod = 1200;
+        //_claimPeriod = ;
     }
 
     receive() external payable {}
@@ -36,15 +39,16 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     modifier isNoneWLStart() {
-        require(block.timestamp > saleStartStamp + wlSalePeriod && block.timestamp < saleStartStamp + salePeriod, "SALE HAD END.");
+        require(block.timestamp > _saleStartStamp + _wlSalePeriod && block.timestamp < _saleStartStamp + _salePeriod, "SALE HAD END.");
         _;
     }
 
     function sale() public payable override isNoneWLStart {
-        require(twoLeftPart != 0, "SOLD OUT.");
+        require(_twoLeftPart != 0, "SOLD OUT.");
         require(msg.value == SINGLEPART, "INVALID AMOUNT.");
         require(saleList[msg.sender] == 0, "HAD BOUGHT.");
-        _sale(msg.sender);
+        _twoLeftPart -= 1;
+        saleList[msg.sender] = 1;
 
         emit Sale(msg.sender);
     }
@@ -55,36 +59,42 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         bytes32 s
     ) public payable override{
         uint256 currentTime = block.timestamp;
-        require(currentTime > saleStartStamp && currentTime < saleStartStamp + wlSalePeriod, "WHITELIST SALE END OR NOT START.");
+        require(currentTime > _saleStartStamp && currentTime < _saleStartStamp + _wlSalePeriod, "WHITELIST SALE END OR NOT START.");
         require(saleList[msg.sender] == 0, "HAD BOUGHT.");
         require(msg.value == SINGLEPART, "INVALID AMOUNT.");
         require(
             keccak256(abi.encodePacked(msg.sender)).toEthSignedMessageHash().recover(v, r, s) == _signer,
             "INVALID SIGNATURE."
         );
-        _sale(msg.sender);
+        _twoLeftPart -= 1;
+        saleList[msg.sender] = 1;
 
-        emit Sale(msg.sender);
+        emit WhiteListSale(msg.sender);
+    }
+
+    function claim() public override {
+        uint256 currentTime = block.timestamp;
+        require(currentTime > _claimPeriod, "NOT START");
+        require(saleList[msg.sender] == 1, "CAN NOT CLAIM");
+        require(claimList[msg.sender] == true, "HAD CLAIMED");
+
+        _two.transfer(msg.sender, TWO_EACHPART);
+        claimList[msg.sender] == true;
     }
 
     //===================================================VIEW======================================= */
 
     function getLeftAmount() public view override returns(uint256) {
-        return twoLeftPart;
+        return _twoLeftPart;
     }
  
     function checkCurrentPeriod() public view override returns(bool isWLPeriod) {
         uint256 currentTime = block.timestamp;
-        if (currentTime > saleStartStamp && currentTime < saleStartStamp + wlSalePeriod) isWLPeriod = true; 
+        if (currentTime > _saleStartStamp && currentTime < _saleStartStamp + _wlSalePeriod) isWLPeriod = true; 
         else isWLPeriod = false;
     } 
 
-    //===================================================INTERNAL======================================= */
-    function _sale(address receiver) internal {
-        _two.transfer(receiver, TWO_EACHPART);
-        twoLeftPart -= 1;
-        saleList[receiver] += 1;
-    }
+    
 
     //===================================================ADMIN======================================= */
     function withdraw() public onlyAdmin {
@@ -105,11 +115,15 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function setSaleStartStamp(uint256 newStart) public onlyOwner {    
-        saleStartStamp = newStart;
+        _saleStartStamp = newStart;
     }
 
     function setSalePeriod(uint256 newPeriod) public onlyOwner {    
-        salePeriod = newPeriod;
+        _salePeriod = newPeriod;
+    }
+
+    function setWLSalePeriod(uint256 newPeriod) public onlyOwner {    
+        _wlSalePeriod = newPeriod;
     }
 
     function setAdmin(address newAdmin) public onlyOwner {
@@ -122,6 +136,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 4;
+        return 5;
     }
 }

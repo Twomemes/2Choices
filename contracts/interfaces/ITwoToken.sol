@@ -8,4 +8,12 @@ interface ITwoToken is IERC20, IERC20Permit {
     function mint(address to, uint256 amount) external;
 
     function burn(uint256 amount) external;
+
+    function batchTransfer(address[] memory recepinents, uint256[] memory amounts) external;
+
+    function batchTransferFrom(
+        address from,
+        address[] memory recepinents,
+        uint256[] memory amounts
+    ) external;
 }

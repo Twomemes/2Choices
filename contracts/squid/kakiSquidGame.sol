@@ -225,7 +225,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         require(!isChapterStart[_chapter], "The chapter is already start.");
 
         //_nextGameTime = time;
-        _totalBonus[_chapter] += _farmGarden.squidPoolCalim(_kakiPayWalletAddress);
+        _totalBonus[_chapter] += _farmGarden.virtualPoolClaim(0,_kakiPayWalletAddress);
         isChapterStart[_chapter] = true;
         _lastRound = 0;
         _lastRoundStartTime[_chapter][_lastRound] = time;
