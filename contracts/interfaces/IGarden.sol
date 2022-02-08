@@ -22,11 +22,17 @@ interface IGarden {
         uint256 accTwoPerShare; // Accumulated TWOs per share, times 1e12. See below.
     }
 
+    struct VirtualPool {
+        address farmer;
+        uint256 allocPoint;
+        uint256 lastRewardBlock;
+    }
+
     function harvestAll() external;
 
     function withdraw(uint256 pid, uint256 amount) external;
 
-    function deposit(uint256 pid, uint256 amount) external ;
+    function deposit(uint256 pid, uint256 amount) external;
 
     function pendingReward(uint256 pid, address user) external view returns (uint256);
 
@@ -34,5 +40,7 @@ interface IGarden {
 
     function poolInfo() external view returns (PoolInfo[] memory);
 
-    function squidPoolCalim(address forUser) external returns (uint256);
+    function virtualPoolClaim(uint256 pid, address forUser) external returns (uint256);
+
+    function pendingVirtualPoolReward(uint256 pid) external view returns (uint256);
 }

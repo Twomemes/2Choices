@@ -21,15 +21,15 @@ import { getSigner } from '~/utils/contract';
   //     *Click the button to claim.`
   // });
   let a = await airdrop.addAirdrop({
-    remain: 1000,
+    remain: 1042,
     total: 0,
     count: 0,
-    startTime: Math.ceil(Date.now() / 1000),
-    endTime: Math.ceil(Date.now() / 1000 + 6 * 24 * 3600),
-    desc: `*Make sure you've completed tasks in Discord or Gleam.
-      *You can claim 50 $TWO token per campaign.
-      *You can claim more $TWO token if you participated more.
-      *Click the button to claim.`
+    startTime:  1644307200,// Math.ceil(Date.now() / 1000),
+    endTime: 1644480000, //Math.ceil(Date.now() / 1000 + 6 * 24 * 3600),
+    desc: `KAKI Protocol\n
+    KAKIER NFT owner,Who have interacted No-Loss & Squid Game protocol can claim400 $TWO！\n\n
+    Interaction Snapshot:2022/1/31 24:00 UTC
+    `
   });
   console.log(a.hash);
 
