@@ -59,7 +59,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         require(saleList[msg.sender] == 0, "HAD BOUGHT.");
         require(msg.value == SINGLEPART, "INVALID AMOUNT.");
         require(
-            keccak256(abi.encode(msg.sender)).toEthSignedMessageHash().recover(v, r, s) == _signer,
+            keccak256(abi.encodePacked(msg.sender)).toEthSignedMessageHash().recover(v, r, s) == _signer,
             "claim:Invalid signarure"
         );
         _sale(msg.sender);
@@ -73,11 +73,11 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         return twoLeftPart;
     }
  
-    function checkCurrentPeriod() public view override returns(uint256) {
+    function checkCurrentPeriod() public view override returns(bool isWLPeriod) {
         uint256 currentTime = block.timestamp;
-        if (currentTime > saleStartStamp && currentTime < saleStartStamp + wlSalePeriod) return 1; 
-        else return 2;
-    }
+        if (currentTime > saleStartStamp && currentTime < saleStartStamp + wlSalePeriod) isWLPeriod = true; 
+        else isWLPeriod = false;
+    } 
 
     //===================================================INTERNAL======================================= */
     function _sale(address receiver) internal {
@@ -87,7 +87,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     //===================================================ADMIN======================================= */
-    function withdraw() public override onlyAdmin {
+    function withdraw() public onlyAdmin {
         require(_admin != address(0), "INVALID admin");
 
         uint256 amount = address(this).balance;
@@ -95,7 +95,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         require(success, "! safe transfer FTM");
     }
 
-    function withdrawTwo() public override onlyAdmin {
+    function withdrawTwo() public onlyAdmin {
         require(_admin != address(0), "INVALID admin");
         
         uint256 leftAmount = _two.balanceOf(address(this));
@@ -117,7 +117,11 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         _admin = newAdmin;
     }
 
+    function setSigner(address signer) public onlyOwner {
+        _signer = signer;
+    }
+
     function version() public pure returns (uint256) {
-        return 0;
+        return 3;
     }
 }
