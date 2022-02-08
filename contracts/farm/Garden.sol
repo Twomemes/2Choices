@@ -21,9 +21,6 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     // total allocation point
     uint256 public _totalAllocPoint;
     uint256 public _rewardPerBlock;
-    uint256 public _squidGameAllocPoint;
-    uint256 public _squidGameLastRewardBlock;
-    address public _squidGameContract;
     ITwoToken public _twoToken;
     IClaimLock public _rewardLocker;
     address public _govVault;
@@ -31,6 +28,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     mapping(uint256 => mapping(address => UserInfo)) public _userInfo;
     // Info of each pool.
     PoolInfo[] public _poolInfo;
+    VirtualPool[] public _vPoolInfo;
     uint256[] public _rewardMultiplier;
     uint256[] public _initRewardPercent;
     uint256 public _normalInitRewardPercent;
@@ -128,19 +126,25 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         );
     }
 
+    function addVirtualPool(address farmer, uint256 allocPoint) public onlyOwner {
+        uint256 lastRewardBlock = block.number > _startBlockNumber ? block.number : _startBlockNumber;
+        _totalAllocPoint += allocPoint;
+        _vPoolInfo.push(VirtualPool({farmer: farmer, allocPoint: allocPoint, lastRewardBlock: lastRewardBlock}));
+    }
+
     function setAllocPoint(uint256 pid, uint256 allocPoint) public onlyOwner {
         massUpdatePools();
         _totalAllocPoint = _totalAllocPoint - _poolInfo[pid].allocPoint + allocPoint;
         _poolInfo[pid].allocPoint = allocPoint;
     }
 
-    function setSquidGameContract(address squid) public onlyOwner {
-        _squidGameContract = squid;
+    function setVirtualAllocPoint(uint256 pid, uint256 allocPoint) public onlyOwner {
+        _totalAllocPoint = _totalAllocPoint - _vPoolInfo[pid].allocPoint + allocPoint;
+        _vPoolInfo[pid].allocPoint = allocPoint;
     }
 
-    function setSquidGameAllocPoint(uint256 allocPoint) public onlyOwner {
-        _totalAllocPoint = _totalAllocPoint - _squidGameAllocPoint + allocPoint;
-        _squidGameAllocPoint = allocPoint;
+    function setVirtualPoolFarmer(uint256 pid, address farmer) public onlyOwner {
+        _vPoolInfo[pid].farmer = farmer;
     }
 
     function checkForDuplicate(IERC20 token) internal view {
@@ -224,7 +228,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         pool.lastRewardBlock = block.number;
     }
 
-    function deposit(uint256 pid, uint256 amount) public  override nonReentrant {
+    function deposit(uint256 pid, uint256 amount) public override nonReentrant {
         PoolInfo storage pool = _poolInfo[pid];
         UserInfo storage user = _userInfo[pid][msg.sender];
         updatePool(pid);
@@ -372,14 +376,20 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         return (multiplier * _rewardPerBlock * _oneDayBlocks * pool.allocPoint) / _totalAllocPoint;
     }
 
-    function squidPoolCalim(address forUser) public override returns (uint256) {
-        require(msg.sender == _squidGameContract, "none squid game");
-        uint256 amount = (_rewardPerBlock *
-            getMultiplier(_squidGameLastRewardBlock, block.number) *
-            _squidGameAllocPoint) / _totalAllocPoint;
-        _squidGameLastRewardBlock = block.number;
-        _twoToken.mint(forUser, amount);
+    function virtualPoolClaim(uint256 pid, address forUser) public override returns (uint256) {
+        require(msg.sender == _vPoolInfo[pid].farmer, "none virtual pool");
+        VirtualPool storage vPool = _vPoolInfo[pid];
+        uint256 amount = (_rewardPerBlock * (getMultiplier(vPool.lastRewardBlock, block.number) * vPool.allocPoint)) /
+            _totalAllocPoint;
+        vPool.lastRewardBlock = block.number;
         return amount;
+    }
+
+    function pendingVirtualPoolReward(uint256 pid) public view override returns (uint256) {
+        VirtualPool memory vPool = _vPoolInfo[pid];
+        return
+            (_rewardPerBlock * (getMultiplier(vPool.lastRewardBlock, block.number) * vPool.allocPoint)) /
+            _totalAllocPoint;
     }
 
     function chainInfo()
@@ -407,6 +417,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     function testMint(address forUser) public onlyOwner {
         _twoToken.mint(forUser, 1);
     }
+
     function testClaimLock(address forUser) public onlyOwner {
         _rewardLocker.lockFarmReward(forUser, 1);
     }
