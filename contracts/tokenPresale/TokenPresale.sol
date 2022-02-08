@@ -23,8 +23,8 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         __Ownable_init();
         twoLeftPart = 440;
         _two = twoadd;
-        saleStartStamp = 1644224400;
-        salePeriod = 2400;  //60 * 20 * 3
+        saleStartStamp = 1644303948;
+        salePeriod = 60 * 60 *10;  //60 * 20 * 3
         wlSalePeriod = 1200;
     }
 
@@ -60,7 +60,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         require(msg.value == SINGLEPART, "INVALID AMOUNT.");
         require(
             keccak256(abi.encodePacked(msg.sender)).toEthSignedMessageHash().recover(v, r, s) == _signer,
-            "claim:Invalid signarure"
+            "INVALID SIGNATURE."
         );
         _sale(msg.sender);
 
@@ -88,7 +88,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
 
     //===================================================ADMIN======================================= */
     function withdraw() public onlyAdmin {
-        require(_admin != address(0), "INVALID admin");
+        require(_admin != address(0), "INVALID ADMIN.");
 
         uint256 amount = address(this).balance;
         (bool success, ) = msg.sender.call{ value: amount } (new bytes(0));
@@ -96,7 +96,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function withdrawTwo() public onlyAdmin {
-        require(_admin != address(0), "INVALID admin");
+        require(_admin != address(0), "INVALID ADMIN.");
         
         uint256 leftAmount = _two.balanceOf(address(this));
         if (leftAmount != 0) {
@@ -122,6 +122,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 3;
+        return 4;
     }
 }
