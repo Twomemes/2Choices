@@ -31,7 +31,8 @@
     "fork:test": "node ./_scripts.js fork:test",
     "node": "hardhat node --network hardhat",
     "hr": "hardhat --network ftm run",
-    "ht": "hardhat --network ftmtest run"
+    "ht": "hardhat --network ftmtest run",
+    "hpre": "hardhat --network ftmpre run"
   },
   "keywords": [],
   "author": "",
