@@ -112,6 +112,10 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         salePeriod = newPeriod;
     }
 
+    function setWLSalePeriod(uint256 newPeriod) public onlyOwner {    
+        wlSalePeriod = newPeriod;
+    }
+
     function setAdmin(address newAdmin) public onlyOwner {
         require(newAdmin != address(0), "INVALID ADDRESS");
         _admin = newAdmin;
@@ -122,6 +126,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 3;
+        return 4;
     }
 }
