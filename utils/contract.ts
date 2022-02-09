@@ -45,13 +45,13 @@ export const frontendUsedContracts = [
 ];
 
 export const webToolsContractNames = [
-  'KakiSquidGame',
   'OpenBox',
   'Ticket',
   'AddressList',
   'CaptainClaim',
   'KakiGarden',
   'KakiNoLoss',
+  'Faucet',
 ];
 
 export const mutiContractAddrs = {

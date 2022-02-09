@@ -9,7 +9,7 @@ const addrs: ContractAddress = {
   squidAllowList: '',
   squidTicket: '',
   squidOpenBox: '',
-  facet: '',
+  facet: '0x45ea90E52E469cd4ADd433543488B79888C9695d',
   farm: '0x009ee80f190DE5e3933CA87D2793F72e639AbDDf',
   kakiCaptain: '',
   captainClaim: '',
@@ -26,7 +26,7 @@ const addrs: ContractAddress = {
   blindBox: '0xB03f96EB6b97A00897E6e3a60fc628FbF40DA575',
   kakiTicket: '0x35604605628691F5285CaBb71250829AcE6C0651',
   airdrop: '0x82b2866Cd7C16CDbe9710B601f8D7755080E5bd5',
-  tokenPresale: '0xAa4b279b15A41E5436E7471Fb5aB9feAAEb0791b',
+  tokenPresale: '0x67aE685D62206111a07aE86D9B1687B07b38e2D0',
 };
 
 export default addrs;
