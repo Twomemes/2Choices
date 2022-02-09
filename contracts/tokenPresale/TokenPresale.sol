@@ -18,8 +18,8 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     address public _admin;
     address public _signer;
     IERC20 public _two;
-    mapping(address => uint256) public saleList;
-    mapping(address => bool) public claimList;    
+    mapping(address => uint256) public override saleList;
+    mapping(address => bool) public claimList;
 
     function initialize(IERC20 twoadd) public initializer {
         __Ownable_init();
