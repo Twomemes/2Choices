@@ -10,7 +10,6 @@ import "../libraries/SafeToken.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-
 contract Garden is IGarden, ReentrancyGuard, Ownable {
     // using SafeToken for address;
     using SafeERC20 for IERC20;
@@ -345,6 +344,10 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         return _poolInfo;
     }
 
+    function virtualPoolInfo() public override view returns (VirtualPool[] memory) {
+        return _vPoolInfo;
+    }
+
     function safeTwoTransfer(address to, uint256 amount) internal {
         uint256 twoBal = _twoToken.balanceOf(address(this));
         uint256 sending = (amount * getInitRewardPercent(block.number)) / 10000;
@@ -377,11 +380,12 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     }
 
     function virtualPoolClaim(uint256 pid, address forUser) public override returns (uint256) {
-        require(msg.sender == _vPoolInfo[pid].farmer, "none virtual pool");
+        require(msg.sender == _vPoolInfo[pid].farmer, "none virtual pool farmer");
         VirtualPool storage vPool = _vPoolInfo[pid];
         uint256 amount = (_rewardPerBlock * (getMultiplier(vPool.lastRewardBlock, block.number) * vPool.allocPoint)) /
             _totalAllocPoint;
         vPool.lastRewardBlock = block.number;
+        _twoToken.mint(forUser, amount);
         return amount;
     }
 

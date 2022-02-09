@@ -1,4 +1,4 @@
-import { ERC20__factory, Garden, Garden__factory, TwoToken__factory, MockTwo__factory, TwoToken } from '~/typechain';
+import { ERC20__factory, Garden, Garden__factory, TwoToken__factory, MockTwo__factory, TwoToken, ClaimLock } from '~/typechain';
 import { claimLockContract, farmContract, getSigner, twoTokenContract } from '../../utils/contract';
 import { parseEther } from 'ethers/lib/utils';
 import { contractAddress } from '../../utils/contract';
@@ -16,45 +16,45 @@ async function deploy() {
 
   const oneDayBlock = Math.ceil((24 * 3600) / 0.88);
 
+  const two = await deployTwo();
+
+  console.log(`deploy two`);
+
   const instance = await factory.deploy(
-    contractAddress.two,
+    two.address,
     parseEther('1'),
     currentBlock + 10,
     currentBlock + oneDayBlock * 365 * 3,
     oneDayBlock
   );
-
   console.log(`farm deploy to: ${instance.address}`);
-  await instance.deployed();
-  return instance;
 
+  const tx = await two.setFarm(instance.address);
+  console.log(`set farm for two: ${tx.hash}`);
+  await instance.deployed();
+  const claimLock = await deployClaimLock(instance.address, two.address);
+
+  return { farm: instance, two, claimLock };
 }
 
 
-async function config(farm: Garden, two: TwoToken) {
+async function config(farm: Garden, claimLock: ClaimLock) {
   console.log('start config');
   // const two = TwoToken__factory.connect(contractAddress.two, await getSigner());
   // const claimLock = await claimLockContract();
-  const claimLock = await deployClaimLock(farm.address, two.address);
-  const tx = await two.setFarm(farm.address);
-  console.log(`setFarm for two: ${tx.hash}`);
 
-  const lp = await farm.addPool(74, addrs.lp);
+  const lp = await farm.addPool(92, addrs.lp);
   console.log(`add lp pool : ${lp.hash}`);
   await lp.wait();
-  const wftm = await farm.addPool(2, addrs.wftm);
+  const wftm = await farm.addPool(5, addrs.wftm);
   console.log(`add wftm ${addrs.wftm} : ${wftm.hash}`);
 
-  const squidAlloc = await farm.setSquidGameAllocPoint(20);
-  console.log(`squid alloc :${squidAlloc.hash}`);
+  const addVirtualPool = await farm.addVirtualPool(contractAddress.squidGame, 3);
+  console.log(`addVirtualPool 0 :${addVirtualPool.hash}`);
 
   const lock = await farm.setRewardLocker(claimLock.address);
   console.log(`set reward lock for farm ${claimLock.address}: ${lock.hash}`);
   const signer = await getSigner(1);
-  // const setGovVault = await farm.setGovVault(signer.address);
-
-  const squidSetting = await farm.setSquidGameContract(contractAddress.squidGame);
-  console.log(`squid game setting ${contractAddress.squidGame}: ${squidSetting.hash}`);
 
   const setFarmForLock = await claimLock.setFarmAdd(farm.address);
   console.log(`set farm for ${farm.address} lock: ${setFarmForLock.hash}`);
@@ -113,23 +113,26 @@ async function harvest(farm: Garden) {
 }
 
 (async () => {
-  const farm = await deploy();
+  const { farm, two, claimLock } = await deploy();
 
   // const farm = await farmContract();
 
   // await transferStaking(['0x7Fc4fdbBf6F4a16ca076e1Eca5364D6e9db68994'])
-  const two = await deployTwo();
+  // const two = await deployTwo();
   // const two = await twoTokenContract();
 
-  await config(farm, two);
+  await config(farm, claimLock);
 
   await deposit(farm);
-  console.log(`wait 20s`);
-  await delay(20 * 1000);
+  console.log(`wait 10s`);
+  await delay(10 * 1000);
   await harvest(farm);
-  console.log(`wait 20s`);
-  await delay(20 * 1000);
+  console.log(`wait 10s`);
+  await delay(10 * 1000);
   await withdraw(farm);
+
+  const tx2 = await claimLock.claimFarmReward([0]);
+  console.log(`claim farm reward: ${tx2.hash}`);
   const pool = await farm.poolInfo();
   printEtherResultArray(pool);
 })();

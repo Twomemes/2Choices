@@ -62,6 +62,9 @@ export async function deployClaimLock(farm: string, two: string) {
   const claimLock = <ClaimLock>await upgrades.deployProxy(new ClaimLock__factory(signer), args);
   console.log(`claimLock deployed to : ${claimLock.address}`);
   await claimLock.deployed();
+
+  const tx =await claimLock.setTreasury(signer.address);
+  console.log(`claimLock.setTreasury: ${tx.hash}`);
   return claimLock;
 }
 

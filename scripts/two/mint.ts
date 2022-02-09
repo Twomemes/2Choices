@@ -1,5 +1,7 @@
 import {twoTokenContract, getSigner} from '~/utils/contract';
 import {parseEther} from 'ethers/lib/utils';
+import { contractAddress } from '../../utils/contract';
+
 
 (async () => {
   const two = await twoTokenContract();
