@@ -103,17 +103,21 @@ describe('garden', async () => {
     expect(twoBl).gt(0);
   });
 
-  it(`add pool-> deposit -> harvest -> withdraw`, async () => {
+  it(`add pool-> deposit -> harvest -> withdraw -> deposit`, async () => {
 
     const { users, farm, mockLp, two } = await setup();
 
     await farm.setGovVault(users[1].address);
     await farm.addPool(30, mockLp.address);
     const value = parseEther('10.1');
+    console.log(`init pendingReward: ${await farm.pendingReward(0, users[0].address)}`);
     await farm.deposit(0, value);
-
-    await delay(5 * 1000);
+    console.log(`init afer deposit: ${await farm.pendingReward(0, users[0].address)}`);
     await farm.withdraw(0, value);
+    console.log(`init afer withdraw: ${await farm.pendingReward(0, users[0].address)}`);
+    await farm.deposit(0, value);
+    console.log(`init afer redeposit: ${await farm.pendingReward(0, users[0].address)}`);
+
   });
 
   it('virtual pool mint', async () => {
