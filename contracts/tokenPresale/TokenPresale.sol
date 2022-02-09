@@ -58,6 +58,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         bytes32 r,
         bytes32 s
     ) public payable override{
+        require(_twoLeftPart > 0, "SOLD OUT.");
         uint256 currentTime = block.timestamp;
         require(currentTime > _saleStartStamp && currentTime < _saleStartStamp + _wlSalePeriod, "WHITELIST SALE END OR NOT START.");
         require(saleList[msg.sender] == 0, "HAD BOUGHT.");
