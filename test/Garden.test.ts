@@ -116,20 +116,32 @@ describe('garden', async () => {
     await farm.withdraw(0, value);
   });
 
-  it('squidGame mint', async () => {
+  it('virtual pool mint', async () => {
     const { users, farm, mockLp, two } = await setup();
 
     await farm.setGovVault(users[1].address);
     await farm.addPool(30, mockLp.address);
 
-    await farm.setSquidGameAllocPoint(50);
+    await farm.addVirtualPool(users[1].address, 30);
+
+    const vpool0 = await farm._vPoolInfo(0);
+
+    expect(vpool0.farmer).to.eq(users[1].address);
+    expect(vpool0.allocPoint).to.eq(30);
+
     const value = parseEther('10.1');
-    await farm.setSquidGameContract(users[1].address);
-    await delay(1 * 1000);
+    // await network.provider.send("evm_increaseTime", [24 * 60 * 60]);
+    // await network.provider.send("evm_mine")
+    await network.provider.send("evm_mine")
 
-    await users[1].farm.squidPoolCalim(users[1].address);
+    const pendingReward = await farm.pendingVirtualPoolReward(0);
 
-    console.log(`_squidGameLastRewardBlock : ${await farm._squidGameLastRewardBlock()}`);
+    console.log(`pendingReward: ${formatEther(pendingReward)}`);
+    await users[1].farm.virtualPoolClaim(0, users[1].address);
+
+    // await users[1].farm.virtualPoolClaim(0,users[1].address);
+
+    console.log(`vpool 0  lastRewardBlock: ${(await farm._vPoolInfo(0)).lastRewardBlock}`);
 
     const squidBl = await two.balanceOf(users[1].address)
     console.log(`squidBl : ${formatEther(squidBl)}`);
