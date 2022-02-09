@@ -110,13 +110,15 @@ describe('garden', async () => {
     await farm.setGovVault(users[1].address);
     await farm.addPool(30, mockLp.address);
     const value = parseEther('10.1');
-    console.log(`init pendingReward: ${await farm.pendingReward(0, users[0].address)}`);
+    console.log(`init pendingReward: ${formatEther(await farm.pendingReward(0, users[0].address))}`);
     await farm.deposit(0, value);
-    console.log(`init afer deposit: ${await farm.pendingReward(0, users[0].address)}`);
+    await network.provider.send("evm_mine");
+    console.log(`init afer deposit: ${formatEther(await farm.pendingReward(0, users[0].address))}`);
     await farm.withdraw(0, value);
-    console.log(`init afer withdraw: ${await farm.pendingReward(0, users[0].address)}`);
+    console.log(`init afer withdraw: ${formatEther(await farm.pendingReward(0, users[0].address))}`);
     await farm.deposit(0, value);
-    console.log(`init afer redeposit: ${await farm.pendingReward(0, users[0].address)}`);
+    await network.provider.send("evm_mine");
+    console.log(`init afer redeposit: ${formatEther(await farm.pendingReward(0, users[0].address))}`);
 
   });
 
