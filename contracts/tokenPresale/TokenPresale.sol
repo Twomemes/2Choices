@@ -25,10 +25,10 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         __Ownable_init();
         _twoLeftPart = 440;
         _two = twoadd;
-        _saleStartStamp = 1644386400;
-        _salePeriod = 10800;  //60 * 20 * 3
-        _wlSalePeriod = 7200;
-        _claimPeriod = 10800;
+        _saleStartStamp = 1644398100;
+        _salePeriod = 2400;  //60 * 20 * 3
+        _wlSalePeriod = 1200;
+        _claimPeriod = 3600;
         _signer = signerAdd;
     }
 
@@ -76,7 +76,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
 
     function claim() public override {
         uint256 currentTime = block.timestamp;
-        require(currentTime > _claimPeriod, "NOT START");
+        require(currentTime > _saleStartStamp + _claimPeriod, "NOT START");
         require(saleList[msg.sender] == 1, "CAN NOT CLAIM");
         require(!claimList[msg.sender], "HAD CLAIMED");
 
@@ -138,6 +138,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 2;
+        return 3;
     }
 }
