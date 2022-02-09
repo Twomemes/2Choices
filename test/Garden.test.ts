@@ -119,12 +119,15 @@ describe('garden', async () => {
   it('virtual pool mint', async () => {
     const { users, farm, mockLp, two } = await setup();
 
-    await farm.setGovVault(users[1].address);
-    await farm.addPool(30, mockLp.address);
+    const chainInfos: Awaited<ReturnType<typeof farm.chainInfo>>[] = []
 
+    chainInfos.push(await farm.chainInfo());
+
+    await farm.setGovVault(users[1].address);
     await farm.addVirtualPool(users[1].address, 30);
 
     const vpool0 = await farm._vPoolInfo(0);
+    chainInfos.push(await farm.chainInfo());
 
     expect(vpool0.farmer).to.eq(users[1].address);
     expect(vpool0.allocPoint).to.eq(30);
@@ -133,6 +136,8 @@ describe('garden', async () => {
     // await network.provider.send("evm_increaseTime", [24 * 60 * 60]);
     // await network.provider.send("evm_mine")
     await network.provider.send("evm_mine")
+    chainInfos.push(await farm.chainInfo());
+
 
     const pendingReward = await farm.pendingVirtualPoolReward(0);
 
@@ -145,8 +150,22 @@ describe('garden', async () => {
 
     const squidBl = await two.balanceOf(users[1].address)
     console.log(`squidBl : ${formatEther(squidBl)}`);
-    expect(squidBl).gt(0);
+    console.log(`first rewarded :${formatEther(squidBl)}`);
 
+    expect(squidBl).gt(0);
+    for (let i = 0; i < 100; i++) {
+      await network.provider.send("evm_mine")
+    }
+    chainInfos.push(await farm.chainInfo());
+
+    await users[1].farm.virtualPoolClaim(0, users[1].address);
+    chainInfos.push(await farm.chainInfo());
+
+    console.log(`vpool 0  lastRewardBlock 2: ${(await farm._vPoolInfo(0)).lastRewardBlock}`);
+    console.log(`second rewarded :${formatEther(await two.balanceOf(users[1].address))}`);
+    console.log(`vpool0 alloc/total : ${(await farm._vPoolInfo(0)).allocPoint.toNumber()}/${(await farm._totalAllocPoint()).toNumber()}`);
+
+    console.log(`blocknumber - ${chainInfos.map(x => x.blockNumber.toNumber()).join('->')}`);
   });
 
   it('set reward muiltiplie', async () => {
