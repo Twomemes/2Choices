@@ -25,10 +25,10 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         __Ownable_init();
         _twoLeftPart = 440;
         _two = twoadd;
-        _saleStartStamp = 1644303948;
-        _salePeriod = 60 * 60 *10;  //60 * 20 * 3
-        _wlSalePeriod = 1200;
-        //_claimPeriod = ;
+        _saleStartStamp = 1644376800;
+        _salePeriod = 7200;  //60 * 20 * 3
+        _wlSalePeriod = 3600;
+        _claimPeriod = 10800;
     }
 
     receive() external payable {}
@@ -136,6 +136,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 5;
+        return 1;
     }
 }
