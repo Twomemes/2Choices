@@ -45,12 +45,7 @@ export const frontendUsedContracts = [
 ];
 
 export const webToolsContractNames = [
-  'OpenBox',
-  'Ticket',
-  'AddressList',
-  'CaptainClaim',
-  'KakiGarden',
-  'KakiNoLoss',
+  'Garden',
   'Faucet',
 ];
 
