@@ -19,16 +19,17 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     address public _signer;
     IERC20 public _two;
     mapping(address => uint256) public override saleList;
-    mapping(address => bool) public claimList;
+    mapping(address => bool) public override claimList;
 
-    function initialize(IERC20 twoadd) public initializer {
+    function initialize(IERC20 twoadd, address signerAdd) public initializer {
         __Ownable_init();
         _twoLeftPart = 440;
         _two = twoadd;
-        _saleStartStamp = 1644376800;
-        _salePeriod = 7200;  //60 * 20 * 3
-        _wlSalePeriod = 3600;
+        _saleStartStamp = 1644386400;
+        _salePeriod = 10800;  //60 * 20 * 3
+        _wlSalePeriod = 7200;
         _claimPeriod = 10800;
+        _signer = signerAdd;
     }
 
     receive() external payable {}
@@ -77,7 +78,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         uint256 currentTime = block.timestamp;
         require(currentTime > _claimPeriod, "NOT START");
         require(saleList[msg.sender] == 1, "CAN NOT CLAIM");
-        require(claimList[msg.sender] == true, "HAD CLAIMED");
+        require(!claimList[msg.sender], "HAD CLAIMED");
 
         _two.transfer(msg.sender, TWO_EACHPART);
         claimList[msg.sender] == true;
@@ -89,13 +90,13 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         return _twoLeftPart;
     }
  
-    function checkCurrentPeriod() public view override returns(bool isWLPeriod) {
-        uint256 currentTime = block.timestamp;
-        if (currentTime > _saleStartStamp && currentTime < _saleStartStamp + _wlSalePeriod) isWLPeriod = true; 
-        else isWLPeriod = false;
-    } 
+    function checkCurrentPeriod() public view override returns(uint256 wlStart, uint256 wlEnd, uint256 saleEnd, uint256 claimTime) {
+        wlStart = _saleStartStamp;
+        wlEnd = _saleStartStamp + _wlSalePeriod;
+        saleEnd = _saleStartStamp + _salePeriod;
+        claimTime = _saleStartStamp + _claimPeriod;
+    }
 
-    
 
     //===================================================ADMIN======================================= */
     function withdraw() public onlyAdmin {
@@ -137,6 +138,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 1;
+        return 2;
     }
 }

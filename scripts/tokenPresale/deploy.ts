@@ -5,11 +5,12 @@ import {deploy} from '~/utils/upgrader';
 
 
 (async () => {
-  
+  const signer0 = await getSigner(0);
 
 
   const args: Parameters<TokenPresale['initialize']> = [
     contractAddress.two,
+    signer0.address
   ];
 
   console.log({args});

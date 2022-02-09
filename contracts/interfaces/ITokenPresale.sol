@@ -14,7 +14,8 @@ interface ITokenPresale {
     function sale() external payable;
     function claim() external;
     function getLeftAmount() external view returns(uint256);
-    function checkCurrentPeriod() external view returns(bool isWLPeriod);
+    function checkCurrentPeriod() external view returns(uint256 wlStart, uint256 wlEnd, uint256 saleEnd, uint256 claimTime);
 
-    function saleList(address account) external view returns (uint256);
+    function saleList(address account) external view returns(uint256);
+    function claimList(address account) external view returns(bool);
 }

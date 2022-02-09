@@ -5,7 +5,7 @@ import { getSigner } from '~/utils/contract';
 (async () => {
   const contract = await tokenPresaleContract();
   const signer0 = await getSigner(0);
-  let amount = await contract.setWLSalePeriod(1200);
+  let amount = await contract.setWLSalePeriod(9000);
 
   console.log(amount);
 })();
