@@ -10649,10 +10649,10 @@ typedarray@^0.0.6:
   resolved "https://registry.npmjs.org/typedarray/-/typedarray-0.0.6.tgz"
   integrity sha1-hnrHTjhkGHsdPUfZlqeOxciDB3c=
 
-typescript@^4.4.3:
-  version "4.4.4"
-  resolved "https://registry.npmjs.org/typescript/-/typescript-4.4.4.tgz"
-  integrity sha512-DqGhF5IKoBl8WNf8C1gu8q0xZSInh9j1kJJMqT3a94w1JzVaBU4EXOSMrz9yDqMT0xt3selp83fuFMQ0uzv6qA==
+typescript@^4.6.0-dev.20220208:
+  version "4.6.0-dev.20220208"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.6.0-dev.20220208.tgz#24a0371626f614f7805fb326bc6a4229eb81e630"
+  integrity sha512-2yfS4UYfkLnpVkjs2IEl7T++ojqdPiV5S/akYv1trTf50TZHmGnyhF5Umo2iLWZEuSDmBCe2K52x5qzBXDi+mQ==
 
 typewise-core@^1.2, typewise-core@^1.2.0:
   version "1.2.0"

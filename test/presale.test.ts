@@ -26,10 +26,10 @@ const setup = deployments.createFixture(async () => {
     100000
   );
 
-  const mintRole = await two.MINTER();
+  //const mintRole = await two.MINTER();
 
-  await two.grantRole(mintRole, farm.address);
-  await two.grantRole(mintRole, signer.address);
+  //await two.grantRole(mintRole, farm.address);
+  //await two.grantRole(mintRole, signer.address);
   await mockLp.approve(farm.address, parseEther('100000000000000'));
 
 

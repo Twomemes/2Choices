@@ -18,8 +18,8 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     address public _admin;
     address public _signer;
     IERC20 public _two;
-    mapping(address => uint256) public saleList;
-    mapping(address => bool) public claimList;    
+    mapping(address => uint256) public override saleList;
+    mapping(address => bool) public claimList;
 
     function initialize(IERC20 twoadd) public initializer {
         __Ownable_init();
@@ -58,6 +58,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         bytes32 r,
         bytes32 s
     ) public payable override{
+        require(_twoLeftPart > 0, "SOLD OUT.");
         uint256 currentTime = block.timestamp;
         require(currentTime > _saleStartStamp && currentTime < _saleStartStamp + _wlSalePeriod, "WHITELIST SALE END OR NOT START.");
         require(saleList[msg.sender] == 0, "HAD BOUGHT.");
