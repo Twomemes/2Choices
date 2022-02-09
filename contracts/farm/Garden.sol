@@ -10,7 +10,6 @@ import "../libraries/SafeToken.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 
-
 contract Garden is IGarden, ReentrancyGuard, Ownable {
     // using SafeToken for address;
     using SafeERC20 for IERC20;
@@ -343,6 +342,10 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
 
     function poolInfo() public view override returns (PoolInfo[] memory) {
         return _poolInfo;
+    }
+
+    function virtualPoolInfo() public override view returns (VirtualPool[] memory) {
+        return _vPoolInfo;
     }
 
     function safeTwoTransfer(address to, uint256 amount) internal {

@@ -40,6 +40,8 @@ interface IGarden {
 
     function poolInfo() external view returns (PoolInfo[] memory);
 
+    function virtualPoolInfo() external view returns (VirtualPool[] memory);
+
     function virtualPoolClaim(uint256 pid, address forUser) external returns (uint256);
 
     function pendingVirtualPoolReward(uint256 pid) external view returns (uint256);
