@@ -6,6 +6,6 @@ import {parseEther} from 'ethers/lib/utils';
   const signer = await getSigner(0);
 
   //const tx = await kaki.mint(signer.address, parseEther('1'));
-  const tx = await two.mint('0x208004343AC61BcE6530C1C58d09d81F83E0e521', parseEther('10000'));
+  const tx = await two.mint('0xb4eD8d1Cee3DDF31b1C5b4aC31Fc99d55a9862b5', parseEther('10000'));
   console.log(tx.hash);
 })();
