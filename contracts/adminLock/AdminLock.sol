@@ -25,6 +25,7 @@ contract AdminLock is Ownable {
     receive() external payable {}
 
     function depositLP(uint256 amount, uint256 pid) public {
+        _lp.transferFrom(msg.sender, address(this), amount);
         _farm.deposit(pid, amount);
         _depositList[msg.sender][pid] += amount;
         _startTimestamp[msg.sender][pid] = block.timestamp;

@@ -81,7 +81,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         require(!claimList[msg.sender], "HAD CLAIMED");
 
         _two.transfer(msg.sender, TWO_EACHPART);
-        claimList[msg.sender] == true;
+        claimList[msg.sender] = true;
     }
 
     //===================================================VIEW======================================= */
@@ -138,6 +138,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 3;
+        return 4;
     }
 }
