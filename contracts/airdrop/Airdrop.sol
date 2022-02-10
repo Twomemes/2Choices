@@ -35,6 +35,11 @@ contract Airdrop is OwnableUpgradeable {
         _two = two;
     }
 
+    function setAirdropEnd(uint256 aid, uint256 endTime) public onlyOwner {
+        require(aid < _airdrop.length);
+        _airdrop[aid].endTime = endTime;
+    }
+
     function claim(
         uint256 aid,
         uint256 amount,
@@ -82,6 +87,6 @@ contract Airdrop is OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 10;
+        return 12;
     }
 }
