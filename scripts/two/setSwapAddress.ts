@@ -6,9 +6,7 @@ import { contractAddress } from '../../utils/contract';
 (async () => {
   const two = await twoTokenContract();
   const signer = await getSigner(0);
-
-  //const tx = await kaki.mint(signer.address, parseEther('1'));
-  const tx = await two.mint(signer.address, parseEther('100000'));
+  const tx = await two.setSwapAddress('0x87d003af8b0bf6a67f31f6e02c73665dfea71ff2');
 
   console.log(tx.hash);
 })();
