@@ -15,7 +15,8 @@ import {deploy} from '~/utils/upgrader';
   const instance = await factory.deploy(
     "0x8FCacfeFF8988c3e4792f585CCC148f67Ae29432",
     contractAddress.farm,
-    contractAddress.two
+    contractAddress.two,
+    contractAddress.claimLock
   );
 
   console.log(`deploy to: ${instance.address}`);
