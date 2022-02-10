@@ -17,6 +17,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     uint256 public constant TWO_EACHPART = 2222.22 * 1e18;
     address public _admin;
     address public _signer;
+    address public constant BLACKHOLE = 0x0000000000000000000000000000000000000000;
     IERC20 public _two;
     mapping(address => uint256) public override saleList;
     mapping(address => bool) public override claimList;   
@@ -25,7 +26,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         __Ownable_init();
         _twoLeftPart = 440;
         _two = twoadd;
-        _saleStartStamp = 1644462900;
+        _saleStartStamp = 1644477000;
         _salePeriod = 1200;  //60 * 20 * 3
         _wlSalePeriod = 600;
         _claimPeriod = 1500;
@@ -45,7 +46,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function sale() public payable override isNoneWLStart {
-        require(_twoLeftPart != 0, "SOLD OUT.");
+        require(_twoLeftPart > 0, "SOLD OUT.");
         require(msg.value == SINGLEPART, "INVALID AMOUNT.");
         require(saleList[msg.sender] == 0, "HAD BOUGHT.");
         _twoLeftPart -= 1;
@@ -96,24 +97,11 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         claimTime = _saleStartStamp + _claimPeriod;
     }
 
-    
-
     //===================================================ADMIN======================================= */
-    function withdraw() public onlyAdmin {
-        require(_admin != address(0), "INVALID ADMIN.");
-
-        uint256 amount = address(this).balance;
-        (bool success, ) = msg.sender.call{ value: amount } (new bytes(0));
-        require(success, "! safe transfer FTM");
-    }
-
-    function withdrawTwo() public onlyAdmin {
-        require(_admin != address(0), "INVALID ADMIN.");
-        
-        uint256 leftAmount = _two.balanceOf(address(this));
-        if (leftAmount != 0) {
-            _two.transfer(_admin, leftAmount);
-        }
+    function burn() public onlyOwner {
+        require(_twoLeftPart != 0, "SOLD OUT.");
+        require(block.timestamp > _saleStartStamp + _claimPeriod, "NOT START");
+        _two.transfer(BLACKHOLE, TWO_EACHPART * _twoLeftPart);
     }
 
     function setSaleStartStamp(uint256 newStart) public onlyOwner {    
@@ -126,11 +114,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
 
     function setWLSalePeriod(uint256 newPeriod) public onlyOwner {    
         _wlSalePeriod = newPeriod;
-    }
-
-    function setAdmin(address newAdmin) public onlyOwner {
-        require(newAdmin != address(0), "INVALID ADDRESS");
-        _admin = newAdmin;
     }
 
     function setSigner(address signer) public onlyOwner {
