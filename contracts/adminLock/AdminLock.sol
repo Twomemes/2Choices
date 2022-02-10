@@ -5,21 +5,18 @@ import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import "../interfaces/IGarden.sol";
 
 contract AdminLock is Ownable {
-    uint256 public constant LOCK_PERIOD =3600;// 8467200; //14 week
-    address public constant LP_ADDRESS = 0xd91cfd064F4C1a9ee91Fc58fCa671c4cF6A68ADB; //lp
-    address public _farmAddress = 0xd91cfd064F4C1a9ee91Fc58fCa671c4cF6A68ADB; //farm
-    address public _wftm = 0xd91cfd064F4C1a9ee91Fc58fCa671c4cF6A68ADB; //wftm
-    address public _two = 0xd91cfd064F4C1a9ee91Fc58fCa671c4cF6A68ADB; //two
-    address _admin;
     IERC20 public _lp;
-    IERC20 public _twoToken;
+    IERC20 public _twoToken; 
     IGarden public _farm;
+    uint256 public constant LOCK_PERIOD =3600;// 8467200; //14 week
+
     mapping(address => mapping(uint256 => uint256)) public _startTimestamp;
     mapping(address => mapping(uint256 => uint256)) public _depositList;
 
-    constructor() {
-        _lp = IERC20(LP_ADDRESS);
-        _farm = IGarden(_farmAddress);
+    constructor(IERC20 lp,IGarden farm,IERC20 two) {
+        _lp = lp;
+        _farm = farm;
+        _twoToken=two;
     }
 
     receive() external payable {}
@@ -37,7 +34,11 @@ contract AdminLock is Ownable {
         uint256 amount = _depositList[msg.sender][pid];
         _farm.withdraw(pid, amount);
         _lp.transfer(msg.sender, amount);
-        _twoToken.transfer(msg.sender, IERC20(_two).balanceOf(address(this)));
+        _twoToken.transfer(msg.sender, _twoToken.balanceOf(address(this)));
         _depositList[msg.sender][pid] = 0;
+    }
+
+    function version() public pure returns (uint256) {
+        return 1;
     }
 }

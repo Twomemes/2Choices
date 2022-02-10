@@ -16,6 +16,7 @@ import {
   Tools__factory,
   TokenPresale__factory,
   Airdrop__factory,
+  AdminLock__factory,
 } from '~/typechain';
 
 import bsctest from './contractAddress/bscTest';
@@ -132,6 +133,9 @@ export const contractAddress = {
   get tokenPresale() {
     return getItem('tokenPresale');
   },
+  get adminLock() {
+    return getItem('adminLock');
+  },
 };
 
 function getItem(key: string) {
@@ -205,4 +209,8 @@ export async function tokenPresaleContract(signerIndex = 0) {
 
 export async function airdropContract(signerIndex = 0) {
   return Airdrop__factory.connect(contractAddress.airdrop, await getSigner(signerIndex));
+}
+
+export async function adminLockContract(signerIndex = 0) {
+  return AdminLock__factory.connect(contractAddress.adminLock, await getSigner(signerIndex));
 }

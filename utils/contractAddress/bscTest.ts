@@ -17,6 +17,7 @@ const addrs = {
   captainAllowList: '',
   mysteryBox: '',
   chainlinkRandoms: '',
+  adminLock: '',
   claimLock: '',
   two: '',
   noLoss: '',
