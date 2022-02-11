@@ -197,9 +197,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
             uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
             uint256 twoReward = (multiplier * _rewardPerBlock * pool.allocPoint) / _totalAllocPoint;
             accTwoPerShare = accTwoPerShare + (twoReward * 1e12) / lpSupply;
-            //  accTwoPerShare.add(oxdReward.mul(1e12).div(lpSupply));
         }
-        // return user.amount.mul(accOXDPerShare).div(1e12).sub(user.rewardDebt);
         return (user.amount * accTwoPerShare) / 1e12 - user.rewardDebt;
     }
 
