@@ -244,6 +244,8 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         uint256 winChip;
         uint256 bonus;
         uint256 lastCheckChapter = _users[msg.sender]._lastCheckChapter;
+        if(lastCheckChapter == _chapter)
+            return 0;
         uint256 baseAward = 40 ether;
         if (_totalWinnerChip[lastCheckChapter] > 0 && lastCheckChapter != _chapter) {
             if (_price[lastCheckChapter][_roundSum - 1] < _price[lastCheckChapter][_roundSum])
@@ -253,32 +255,33 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
 
         uint256 totalBonus = _totalBonus[lastCheckChapter];
         uint256 joinOrder = _users[msg.sender]._joinOrder[lastCheckChapter];
-        uint256 lastUserAward = (totalBonus * _lastUserAwardRate) / THOUSAND;
-        if (_joinNum[lastCheckChapter] - joinOrder < _lastAwardNum) {
-            uint256 lastAwrdUser = _joinNum[lastCheckChapter] < _lastAwardNum
-                ? _joinNum[lastCheckChapter]
-                : _lastAwardNum;
-            bonus += lastUserAward / (lastAwrdUser);
-        }
-        
-        if (joinOrder < _beforeAwrdNum) {
-            uint256 beforeAwrdUser = _joinNum[lastCheckChapter] > _beforeAwrdNum
-                ? _joinNum[lastCheckChapter]
-                : _beforeAwrdNum;
-            for (uint256 i = joinOrder; i <= beforeAwrdUser; i++) {
-                bonus += baseAward/ i;
+        if(joinOrder >0){
+            uint256 lastUserAward = (totalBonus * _lastUserAwardRate) / THOUSAND;
+            if (_joinNum[lastCheckChapter] - joinOrder < _lastAwardNum) {
+                uint256 lastAwrdUser = _joinNum[lastCheckChapter] < _lastAwardNum
+                    ? _joinNum[lastCheckChapter]
+                    : _lastAwardNum;
+                bonus += lastUserAward / (lastAwrdUser);
+            }
+            
+            if (joinOrder < _beforeAwrdNum) {
+                uint256 beforeAwrdUser = _joinNum[lastCheckChapter] > _beforeAwrdNum
+                    ? _joinNum[lastCheckChapter]
+                    : _beforeAwrdNum;
+                for (uint256 i = joinOrder; i <= beforeAwrdUser; i++) {
+                    bonus += baseAward/ i;
+                }
+            }
+            if (winChip > 0) {
+                totalBonus = totalBonus - lastUserAward;
+                if (_joinNum[lastCheckChapter] < _beforeAwrdNum) {
+                    totalBonus -= (_joinNum[lastCheckChapter] - 1) * baseAward;
+                } else {
+                    totalBonus -= _beforeAwrdNum * baseAward;
+                }
+                bonus = totalBonus.mul(winChip).div(_totalWinnerChip[lastCheckChapter]);
             }
         }
-        if (winChip > 0) {
-            totalBonus = totalBonus - lastUserAward;
-            if (_joinNum[lastCheckChapter] < _beforeAwrdNum) {
-                totalBonus -= (_joinNum[lastCheckChapter] - 1) * baseAward;
-            } else {
-                totalBonus -= _beforeAwrdNum * baseAward;
-            }
-            bonus = totalBonus.mul(winChip).div(_totalWinnerChip[lastCheckChapter]);
-        }
-
         
         return bonus;
     }
@@ -429,6 +432,6 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
     }
 
     function version() public pure returns (uint256) {
-        return 19;
+        return 23;
     }
 }
