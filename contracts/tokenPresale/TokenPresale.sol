@@ -26,10 +26,10 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         __Ownable_init();
         _twoLeftPart = 440;
         _two = twoadd;
-        _saleStartStamp = 1644477000;
-        _salePeriod = 1200;  //60 * 20 * 3
-        _wlSalePeriod = 600;
-        _claimPeriod = 1500;
+        _saleStartStamp = 1644814800;
+        _salePeriod = 2400;  //60 * 20 * 3
+        _wlSalePeriod = 1200;
+        _claimPeriod = 3600;
         _signer = signerAdd;
     }
 
@@ -112,6 +112,10 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         _salePeriod = newPeriod;
     }
 
+    function setClaimPeriod(uint256 newPeriod) public onlyOwner {    
+        _claimPeriod = newPeriod;
+    }
+
     function setWLSalePeriod(uint256 newPeriod) public onlyOwner {    
         _wlSalePeriod = newPeriod;
     }
@@ -121,6 +125,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 1;
+        return 3;
     }
 }

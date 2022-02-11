@@ -8,12 +8,12 @@ import {ITwoToken} from "../interfaces/ITwoToken.sol";
 contract TwoToken is ERC20Permit, ITwoToken, Ownable {
     uint256 public constant MAX_SUPPLY = 222222000 ether;
     uint256 public constant PREMINT = 9777768 * 1e17;
-    address public constant AIRDROP = 0xa525bC8E6eeaB54b3e35cAaFa3C3Bc04228096eD;
+    address public constant AIRDROP = 0xcBe6952d500E892Ed403894a8Dd06134daE9BD81;
 
-    address public constant INITIAL_LIQUID = 0xc09fa50C69695E612b54829C158a63D52E62656B;
+    address public constant INITIAL_LIQUID = 0xa86C5582404919822370EE2f2E3e247218054CC9;
 
-    address public constant INITIAL_TREASURY = 0x9b0057f98A95f3C7Fb7F8a8540ADF871F4DB14a1;
-    address public constant AUCTION = 0xc09fa50C69695E612b54829C158a63D52E62656B;
+    address public constant INITIAL_TREASURY = 0xAc20A0B1eb8604C35b97ded69d7A1E4F96Ed57c1;
+    address public constant AUCTION = 0xa86C5582404919822370EE2f2E3e247218054CC9;
     address public farmContract;
     address public swapAddress;
     bool public isSetFarm;

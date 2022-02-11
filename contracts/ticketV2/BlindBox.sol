@@ -50,7 +50,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         _rPr = 85;
         _srPr = 99;
         _foundationRate = 20; //2%
-        _foundation = 0x9b0057f98A95f3C7Fb7F8a8540ADF871F4DB14a1; // kaki foundation address
+        _foundation = 0xAc20A0B1eb8604C35b97ded69d7A1E4F96Ed57c1; // kaki foundation address
         _feeFound = 0xD4b887b40393Ab960138EA1cD7Fb49EBE221d7A0;//
         _squidCoinBase = 0x73a0aA76D57CFd77a840DC18CE2C469C5610D993;
     }
@@ -170,6 +170,6 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     }
 
     function version() public pure returns (uint256) {
-        return 7;
+        return 8;
     }
 }

@@ -32,6 +32,6 @@ contract KakiTicket is IKakiTicket, BaseERC721 {
     }
 
     function version() public pure returns (uint256) {
-        return 3;
+        return 4;
     }
 }

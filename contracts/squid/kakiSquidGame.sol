@@ -82,13 +82,13 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
 
         _ticketToBonus0 = 156800000000000000000;
         _ticketToBonus1 = 313600000000000000000;
-        _nextGameTime = 1638442800; //2021-12-2 16:00:00
+        _nextGameTime = 1644904800; //2021-12-2 16:00:00
 
         _lastUserAwardRate = 3;
         _beforeAwrdNum = 1000;
         _lastAwardNum = 22;
         _roundSum = 5; //5; //5round
-        _gameInterval = 3600; //8hour = 28800 35min =2100  13min=780 60min3600
+        _gameInterval = 28800; //8hour = 28800 35min =2100  13min=780 60min3600
         _roundTime = 5 * 60; //  5min = 300
         _tradingTime = 3 * 60; //  3min = 180
 
@@ -426,6 +426,6 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
     }
 
     function version() public pure returns (uint256) {
-        return 18;
+        return 19;
     }
 }
