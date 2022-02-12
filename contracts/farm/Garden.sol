@@ -380,8 +380,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
     function virtualPoolClaim(uint256 pid, address forUser) public override returns (uint256) {
         require(msg.sender == _vPoolInfo[pid].farmer, "none virtual pool farmer");
         VirtualPool storage vPool = _vPoolInfo[pid];
-        uint256 amount = (_rewardPerBlock * (getMultiplier(vPool.lastRewardBlock, block.number) * vPool.allocPoint)) /
-            _totalAllocPoint;
+        uint256 amount = pendingVirtualPoolReward(pid);
         vPool.lastRewardBlock = block.number;
         _twoToken.mint(forUser, amount);
         return amount;
@@ -389,6 +388,9 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
 
     function pendingVirtualPoolReward(uint256 pid) public view override returns (uint256) {
         VirtualPool memory vPool = _vPoolInfo[pid];
+        if(vPool.allocPoint == 0) {
+            return 0;
+        }
         return
             (_rewardPerBlock * (getMultiplier(vPool.lastRewardBlock, block.number) * vPool.allocPoint)) /
             _totalAllocPoint;
