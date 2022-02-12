@@ -12,9 +12,6 @@ import { printEtherResultArray } from '../../utils/logutil';
     '_oneDayBlocks',
     '_rewardLocker',
     '_rewardPerBlock',
-    '_squidGameAllocPoint',
-    '_squidGameContract',
-    '_squidGameLastRewardBlock',
     '_totalAllocPoint',
     '_twoToken',
     '_canEmergencyWithdraw',
@@ -23,7 +20,7 @@ import { printEtherResultArray } from '../../utils/logutil';
     'owner',
     'poolInfo',
     'poolInfoLength',
-    '_squidGameLastRewardBlock',
+    'virtualPoolInfo',
     // 'withdrawPercent',
   ]) {
     try {
