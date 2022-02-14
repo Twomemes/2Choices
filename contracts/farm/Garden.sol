@@ -371,7 +371,7 @@ contract Garden is IGarden, ReentrancyGuard, Ownable {
         emit EmergencyWithdraw(msg.sender, pid, oldUserAmount);
     }
 
-    function daylyReward(uint256 pid) public view returns (uint256) {
+    function daylyReward(uint256 pid) public override view returns (uint256) {
         uint256 multiplier = getMultiplier(block.number - 1, block.number);
         PoolInfo memory pool = _poolInfo[pid];
         return (multiplier * _rewardPerBlock * _oneDayBlocks * pool.allocPoint) / _totalAllocPoint;

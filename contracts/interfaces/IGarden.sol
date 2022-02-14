@@ -45,4 +45,6 @@ interface IGarden {
     function virtualPoolClaim(uint256 pid, address forUser) external returns (uint256);
 
     function pendingVirtualPoolReward(uint256 pid) external view returns (uint256);
+
+     function daylyReward(uint256 pid) external view returns (uint256) ;
 }
