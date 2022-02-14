@@ -41,7 +41,7 @@ contract MockSquid is  OwnableUpgradeable {
                     : _beforeAwrdNum;
                 console.log('bonus **********11',beforeAwrdUser);
                 for (uint256 i = joinOrder; i < beforeAwrdUser; i++) {
-                    bonus += baseAward/ i;
+                    bonus += (baseAward/ i);
                 }
             }
             console.log('bonus **********2',bonus);
@@ -55,7 +55,7 @@ contract MockSquid is  OwnableUpgradeable {
                     totalBonus -= _beforeAwrdNum * baseAward;
                 }
                 console.log('total bonus .............2',totalBonus);
-                bonus = totalBonus*winChip/_totalWinnerChip;
+                bonus += (totalBonus*winChip/_totalWinnerChip);
             }
         }
         console.log('bonus **********3',bonus);
