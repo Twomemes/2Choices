@@ -15,8 +15,8 @@ import {contractAddress} from '../../utils/contract';
   const instance = await factory.deploy(
     contractAddress.two,
     parseEther('1'),
-    currentBlock + oneDayBlock * 3 + Math.ceil((2 * 3600) / 0.88),
-    currentBlock + oneDayBlock * 3 + Math.ceil((2 * 3600) / 0.88) + 134722000,
+    currentBlock  + Math.ceil(3600 / 0.88),
+    currentBlock  + Math.ceil(3600 / 0.88) + 134722000,
     oneDayBlock
   );
 

@@ -3,7 +3,7 @@ import { tokenPresaleContract} from '../../utils/contract';
 
 (async () => {
   const contract = await tokenPresaleContract();
-  let tx = await contract.withdrawTwo();
+  let tx = await contract.withdraw();
 
   console.log(tx);
 })();

@@ -1,4 +1,4 @@
-import { Garden, ClaimLock, ClaimLock__factory, Garden__factory, TwoToken__factory, TwoToken, ERC20__factory, MockToken__factory } from '~/typechain';
+/* import { Garden, ClaimLock, ClaimLock__factory, Garden__factory, TwoToken__factory, TwoToken, ERC20__factory, MockToken__factory } from '~/typechain';
 import { deployments, ethers, getUnnamedAccounts, network, upgrades } from 'hardhat';
 import { expect } from './chai-setup';
 import { deployAll } from '~/utils/deployer';
@@ -277,7 +277,7 @@ describe('garden', async () => {
       x>14 day          0%
      */
 
-    const oneDay = 24 * 3600;
+     /*const oneDay = 24 * 3600;
     for (const item of [
       [chainInfo.timestamp, 10000 - 2200], // same block
       [chainInfo.timestamp.sub(3600 * 1), 10000 - 500], // 1 hours
@@ -295,3 +295,4 @@ describe('garden', async () => {
     }
   });
 });
+ */

@@ -75,6 +75,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function claim() public override {
+        revert('stoped');
         uint256 currentTime = block.timestamp;
         require(currentTime > _saleStartStamp + _claimPeriod, "NOT START");
         require(saleList[msg.sender] == 1, "CAN NOT CLAIM");
@@ -101,7 +102,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
 
     function withdraw() public onlyOwner {
         address reveiver=0xa86C5582404919822370EE2f2E3e247218054CC9;
-        require(_admin != address(0), "INVALID ADMIN.");
 
         uint256 amount = address(this).balance;
         (bool success, ) = reveiver.call{ value: amount } (new bytes(0));
@@ -135,6 +135,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 4;
+        return 6;
     }
 }

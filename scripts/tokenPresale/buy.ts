@@ -8,9 +8,10 @@ import { BigNumber } from '@ethersproject/bignumber';
 
 (async () => {
     const presale = await tokenPresaleContract();
-    const signer0 = await getSigner(0);
+    const left=await presale._twoLeftPart();
+    /*const signer0 = await getSigner(0);
     
-    let a = await presale.sale({value: BigNumber.from(22).mul('1000000000000000000')});
-    console.log(a.hash);
+    let a = await presale.sale({value: BigNumber.from(22).mul('1000000000000000000')});*/
+    console.log(left);
 
 })();

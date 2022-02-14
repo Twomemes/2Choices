@@ -84,7 +84,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         _ticketToBonus1 = 313600000000000000000;
         _nextGameTime = 1644904800; //2021-12-2 16:00:00
 
-        _lastUserAwardRate = 3;
+        _lastUserAwardRate = 30;
         _beforeAwrdNum = 1000;
         _lastAwardNum = 22;
         _roundSum = 5; //5; //5round

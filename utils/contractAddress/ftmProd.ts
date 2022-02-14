@@ -10,7 +10,7 @@ const addrs: ContractAddress = {
   squidTicket: '',
   squidOpenBox: '',
   facet: '',
-  farm: '0x0d96538a0706363F17EB26e114F6381eaa5169a5',
+  farm: '0xe8Ee8218DDE80329aFCEA84B42705aF2a6B8c70C',
   kakiCaptain: '',
   captainClaim: '',
   captainMintList: '',
@@ -19,7 +19,7 @@ const addrs: ContractAddress = {
   chainlinkRandoms: '0x95cCFa193ec6150b86a763f8622467BCf276251A',
   adminLock:'',
   claimLock: '0x25c520C0A4438897032aeB0C15E2aF1088BEdbFd',
-  two:'0x6AAD861a59c33497babBe7F7010e6c60968FE81c',
+  two:'0x2A93a76b799fAe50ff4853fE74E31e2aBe92F300',
   // '0xb5591a869b95de95c6a352c5601e1ad313dd8b5f',
   //正式two'0x9F1851f29374eFb292cFa78503fc02A9b640c45b',
   //v2新0x36c6426174D6BF834061CE33415DEF61C0824776

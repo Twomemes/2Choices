@@ -5,8 +5,7 @@ import { getSigner } from '~/utils/contract';
 
 (async () => {
   const contract = await tokenPresaleContract();
-  const signer0 = await getSigner(0);
-  let tx = await contract.setSigner(signer0.address);
+  let tx = await contract.setSigner("0xadce766f4b29f603fdb25b97cf27ef50d4d1a31f");
 
   console.log(tx);
 })();
