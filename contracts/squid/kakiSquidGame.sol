@@ -265,7 +265,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
             }
             
             if (joinOrder < _beforeAwrdNum) {
-                uint256 beforeAwrdUser = _joinNum[lastCheckChapter] > _beforeAwrdNum
+                uint256 beforeAwrdUser = _joinNum[lastCheckChapter] < _beforeAwrdNum
                     ? _joinNum[lastCheckChapter]
                     : _beforeAwrdNum;
                 for (uint256 i = joinOrder; i < beforeAwrdUser; i++) {
@@ -279,7 +279,7 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
                 } else {
                     totalBonus -= _beforeAwrdNum * baseAward;
                 }
-                bonus = totalBonus.mul(winChip).div(_totalWinnerChip[lastCheckChapter]);
+                bonus = totalBonus * winChip / _totalWinnerChip[lastCheckChapter];
             }
         }
         

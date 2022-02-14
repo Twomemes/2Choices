@@ -75,7 +75,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function claim() public override {
-        revert('stoped');
         uint256 currentTime = block.timestamp;
         require(currentTime > _saleStartStamp + _claimPeriod, "NOT START");
         require(saleList[msg.sender] == 1, "CAN NOT CLAIM");
@@ -130,11 +129,16 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         _wlSalePeriod = newPeriod;
     }
 
+
+    function setTwoToken(IERC20 newAddress) public onlyOwner {    
+        _two = newAddress;
+    }
+
     function setSigner(address signer) public onlyOwner {
         _signer = signer;
     }
 
     function version() public pure returns (uint256) {
-        return 6;
+        return 7;
     }
 }

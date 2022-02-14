@@ -25,7 +25,7 @@ import { airdropByGoogleDoc, parseSheetWithType } from "../../utils/googleDoc";
 
   for(let i=0;i<group.length;i++){
     const g = group[i];
-    const tx = await two.batchTransferFrom('',g.map(x=>x.HolderAddress),g.map(x=>parseEther(`${x.Balance}`)));
+    const tx = await two.batchTransferFrom('0xcBe6952d500E892Ed403894a8Dd06134daE9BD81',g.map(x=>x.HolderAddress),g.map(x=>parseEther(`${x.Balance}`)));
     console.log(`transfer chunk ${i} ${tx.hash}`);
   }
 
