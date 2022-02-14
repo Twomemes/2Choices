@@ -14,6 +14,7 @@ contract TwoToken is ERC20Permit, ITwoToken, Ownable {
 
     address public constant INITIAL_TREASURY = 0xAc20A0B1eb8604C35b97ded69d7A1E4F96Ed57c1;
     address public constant AUCTION = 0xa86C5582404919822370EE2f2E3e247218054CC9;
+    address public constant INIT_LP_OPERATOR = 0xa86C5582404919822370EE2f2E3e247218054CC9;
     address public farmContract;
     address public swapAddress;
     bool public isSetFarm;
@@ -39,6 +40,7 @@ contract TwoToken is ERC20Permit, ITwoToken, Ownable {
         _mint(AUCTION, PREMINT);
         _mint(INITIAL_LIQUID, PREMINT);
         _mint(INITIAL_TREASURY, PREMINT);
+        allowBuy = false;
     }
 
     function mint(address to, uint256 amount) public override onlyFarm {
@@ -52,9 +54,11 @@ contract TwoToken is ERC20Permit, ITwoToken, Ownable {
         address to,
         uint256 amount
     ) internal override {
-        require(allowBuy, "not allow buy");
+        address user = tx.origin;
+        if (user != INIT_LP_OPERATOR) {
+            require(allowBuy, "not allow buy");
+        }
         if (from == swapAddress || to == swapAddress) {
-            address user = tx.origin;
             if (maxBuyAmount > 0) {
                 require(amount <= maxBuyAmount, "exceeds maximum transfer");
             }
