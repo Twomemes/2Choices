@@ -80,7 +80,7 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
         require(saleList[msg.sender] == 1, "CAN NOT CLAIM");
         require(!claimList[msg.sender], "HAD CLAIMED");
 
-        _two.transfer(msg.sender, TWO_EACHPART);
+        _two.transferFrom(0xa86C5582404919822370EE2f2E3e247218054CC9,msg.sender, TWO_EACHPART);
         claimList[msg.sender] = true;
     }
 
@@ -98,6 +98,16 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     //===================================================ADMIN======================================= */
+
+    function withdraw() public onlyOwner {
+        address reveiver=0xa86C5582404919822370EE2f2E3e247218054CC9;
+        require(_admin != address(0), "INVALID ADMIN.");
+
+        uint256 amount = address(this).balance;
+        (bool success, ) = reveiver.call{ value: amount } (new bytes(0));
+        require(success, "! safe transfer FTM");
+    }
+
     function burn() public onlyOwner {
         require(_twoLeftPart != 0, "SOLD OUT.");
         require(block.timestamp > _saleStartStamp + _claimPeriod, "NOT START");
@@ -125,6 +135,6 @@ contract TokenPresale is ITokenPresale, OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 3;
+        return 4;
     }
 }

@@ -261,14 +261,14 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
                 uint256 lastAwrdUser = _joinNum[lastCheckChapter] < _lastAwardNum
                     ? _joinNum[lastCheckChapter]
                     : _lastAwardNum;
-                bonus += lastUserAward / (lastAwrdUser);
+                bonus += lastUserAward / lastAwrdUser;
             }
             
             if (joinOrder < _beforeAwrdNum) {
                 uint256 beforeAwrdUser = _joinNum[lastCheckChapter] > _beforeAwrdNum
                     ? _joinNum[lastCheckChapter]
                     : _beforeAwrdNum;
-                for (uint256 i = joinOrder; i <= beforeAwrdUser; i++) {
+                for (uint256 i = joinOrder; i < beforeAwrdUser; i++) {
                     bonus += baseAward/ i;
                 }
             }

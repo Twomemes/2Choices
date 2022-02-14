@@ -10,7 +10,7 @@ contract AdminLock is Ownable {
     IERC20 public _twoToken; 
     IClaimLock public _claimLock;
     IGarden public _farm;
-    uint256 public constant LOCK_PERIOD = 10 minutes;//14 weeks; //14 week
+    uint256 public constant LOCK_PERIOD = 14 weeks; //14 week
 
     mapping(address => mapping(uint256 => uint256)) public _startTimestamp;
     mapping(address => mapping(uint256 => uint256)) public _depositList;
