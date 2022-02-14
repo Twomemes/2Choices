@@ -6,7 +6,7 @@ import { contractAddress } from '../../utils/contract';
 (async () => {
   const two = await twoTokenContract();
   const signer = await getSigner(0);
-  const tx = await two.setMaxBuyAmount(parseEther('10'));
+  const tx = await two.setMaxBuyAmount(parseEther('1000'));
 
   console.log(tx.hash);
 })();
