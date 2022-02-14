@@ -26,12 +26,27 @@ contract TwoToken is ERC20Permit, ITwoToken, Ownable {
     bool public allowBuy;
     mapping(address => uint256) public lastBuy;
     uint256 public buyDelayBlock;
+    uint256 public allowBuyAt;
+    Mode public mode;
 
     event Mint(address indexed mintTo, address minter, uint256 amount);
+
+    enum Mode {
+        Manual,
+        Automatic
+    }
 
     modifier onlyFarm() {
         require(msg.sender == farmContract, "only farm");
         _;
+    }
+
+    function isAllowBuy() public view returns (bool) {
+        if (mode == Mode.Manual) {
+            return allowBuy;
+        } else if (mode == Mode.Automatic) {
+            return block.timestamp > allowBuyAt;
+        }
     }
 
     constructor() ERC20Permit("TWO") ERC20("2Choices", "TWO") {
@@ -56,7 +71,7 @@ contract TwoToken is ERC20Permit, ITwoToken, Ownable {
     ) internal override {
         address user = tx.origin;
         if (user != INIT_LP_OPERATOR) {
-            require(allowBuy, "not allow buy");
+            require(isAllowBuy(), "not allow buy");
         }
         if (from == swapAddress || to == swapAddress) {
             if (maxBuyAmount > 0) {
@@ -105,6 +120,14 @@ contract TwoToken is ERC20Permit, ITwoToken, Ownable {
 
     function setAllowBuy(bool _allowBuy) public onlyOwner {
         allowBuy = _allowBuy;
+    }
+
+    function setAllowBuyAt(uint256 _allowBuyAt) public onlyOwner {
+        allowBuyAt = _allowBuyAt;
+    }
+
+    function setMode(Mode _mode) public onlyOwner {
+        mode = _mode;
     }
 
     function setBuyDelayBlock(uint256 _buyDelayBlock) public onlyOwner {
