@@ -109,6 +109,7 @@ describe('garden', async () => {
 
     await farm.setGovVault(users[1].address);
     await farm.addPool(30, mockLp.address);
+    await farm.addPool(1,two.address);
     const value = parseEther('10.1');
     console.log(`init pendingReward: ${formatEther(await farm.pendingReward(0, users[0].address))}`);
     await farm.deposit(0, value);
@@ -119,6 +120,22 @@ describe('garden', async () => {
     await farm.deposit(0, value);
     await network.provider.send("evm_mine");
     console.log(`init afer redeposit: ${formatEther(await farm.pendingReward(0, users[0].address))}`);
+
+    await farm.setAllocPoint(0,0);
+    await farm.deposit(0, value);
+
+    const pending0 = await farm.pendingReward(0, users[0].address);
+    console.log(`pending0: ${formatEther(pending0)}`);
+    expect(pending0).to.eq(0);
+
+    const daylyReward0 = await farm.daylyReward(0);
+    console.log(`daylyReward0: ${formatEther(daylyReward0)}`);
+    expect(daylyReward0).to.eq(0);
+    await farm.harvestAll();
+
+    await farm.withdraw(0, value);
+
+
 
   });
 
@@ -172,6 +189,14 @@ describe('garden', async () => {
     console.log(`vpool0 alloc/total : ${(await farm._vPoolInfo(0)).allocPoint.toNumber()}/${(await farm._totalAllocPoint()).toNumber()}`);
 
     console.log(`blocknumber - ${chainInfos.map(x => x.blockNumber.toNumber()).join('->')}`);
+
+    await farm.setVirtualAllocPoint(0,0);
+
+    const pendingReward1 = await farm.pendingVirtualPoolReward(0);
+    expect(pendingReward1).to.eq(0);
+
+    await users[1].farm.virtualPoolClaim(0, users[1].address);
+
   });
 
   it('set reward muiltiplie', async () => {
