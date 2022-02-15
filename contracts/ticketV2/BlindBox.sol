@@ -82,6 +82,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     }
 
     function claim(uint256 amount,uint256 aid,uint8 v,bytes32 r,bytes32 s) public {   
+        address airdropVault=0xcBe6952d500E892Ed403894a8Dd06134daE9BD81;
         uint256 currentTime = block.timestamp;
         bool result;
         uint256 endTime;
@@ -90,7 +91,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
 
         uint256 fee = _lowPrice * _foundationRate / THOUSAND;
         uint256 tokenId=_kakiTicket.mint(msg.sender, _commonChip,  5, _lowPrice, 9);
-        _two.transferFrom(_foundation, _squidCoinBase, _lowPrice - fee);
+        _two.transferFrom(airdropVault, _squidCoinBase, _lowPrice - fee);
 
         
         _ticketValidTime[tokenId]=endTime;
