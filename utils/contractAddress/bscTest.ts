@@ -1,6 +1,7 @@
 export type ContractAddress = typeof addrs;
 
 const addrs = {
+  ftmOracle: '',
   squidGame: '',
   squidShortGame: '',
   busd: '',

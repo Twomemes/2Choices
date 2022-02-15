@@ -1,6 +1,7 @@
 import type { ContractAddress } from './bscTest';
 
 const addrs: ContractAddress = {
+  ftmOracle: '',
   squidGame: '0x47Ab09E6D79983b71795ffA3253e50221d5c8f5B',
   squidShortGame: '',
   busd: '',

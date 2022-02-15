@@ -17,6 +17,7 @@ import {
   TokenPresale__factory,
   Airdrop__factory,
   AdminLock__factory,
+  FtmOracle__factory,
 } from '~/typechain';
 
 import bsctest from './contractAddress/bscTest';
@@ -58,6 +59,9 @@ export const mutiContractAddrs = {
 };
 
 export const contractAddress = {
+  get ftmOracle() {
+    return getItem('ftmOracle');
+  },  
   get squidGame() {
     return getItem('squidGame');
   },
@@ -213,4 +217,8 @@ export async function airdropContract(signerIndex = 0) {
 
 export async function adminLockContract(signerIndex = 0) {
   return AdminLock__factory.connect(contractAddress.adminLock, await getSigner(signerIndex));
+}
+
+export async function ftmOracleContract(signerIndex = 0) {
+  return FtmOracle__factory.connect(contractAddress.ftmOracle, await getSigner(signerIndex));
 }

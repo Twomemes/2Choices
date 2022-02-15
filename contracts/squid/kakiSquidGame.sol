@@ -58,6 +58,8 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         mapping(uint256 => uint256) _joinOrder;
         uint256 _lastCheckChapter;
     }
+
+
     modifier onlyNoneContract() {
         require(msg.sender == tx.origin, "only non contract call");
         _;
@@ -212,9 +214,14 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
             }
             _chapter++;
             _nextGameTime = _nextGameTime.add(_gameInterval);
+            if(_gameInterval==8 hours)
+                _gameInterval=16 hours;
+            else   
+                _gameInterval=8 hours;
         }
         emit Settle(msg.sender, _lastRound, time, _price[curChapter][_lastRound - 1], _price[curChapter][_lastRound]);
     }
+
 
     /*
      * Stop buy ticket & start game
@@ -399,6 +406,10 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
     function updateKakiOracleAddress(address oracleAddress) public onlyOwner {
         require(oracleAddress != address(0), "The address cannot be 0.");
         _aggregator = IAggregatorInterface(oracleAddress);
+    }
+
+    function getOracleNowData() public view returns (uint256) {
+        return _aggregator.latestAnswer();
     }
 
     function updateGameInterval(uint256 gameInterval) public onlyOwner {
