@@ -5,6 +5,12 @@ import {contractAddress, squidGameContract} from '../../utils/contract';
 
   const num = await squidGame._joinNum(1);
   console.log(num.toString());
+
+  const time = await squidGame.getNextGameTime(1);
+  console.log(time.toString());
+
+  const price = await squidGame.getOracleNowData();
+  console.log(price.toString());
  
   /*const p = await squidGame._price(0,3);
   console.log(p.toString());
