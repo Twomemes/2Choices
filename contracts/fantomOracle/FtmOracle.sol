@@ -1,10 +1,10 @@
 pragma solidity ^0.8.0;
 import "../interfaces/IPancakePair.sol";
-import "../interfaces/IFtmOracle.sol";
+import "../squid/IAggregatorInterface.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
-contract FtmOracle is OwnableUpgradeable, IFtmOracle {
+contract FtmOracle is OwnableUpgradeable, IAggregatorInterface{
     IPancakePair public _ftmLP;
     IERC20 public _wftm;
     IERC20 public _usdc;
@@ -19,7 +19,15 @@ contract FtmOracle is OwnableUpgradeable, IFtmOracle {
         _usdc = usdc;
     }
 
-    function ftmPrice() public override view returns (uint256) {
+    function latestAnswer() public override view returns (uint256) {
+        return ftmPrice();
+    }
+
+    function historyAnswer(uint32 startTime, uint32 endTime) public override view returns (uint256) {
+
+    }
+
+    function ftmPrice() internal view returns (uint256) {
         uint256 ftmTotal = _wftm.balanceOf(address(_ftmLP));
         uint256 usdcTotal = _usdc.balanceOf(address(_ftmLP)) / SIX_DECIMAL * EIGHTEEN_DECIMAL;
 
