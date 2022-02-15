@@ -6,13 +6,13 @@ import "../base/WithAdminRole.sol";
 import "../interfaces/IKakiTicket.sol";
 import "../interfaces/IKakiCaptain.sol";
 import "../interfaces/IBlindBox.sol";
+import "../interfaces/IAirdrop.sol";
 
 contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
 
     IERC20 _two;
     IKakiTicket _kakiTicket;
-    IKakiCaptain _kakiCaptain;
-
+    IKakiCaptain _kakiCaptain;    
     string[] _uri;
     bool _able;
     uint256 constant THOUSAND = 10 ** 3;
@@ -31,6 +31,9 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     address public _feeFound;
     address constant BlackHole = 0x0000000000000000000000000000000000000000;
     mapping(uint256 => uint256) _sTicketCount;
+
+    IAirdrop _airDrop;
+    mapping(uint256 => uint256) public _ticketValidTime;
 
     function initialize(
         IKakiTicket ercAdd,
@@ -76,6 +79,22 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         for (uint256 i; i < num; i ++) {
             _bBoxOpen();
         }
+    }
+
+    function claim(uint256 amount,uint256 aid,uint8 v,bytes32 r,bytes32 s) public {   
+        uint256 currentTime = block.timestamp;
+        bool result;
+        uint256 endTime;
+        (result,endTime)= _airDrop.checkToClaim(msg.sender,amount,aid,v,r,s);
+        require(result,'error');
+
+        uint256 fee = _lowPrice * _foundationRate / THOUSAND;
+        uint256 tokenId=_kakiTicket.mint(msg.sender, _commonChip,  5, _lowPrice, 9);
+        _two.transferFrom(_foundation, _squidCoinBase, _lowPrice - fee);
+
+        
+        _ticketValidTime[tokenId]=endTime;
+        emit Claim(msg.sender);
     }
 
     function _aBoxOpen() internal {

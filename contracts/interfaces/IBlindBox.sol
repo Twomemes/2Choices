@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 interface IBlindBox {
+    event Claim(address indexed account);
     event BuyABox(address indexed account, uint256 ticketType);
     event BuyBBox(address indexed account, uint256 ticketType);
 
