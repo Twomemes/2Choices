@@ -66,6 +66,25 @@ contract Airdrop is OwnableUpgradeable {
         emit Claim(aid, msg.sender, amount);
     }
 
+    function checkToClaim(address user,uint256 amount,uint256 aid,uint8 v,bytes32 r,bytes32 s) public returns (bool,uint256){
+        uint256 currentTime = block.timestamp;
+        Airdrop storage airdrop = _airdrop[aid];
+        require(airdrop.startTime < currentTime, "not started yet");
+        require(airdrop.endTime > currentTime, "expired");
+        require(airdrop.count < airdrop.remain, "out of remain");
+
+        require(_claimList[aid][user] == 0, "HAD CLAIMED");
+        bytes32 kecak=keccak256(abi.encodePacked(user, aid, amount));
+        require(
+            kecak.toEthSignedMessageHash().recover(v, r, s) == _signer,
+            "claim:Invalid signarure"
+        );
+        _claimList[aid][user] = amount;
+        airdrop.count += 1;
+        airdrop.total += amount;
+        return (true,airdrop.endTime);
+    }
+
     function getAirdrops() public view returns (Airdrop[] memory) {
         return _airdrop;
     }
