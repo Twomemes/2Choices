@@ -101,7 +101,7 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     }
 
     function airdropClaim(uint256 id) public {
-        require(_whiteList[id][msg.sender]==0,'invalid');
+        require(_whiteList[id][msg.sender]==1,'invalid');
         address airdropVault=0xcBe6952d500E892Ed403894a8Dd06134daE9BD81;
 
         uint256 fee = _lowPrice * _foundationRate / THOUSAND;
@@ -110,8 +110,12 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         _whiteList[id][msg.sender]=2;
     }
 
-    function  setWhiteList() public{
 
+
+    function setWhiteList(uint256 id,address[] memory whileList) public onlyOwner {
+        for(uint256 i;i<whileList.length;i++){
+            _whiteList[id][whileList[i]] = 1;
+        }
     }
 
     function _aBoxOpen() internal {
@@ -210,6 +214,6 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     }
 
     function version() public pure returns (uint256) {
-        return 10;
+        return 11;
     }
 }
