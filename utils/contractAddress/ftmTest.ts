@@ -27,7 +27,7 @@ const addrs: ContractAddress = {
   tools: '',
   blindBox: '0xB03f96EB6b97A00897E6e3a60fc628FbF40DA575',
   kakiTicket: '0x35604605628691F5285CaBb71250829AcE6C0651',
-  airdrop: '0x82b2866Cd7C16CDbe9710B601f8D7755080E5bd5',
+  airdrop: '0xf41db311620DA3f4BaDBdFE792615CCd49FFb649',
   tokenPresale: '0x3A98A5FE4b36a6eF3090DA700581901ee4d49260',
 };
 

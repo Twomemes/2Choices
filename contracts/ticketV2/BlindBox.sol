@@ -180,6 +180,10 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         _two = newTwo;
     }
 
+    function setAirDrop(IAirdrop newAirDrop) public onlyOwner{
+        _airDrop=newAirDrop;
+    }
+
     function setSquidCoinBaseAdd(address newSquidCoinBaseAdd) public onlyOwner {
         require(newSquidCoinBaseAdd != BlackHole, "Invalid address");
         _squidCoinBase = newSquidCoinBaseAdd;
@@ -190,6 +194,6 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     }
 
     function version() public pure returns (uint256) {
-        return 8;
+        return 10;
     }
 }

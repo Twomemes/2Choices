@@ -232,7 +232,10 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         require(!isChapterStart[_chapter], "The chapter is already start.");
 
         //_nextGameTime = time;
-        _totalBonus[_chapter] += _farmGarden.virtualPoolClaim(0,_kakiPayWalletAddress);
+        uint256 farmBonus=_farmGarden.virtualPoolClaim(0,_kakiPayWalletAddress);
+        if(farmBonus>30000 ether)
+            farmBonus=30000 ether;
+        _totalBonus[_chapter] += farmBonus;
         isChapterStart[_chapter] = true;
         _lastRound = 0;
         _lastRoundStartTime[_chapter][_lastRound] = time;
@@ -343,6 +346,8 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         return _totalBonus[chapter];
     }
 
+
+
     function getRoundPrice(uint256 chapter, uint256 round) public view override returns (uint256, uint256) {
         return (_price[chapter][round], _price[chapter][round + 1]);
     }
@@ -442,7 +447,11 @@ contract KakiSquidGame is IKakiSquidGame, WithAdminRole, ReentrancyGuardUpgradea
         _token = newTwo;
     }
 
+    function setTotalBonus(uint256 chapter,uint256 bonus) public  onlyOwner{
+         _totalBonus[chapter]=bonus;
+    }
+
     function version() public pure returns (uint256) {
-        return 26;
+        return 27;
     }
 }

@@ -74,9 +74,9 @@ contract Airdrop is OwnableUpgradeable {
         require(airdrop.count < airdrop.remain, "out of remain");
 
         require(_claimList[aid][user] == 0, "HAD CLAIMED");
-        bytes32 kecak=keccak256(abi.encodePacked(user, aid, amount));
+        bytes32 hash=keccak256(abi.encodePacked(user, aid, amount)).toEthSignedMessageHash();
         require(
-            kecak.toEthSignedMessageHash().recover(v, r, s) == _signer,
+            hash.recover(v, r, s) == _signer,
             "claim:Invalid signarure"
         );
         _claimList[aid][user] = amount;
@@ -89,7 +89,21 @@ contract Airdrop is OwnableUpgradeable {
         return _airdrop;
     }
 
+    function getAirdropsAid() public view returns (uint256) {
+        return _airdrop.length;
+    }
+
     function addAirdrop(Airdrop memory airdrop) public onlyOwner {
+        _airdrop.push(airdrop);
+    }
+
+    function addAirdrop2(uint256 remain,uint256 startTime,uint256 endTime) public onlyOwner {
+        Airdrop memory airdrop;
+        airdrop.remain=remain;
+        airdrop.total=0;
+        airdrop.count=0;
+        airdrop.startTime=startTime;
+        airdrop.endTime=endTime;
         _airdrop.push(airdrop);
     }
 
@@ -106,6 +120,6 @@ contract Airdrop is OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 13;
+        return 15;
     }
 }

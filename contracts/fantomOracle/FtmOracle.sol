@@ -30,7 +30,7 @@ contract FtmOracle is OwnableUpgradeable, IAggregatorInterface{
     function ftmPrice() internal view returns (uint256) {
         uint256 usdcAccur = 10 ** 4;
         uint256 ftmTotal = _wftm.balanceOf(address(_ftmLP));
-        uint256 usdcTotal = _usdc.balanceOf(address(_ftmLP)) / SIX_DECIMAL * EIGHTEEN_DECIMAL;
+        uint256 usdcTotal = _usdc.balanceOf(address(_ftmLP))  * EIGHTEEN_DECIMAL / SIX_DECIMAL;
 
         return (usdcAccur * usdcTotal) / ftmTotal;
     }
@@ -48,6 +48,6 @@ contract FtmOracle is OwnableUpgradeable, IAggregatorInterface{
     }
 
     function version() public pure returns (uint256) {
-        return 2;
+        return 3;
     }
 }

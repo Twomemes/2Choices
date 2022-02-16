@@ -3,7 +3,7 @@ import {contractAddress, squidGameContract} from '../../utils/contract';
 (async () => {
   const squidGame = await squidGameContract();
 
-  const num = await squidGame._joinNum(1);
+  const num = await squidGame._joinNum(2);
   console.log(num.toString());
 
   const time = await squidGame.getNextGameTime(1);
@@ -12,9 +12,9 @@ import {contractAddress, squidGameContract} from '../../utils/contract';
   const price = await squidGame.getOracleNowData();
   console.log(price.toString());
  
-  /*const p = await squidGame._price(0,3);
+  /*const p = await squidGame._price(1,0);
   console.log(p.toString());
-  const chips = await squidGame._price(0,4);
+  const chips = await squidGame._price(1,1);
   console.log(chips.toString());
 
   //const version = await squidGame.version();

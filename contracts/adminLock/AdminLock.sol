@@ -11,7 +11,7 @@ contract AdminLock is Ownable {
     IClaimLock public _claimLock;
     IGarden public _farm;
     uint256 public constant LOCK_PERIOD = 14 weeks; //14 week
-
+    address public constant initLpHolder=0xa86C5582404919822370EE2f2E3e247218054CC9;
     mapping(address => mapping(uint256 => uint256)) public _startTimestamp;
     mapping(address => mapping(uint256 => uint256)) public _depositList;
 
@@ -24,22 +24,22 @@ contract AdminLock is Ownable {
 
     receive() external payable {}
 
-    function depositLP(uint256 amount, uint256 pid) public {
+    function depositLP(uint256 amount) public {
         _lp.approve(address(_farm),amount);
-        _lp.transferFrom(msg.sender, address(this), amount);
-        _farm.deposit(pid, amount);
-        _depositList[msg.sender][pid] += amount;
-        _startTimestamp[msg.sender][pid] = block.timestamp;
+        _lp.transferFrom(initLpHolder, address(this), amount);
+        _farm.deposit(1, amount);
+        _depositList[initLpHolder][1] += amount;
+        _startTimestamp[initLpHolder][1] = block.timestamp;
     }
 
-    function withdrawLP(uint256 pid) public {
-        require(block.timestamp >= _startTimestamp[msg.sender][pid] + LOCK_PERIOD, "STILL LOCKED.");
+    function withdrawLP() public {
+        require(block.timestamp >= _startTimestamp[initLpHolder][1] + LOCK_PERIOD, "STILL LOCKED.");
 
-        uint256 amount = _depositList[msg.sender][pid];
-        _farm.withdraw(pid, amount);
-        _lp.transfer(msg.sender, _lp.balanceOf(address(this)));
-        _twoToken.transfer(msg.sender, _twoToken.balanceOf(address(this)));
-        _depositList[msg.sender][pid] = 0;
+        uint256 amount = _depositList[initLpHolder][1];
+        _farm.withdraw(1, amount);
+        _lp.transfer(initLpHolder, _lp.balanceOf(address(this)));
+        _twoToken.transfer(initLpHolder, _twoToken.balanceOf(address(this)));
+        _depositList[initLpHolder][1] = 0;
     }
 
     function harvestAll() public {

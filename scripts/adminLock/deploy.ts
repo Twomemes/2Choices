@@ -13,7 +13,7 @@ import {deploy} from '~/utils/upgrader';
 
 
   const instance = await factory.deploy(
-    "0x8FCacfeFF8988c3e4792f585CCC148f67Ae29432",
+    "0xb5D0e466953aC291CABb2eB9E11866c50F1E269f",
     contractAddress.farm,
     contractAddress.two,
     contractAddress.claimLock

@@ -8,6 +8,8 @@ import { printEtherResultArray } from '../../utils/logutil';
 
 (async () => {
     const airdrop = await airdropContract();
+    const a=await airdrop.getAirdropsAid();
+    console.log('**********',a);
     const signer0 = await getSigner(0);
 
     let _signer = await airdrop._signer();
