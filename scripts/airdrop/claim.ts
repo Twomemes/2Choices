@@ -21,9 +21,14 @@ import { fetcher } from '~/utils/fetcher';
     }
   }[]>(`https://twochoice.vercel.app/api/two/airdrop/${signer.address}`);
 
+  console.log(signer.address);
+  console.log(signs);
   for (const s of signs) {
     const tx = await airdrop.claim(s.id, s.amount, s.sign.v, s.sign.r, s.sign.s,{gasLimit: 1000000});
     console.log(tx.hash);
+
+    //const tx = await airdrop.checkToClaim2(signer.address, s.amount, s.id,s.sign.v, s.sign.r, s.sign.s);
+    //console.log(tx);
   }
 
 

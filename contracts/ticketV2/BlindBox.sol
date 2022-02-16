@@ -34,6 +34,8 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
 
     IAirdrop _airDrop;
     mapping(uint256 => uint256) public _ticketValidTime;
+    mapping(uint256 => mapping(address => uint256)) public _whiteList;
+
 
     function initialize(
         IKakiTicket ercAdd,
@@ -96,6 +98,20 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
         
         _ticketValidTime[tokenId]=endTime;
         emit Claim(msg.sender);
+    }
+
+    function airdropClaim(uint256 id) public {
+        require(_whiteList[id][msg.sender]==0,'invalid');
+        address airdropVault=0xcBe6952d500E892Ed403894a8Dd06134daE9BD81;
+
+        uint256 fee = _lowPrice * _foundationRate / THOUSAND;
+        uint256 tokenId=_kakiTicket.mint(msg.sender, _commonChip,  5, _lowPrice, 9);
+        _two.transferFrom(airdropVault, _squidCoinBase, _lowPrice - fee);
+        _whiteList[id][msg.sender]=2;
+    }
+
+    function  setWhiteList() public{
+
     }
 
     function _aBoxOpen() internal {

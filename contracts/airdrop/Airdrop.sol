@@ -85,6 +85,14 @@ contract Airdrop is OwnableUpgradeable {
         return (true,airdrop.endTime);
     }
 
+    function checkToClaim2(address user,uint256 aid,uint256 amount,uint8 v,bytes32 r,bytes32 s) public view returns (bool){
+        
+       if(keccak256(abi.encodePacked(user, aid, amount)).toEthSignedMessageHash().recover(v, r, s) == _signer)        
+            return true;
+        else 
+            return false;
+    }
+
     function getAirdrops() public view returns (Airdrop[] memory) {
         return _airdrop;
     }

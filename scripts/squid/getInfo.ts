@@ -11,6 +11,9 @@ import {contractAddress, squidGameContract} from '../../utils/contract';
 
   const price = await squidGame.getOracleNowData();
   console.log(price.toString());
+
+  const bonus = await squidGame._totalBonus(2);
+  console.log(bonus.toString());
  
   /*const p = await squidGame._price(1,0);
   console.log(p.toString());
