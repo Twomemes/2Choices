@@ -214,6 +214,6 @@ contract BlindBox is WithAdminRole, IBlindBox, WithRandom {
     }
 
     function version() public pure returns (uint256) {
-        return 11;
+        return 14;
     }
 }
