@@ -50,8 +50,10 @@ contract ClaimLock is IClaimLock, WithAdminRole {
 
     function claimFarmReward(uint256[] memory indexes) public override noReentrant {
         uint256 len = indexes.length;
-        for (uint256 i; i < len - 1; i++) {
-            require(indexes[i] < indexes[i + 1], "need sorted indexes");
+        if (len > 1) {
+            for (uint256 i; i < len - 1; i++) {
+                require(indexes[i] < indexes[i + 1], "need sorted indexes");
+            }
         }
         uint256 locked;
         uint256 unlocked;
