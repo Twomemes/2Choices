@@ -18,6 +18,7 @@ contract ClaimLock is IClaimLock, WithAdminRole {
 
     mapping(address => LockedFarmReward[]) public _userLockedFarmRewards;
     mapping(address => uint256) public _userFarmLockedAmount;
+    event ClaimFarmReward(address indexed user, uint256 unlockedAmount, uint256 lockedAmount);
 
     modifier noReentrant() {
         require(!locked, "No re-entrancy");
@@ -42,15 +43,45 @@ contract ClaimLock is IClaimLock, WithAdminRole {
     function lockFarmReward(address account, uint256 amount) public override isFarm {
         uint256 currentBlockNumber = block.number;
         _userFarmLockedAmount[account] += amount;
-        _userLockedFarmRewards[account].push(LockedFarmReward({_locked: amount, _blockNumber: currentBlockNumber, _currentTime: block.timestamp}));
+        _userLockedFarmRewards[account].push(
+            LockedFarmReward({_locked: amount, _blockNumber: currentBlockNumber, _currentTime: block.timestamp})
+        );
     }
 
-    function claimFarmReward(uint256[] memory index) public override noReentrant {
+    function claimFarmReward(uint256[] memory indexes) public override noReentrant {
+        uint256 len = indexes.length;
+        for (uint256 i; i < len - 1; i++) {
+            require(indexes[i] < indexes[i + 1], "need sorted indexes");
+        }
+        uint256 locked;
+        uint256 unlocked;
+        address user = msg.sender;
+        uint256 currentBlockNumber = block.number;
+        for (uint256 i = len - 1; i >= 0; i--) {
+            uint256 currentIndex = indexes[i];
+            LockedFarmReward memory reward = _userLockedFarmRewards[user][currentIndex];
+            if (currentBlockNumber - reward._blockNumber >= _farmPeriod) {
+                unlocked += reward._locked;
+            } else {
+                uint256 cUnlocked = (reward._locked * (currentBlockNumber - reward._blockNumber)) / _farmPeriod;
+                locked += reward._locked - cUnlocked;
+                unlocked += cUnlocked;
+            }
+            LockedFarmReward[] storage sUser = _userLockedFarmRewards[user];
+            sUser[currentIndex] = sUser[sUser.length - 1];
+            sUser.pop();
+        }
+        _two.transfer(user, unlocked);
+        _two.transfer(_treasury, locked);
+        emit ClaimFarmReward(user, unlocked, locked);
+    }
+
+    function _claimFarmReward(uint256[] memory index) public noReentrant {
         require(index.length <= _userLockedFarmRewards[msg.sender].length, "Invalid index.");
         uint256[] memory orderIndex;
         orderIndex = new uint256[](index.length);
         orderIndex[0] = index[0];
-        
+
         for (uint256 i; i < index.length; i++) {
             uint256 bonus = getClaimableFarmReward(msg.sender, index[i]);
             _two.transfer(msg.sender, bonus);
@@ -58,14 +89,14 @@ contract ClaimLock is IClaimLock, WithAdminRole {
             if (i > 0) {
                 uint256 j = i - 1;
                 while (index[i] < orderIndex[j]) {
-                    orderIndex[j + 1] = orderIndex[j]; 
+                    orderIndex[j + 1] = orderIndex[j];
                     j--;
                 }
                 orderIndex[j + 1] = index[i];
             }
         }
         for (uint256 i = orderIndex.length; i > 0; i--) {
-            _userLockedFarmRewards[msg.sender][orderIndex[i-1]] = _userLockedFarmRewards[msg.sender][
+            _userLockedFarmRewards[msg.sender][orderIndex[i - 1]] = _userLockedFarmRewards[msg.sender][
                 _userLockedFarmRewards[msg.sender].length - 1
             ];
             _userLockedFarmRewards[msg.sender].pop();
