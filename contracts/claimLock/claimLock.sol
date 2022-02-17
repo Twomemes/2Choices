@@ -64,8 +64,7 @@ contract ClaimLock is IClaimLock, WithAdminRole {
                 unlocked += reward._locked;
             } else {
                 uint256 cUnlocked = (reward._locked * (currentBlockNumber - reward._blockNumber)) / _farmPeriod;
-                uint256 cLocked = reward._locked - cUnlocked;
-                locked += cLocked;
+                locked += reward._locked - cUnlocked;
                 unlocked += cUnlocked;
             }
             LockedFarmReward[] storage sUser = _userLockedFarmRewards[user];
