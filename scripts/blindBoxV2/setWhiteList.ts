@@ -3,7 +3,23 @@ import { getSigner } from '~/utils/contract';
 
 (async () => {
   const blindBox = await blindBoxContract();
-  const tx = await blindBox.setWhiteList(1,["0xAA05853E72b0C8600d7727C9DF2a880BdB9A75d9",
+ /* const tx = await blindBox.setWhiteList(1,[
+  
+]);
+console.log(tx.hash);*/
+
+ let a=[// "0xAa197d202E973aC76f41fc44e8Ad9512a219576C",
+  "0x839F1eeb66934dD5F024E48c9075876fe5c3B587",
+  "0x0E7C838B06597453E91a12e57a70399cBF405FCC",
+  "0x1536Db1F7B4DDc254C0e9310DaC93C680D9a98B1",
+  "0x4ae20BA3f2A69332e3873ea82f5CF93E1dEE8194",
+  "0x2c81EFd9C410678217e22435F070ddc998EB0D75",
+  "0x86431c88ecC9ACa1fF763A2B1bE7fc475Fa7479c",
+  "0x8da36D9e6b1bc21F4f689a32dCAA1A5905faf826",
+  "0x3033F7011873F1D9D644A35f97c6b12B7BB3f78b",
+  "0x064d8A5BB0320eCAb43C2a93dbF90f8d7207bD45",
+  "0x4428d7D19753962d6AF32EEd6Ed1bfbfB4BE86c7",
+  "0xAA05853E72b0C8600d7727C9DF2a880BdB9A75d9",
   "0x2E4a7E112CD1F425ea09118fe2365A81BB889BDE",
   "0xAa15279f8c2805dc8F53FfF97F194E8D23F66576",
   "0xF7e59A0F64cEE03ECE4C10F87016a51c5ac729ce",
@@ -12,12 +28,7 @@ import { getSigner } from '~/utils/contract';
   "0xb4eD8d1Cee3DDF31b1C5b4aC31Fc99d55a9862b5",
   "0xe45580CEEe87d2B206132430D03a4e7a86412810",
   "0x923102Fd556EaDE0d48c5c8d76cC70115fDb6157",
-  "0x511B0D30ea0611d5a237f9485e438Bd692F67974",
-  
-],{gasLimit:300000});
-
-/*
-
+  "0x511B0D30ea0611d5a237f9485e438Bd692F67974", 
   "0x3033b16B6044609cad0E089fcda9b508507FeD84",
   "0xc361DDc3e6b19F8c9517806D00fa83CEEe8AaE98",
   "0x60aa87CF22EAFf9E36C036c4274cE1d409a11144",
@@ -33,23 +44,16 @@ import { getSigner } from '~/utils/contract';
   "0x61A4ce9e2051f44Ad8Ac25cd4dbee2DAc9924Fa5",
   "0xAa197d202E973aC76f41fc44e8Ad9512a219576C",
   "0x7170b22B066bf2a38aD9045E8B26fb108Fd0916e",
-*/
+];
+for (let i=0;i<a.length;i++){
+  const tx2 = await blindBox._whiteList(1,a[i]);
+  console.log(a[i],tx2);
+}
 
-  console.log(tx.hash);
+  
 
  /* const tx=await blindBox.setWhiteList(1,["0xaa20c5A5B500E32bF74308570D4bDb9A72CDb7bD"])
   console.log(tx.hash);
-
-  
- 
- 
- 
- 
- 
- 
- 
- 
- 
 
   const tx2 = await blindBox._whiteList(1,"0xaa20c5A5B500E32bF74308570D4bDb9A72CDb7bD");
   console.log(tx2);*/

@@ -3,8 +3,10 @@ import {contractAddress, squidGameContract} from '../../utils/contract';
 (async () => {
   const squidGame = await squidGameContract();
 
-  const tx = await squidGame.chapterInvalid(1644895814);
+  const tx = await squidGame.chapterInvalid(1708160162);
   console.log(tx.hash);
+ 
+  
   //const tx2=await squidGame.updateGameInterval(28800);//28800
   //console.log(tx2.hash);
   //const tx3=await squidGame.setKakiPayWallet("0xF6ee79720964bE662D6653fa60b7D356D8a61e59");
