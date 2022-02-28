@@ -1,10 +1,12 @@
-import {contractAddress, farmContract} from '~/utils/contract';
+import {contractAddress, farmContract, getSigner} from '~/utils/contract';
 import {printEtherResultArray} from '~/utils/logutil';
 
 (async () => {
   const farm = await farmContract();
 
-  const tx = await farm.addVirtualPool(contractAddress.facet, 10);
+  const signer = await getSigner(0);
+
+  const tx = await farm.addVirtualPool(signer.address, 3518);
 
   console.log(tx.hash);
 })();
