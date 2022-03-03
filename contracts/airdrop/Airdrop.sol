@@ -36,8 +36,11 @@ contract Airdrop is OwnableUpgradeable {
     }
 
     function setAirdropEnd(uint256 aid, uint256 endTime) public onlyOwner {
-        require(aid < _airdrop.length);
         _airdrop[aid].endTime = endTime;
+    }
+
+    function setAirdropDetailText(uint256 aid, string memory txt) public onlyOwner {
+        _airdrop[aid].desc = txt;
     }
 
     function claim(
@@ -86,10 +89,10 @@ contract Airdrop is OwnableUpgradeable {
     }
 
     function checkToClaim2(address user,uint256 aid,uint256 amount,uint8 v,bytes32 r,bytes32 s) public view returns (bool){
-        
-       if(keccak256(abi.encodePacked(user, aid, amount)).toEthSignedMessageHash().recover(v, r, s) == _signer)        
+
+       if(keccak256(abi.encodePacked(user, aid, amount)).toEthSignedMessageHash().recover(v, r, s) == _signer)
             return true;
-        else 
+        else
             return false;
     }
 
@@ -128,6 +131,6 @@ contract Airdrop is OwnableUpgradeable {
     }
 
     function version() public pure returns (uint256) {
-        return 15;
+        return 16;
     }
 }

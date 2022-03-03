@@ -1,3 +1,4 @@
+import { formatEther } from 'ethers/lib/utils';
 import chalk from 'chalk';
 import { farmContract } from '~/utils/contract';
 import { printEtherResultArray } from '../../utils/logutil';
@@ -29,5 +30,8 @@ import { printEtherResultArray } from '../../utils/logutil';
       console.log(`error: ${k} ${e.message}`);
     }
   }
+
+  console.log(`wftm dailyReward: ${formatEther(await farm.daylyReward(0))}`);
+  console.log(`lp dailyReward: ${formatEther(await farm.daylyReward(1))}`);
 
 })();
